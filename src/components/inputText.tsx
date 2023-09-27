@@ -7,7 +7,7 @@ interface screenProps {
 const InputText = ({ label, placeHolder, type = "text" }: screenProps) => {
   return (
     <div className=" w-full flex flex-col mt-2">
-      <h5 className=" text-xs mb-2 text-[#123060] dark:text-white font-semibold">
+      <h5 className=" text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
         {label}
       </h5>
       <input
