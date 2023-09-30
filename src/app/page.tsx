@@ -2,8 +2,8 @@ import InputText from "src/components/inputText";
 
 export default function Home() {
   return (
-    <main className="flex h-screen w-screen flex-col items-center justify-center p-5 bg-no-repeat bg-fixed bg-cover bg-[url('../../public/assets/images/background.png')]">
-      <div className="flex flex-col w-2/3 md:w-1/2 lg:w-1/3 md:self-end h-3/4 self-center lg:self_end sm:self-center justify-center items-center bg-primaryAuth">
+    <main className="flex bg-center h-screen w-screen flex-col items-center justify-center p-5 bg-no-repeat bg-fixed bg-cover bg-[url('../../public/assets/images/background.png')]">
+      <div className="flex flex-col w-5/6 md:w-5/6 lg:w-1/3 md:self-end sm:w-5/6 h-3/4 self-center lg:self_end sm:self-center justify-center items-center bg-primaryAuth">
         <div className="w-2/3 flex flex-col items-center justify-center">
           <div className="text-[#FAF9F6] font-bold text-3xl">SIGN UP</div>
           <div>
