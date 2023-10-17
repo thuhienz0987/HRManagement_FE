@@ -1,18 +1,19 @@
 interface screenProps {
   label: string;
   placeHolder: string;
+  type?: "text" | "password";
 }
 
-const InputText = ({ label, placeHolder }: screenProps) => {
+const InputText = ({ label, placeHolder, type = "text" }: screenProps) => {
   return (
-    <div className="bg-red-300 w-3/4 flex m-2 flex-col">
-      <h5 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+    <div className=" w-full flex flex-col mt-2">
+      <h5 className=" text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
         {label}
       </h5>
       <input
-        type="text"
+        type={type}
         id="first_name"
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        className=" text-sm rounded-lg border-gray-950 border h-10 p-3 leading-4"
         placeholder={placeHolder}
         required
       />
