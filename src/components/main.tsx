@@ -99,7 +99,9 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                         : "w-[calc(100%-56px)]")
                 }
             >
-                <TraceBar option={option} subOption={subOption} />
+                {option?.href !== "/dashboard" && (
+                    <TraceBar option={option} subOption={subOption} />
+                )}
                 <div className="flex flex-col flex-1">{children}</div>
                 <Footer />
             </div>

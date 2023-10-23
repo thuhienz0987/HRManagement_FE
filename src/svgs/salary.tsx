@@ -1,6 +1,6 @@
 import React from "react";
 
-function UserIcon({
+function SalaryIcon({
     width,
     height,
     fill,
@@ -30,4 +30,4 @@ function UserIcon({
     );
 }
 
-export default UserIcon;
+export default SalaryIcon;

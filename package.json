@@ -10,8 +10,14 @@
     },
     "dependencies": {
         "@heroicons/react": "^2.0.18",
+        "@nextui-org/react": "^2.1.13",
+        "chart.js": "^4.4.0",
+        "date-fns": "^2.30.0",
+        "faker": "^6.6.6",
+        "framer-motion": "^10.16.4",
         "next": "^13.5.5-canary.4",
         "react": "latest",
+        "react-chartjs-2": "^5.2.0",
         "react-dom": "latest"
     },
     "devDependencies": {

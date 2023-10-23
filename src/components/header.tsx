@@ -49,8 +49,10 @@ function Header() {
                     />
                 </button>
                 <div
-                    className={`absolute w-60 py-2 bg-white self-start right-2 top-12 border rounded-sm border-slate-300 flex flex-col transition-all duration-200 ${
-                        visible ? "opacity-100" : " opacity-0 invisible"
+                    className={`absolute w-60 py-2 bg-white self-start right-2 top-12 border rounded-sm border-slate-300 flex flex-col transition-all duration-300 origin-top ${
+                        visible
+                            ? "opacity-100"
+                            : " opacity-0 invisible scale-y-0"
                     }`}
                 >
                     {options.map((option) => (

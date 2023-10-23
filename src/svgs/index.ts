@@ -5,3 +5,5 @@ export { default as PresentationChartLineIcon } from "./presentationChartLine";
 export { default as BackIcon } from "./back";
 export { default as ArrowIcon } from "./arrow";
 export { default as CameraIcon } from "./camera";
+export { default as TrendUpIcon } from "./trendUp";
+export { default as CalendarIcon } from "./calendar";
