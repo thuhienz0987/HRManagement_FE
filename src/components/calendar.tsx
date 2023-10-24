@@ -98,30 +98,32 @@ function Calendar() {
         <div className="flex flex-1 flex-col border bg-gray-50 border-blue-700 rounded-xl overflow-hidden">
             {/* <div className="flex w-full justify-between h-fit px-10  pt-7"></div> */}
             <div className="flex flex-1 justify-center items-stretch">
-                <div className="flex flex-1 flex-col px-9 dark:bg-gray-700 bg-gray-50 rounded-l items-center border justify-center relative">
+                <div className="flex flex-1 flex-col px-9 bg-gray-50 rounded-l items-center border justify-center relative">
                     <p className=" self-start top-5 block absolute text-xl font-medium">
                         Events
                     </p>
                     <div className="px-4 justify-self-center self-center">
-                        <ScrollShadow size={30} className="h-[350px]">
+                        <ScrollShadow size={30} className="h-[350px]" hideScrollBar>
                             {meetings.map((meeting) => (
-                                <div className="border p-4 border-gray-400 border-solid rounded-xl mb-4">
-                                    <p className="text-xs font-light leading-3 text-gray-500 dark:text-gray-300">
-                                        9:00 AM
-                                    </p>
-                                    <a
-                                        // tabindex="0"
-                                        className="focus:outline-none text-lg font-medium leading-5 text-gray-800 dark:text-gray-100 mt-2"
-                                    >
-                                        Zoom call with design team
-                                    </a>
-                                    <p className="text-sm pt-2 pl-2 leading-4 text-gray-600 dark:text-gray-300">
-                                        Discussion on UX sprint and Wireframe
-                                        review
-                                    </p>
-                                    <p className="text-sm pt-2 pl-2 leading-4 text-gray-600 dark:text-gray-300">
-                                        Room 3.2
-                                    </p>
+                                <div className="w-full">
+                                    <div className="border p-4 border-gray-400 border-solid rounded-xl mb-4">
+                                        <p className="text-xs font-light leading-3 text-gray-500">
+                                            9:00 AM
+                                        </p>
+                                        <a
+                                            // tabindex="0"
+                                            className="focus:outline-none text-lg font-medium leading-5 text-gray-800 mt-2"
+                                        >
+                                            Zoom call with design team
+                                        </a>
+                                        <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
+                                            Discussion on UX sprint and Wireframe
+                                            review
+                                        </p>
+                                        <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
+                                            Room 3.2
+                                        </p>
+                                    </div>
                                 </div>
                             ))}
                         </ScrollShadow>
@@ -131,11 +133,11 @@ function Calendar() {
                     <button className="self-end mt-5 mr-6">
                         <CalendarIcon />
                     </button>
-                    <div className=" p-5 dark:bg-gray-800 bg-white rounded-r">
+                    <div className=" p-5 bg-white rounded-r">
                         <div className="px-4 flex items-center justify-between">
                             <span
                                 // tabindex="0"
-                                className="focus:outline-none  text-base font-bold dark:text-gray-100 text-gray-800"
+                                className="focus:outline-none  text-base font-bold text-gray-800"
                             >
                                 {format(firstDayCurrentMonth, "MMM yyyy")}
                             </span>
@@ -143,7 +145,7 @@ function Calendar() {
                                 <button
                                     onClick={previousMonth}
                                     aria-label="calendar backward"
-                                    className="focus:text-gray-400 hover:text-gray-400 text-gray-800 dark:text-gray-100"
+                                    className="focus:text-gray-400 hover:text-gray-400 text-gray-800"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -168,7 +170,7 @@ function Calendar() {
                                 <button
                                     onClick={nextMonth}
                                     aria-label="calendar forward"
-                                    className="focus:text-gray-400 hover:text-gray-400 ml-3 text-gray-800 dark:text-gray-100"
+                                    className="focus:text-gray-400 hover:text-gray-400 ml-3 text-gray-800"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -195,37 +197,37 @@ function Calendar() {
                         <div className="flex items-center justify-between pt-12 overflow-x-auto flex-col">
                             <div className="grid grid-cols-7 pt-6 w-full">
                                 <div className="w-full flex justify-center">
-                                    <p className="text-base font-medium text-center text-gray-800 dark:text-gray-100">
+                                    <p className="text-base font-medium text-center text-gray-800">
                                         Mo
                                     </p>
                                 </div>
                                 <div className="w-full flex justify-center">
-                                    <p className="text-base font-medium text-center text-gray-800 dark:text-gray-100">
+                                    <p className="text-base font-medium text-center text-gray-800">
                                         Tu
                                     </p>
                                 </div>
                                 <div className="w-full flex justify-center">
-                                    <p className="text-base font-medium text-center text-gray-800 dark:text-gray-100">
+                                    <p className="text-base font-medium text-center text-gray-800">
                                         We
                                     </p>
                                 </div>
                                 <div className="w-full flex justify-center">
-                                    <p className="text-base font-medium text-center text-gray-800 dark:text-gray-100">
+                                    <p className="text-base font-medium text-center text-gray-800">
                                         Th
                                     </p>
                                 </div>
                                 <div className="w-full flex justify-center">
-                                    <p className="text-base font-medium text-center text-gray-800 dark:text-gray-100">
+                                    <p className="text-base font-medium text-center text-gray-800">
                                         Fr
                                     </p>
                                 </div>
                                 <div className="w-full flex justify-center">
-                                    <p className="text-base font-medium text-center text-gray-800 dark:text-gray-100">
+                                    <p className="text-base font-medium text-center text-gray-800">
                                         Sa
                                     </p>
                                 </div>
                                 <div className="w-full flex justify-center">
-                                    <p className="text-base font-medium text-center text-gray-800 dark:text-gray-100">
+                                    <p className="text-base font-medium text-center text-gray-800">
                                         Su
                                     </p>
                                 </div>
