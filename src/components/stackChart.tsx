@@ -28,6 +28,7 @@ function StackChart() {
             },
         },
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
             x: {
                 stacked: true,
@@ -56,28 +57,41 @@ function StackChart() {
             {
                 label: "Dataset 1",
                 data: labels.map(() => -300),
-                backgroundColor: "rgb(255, 99, 132)",
+                backgroundColor: "#FF5630CC",
                 borderWidth: 1,
                 borderRadius: [10],
             },
             {
                 label: "Dataset 2",
                 data: labels.map(() => -121),
-                backgroundColor: "rgb(75, 192, 192)",
+                backgroundColor: "#FFA600CC",
                 borderWidth: 1,
                 borderRadius: 10,
             },
             {
                 label: "Dataset 3",
                 data: labels.map(() => 100),
-                backgroundColor: "rgb(53, 162, 235)",
+                backgroundColor: "#2C3D3A",
                 borderWidth: 1,
                 borderRadius: 10,
             },
         ],
     };
+
+    useEffect(() => {
+        function handleResize() {
+            console.log(
+                "resized to: ",
+                window.innerWidth,
+                "x",
+                window.innerHeight
+            );
+        }
+
+        window.addEventListener("resize", handleResize);
+    });
     return (
-        <div className="flex flex-1 border border-blue-700 rounded-xl">
+        <div className="flex flex-grow border border-blue-700 rounded-xl lg:h-96 md:h-64 h-48 bg-white">
             <Bar options={options} data={data} />
         </div>
     );

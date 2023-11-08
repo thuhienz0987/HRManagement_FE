@@ -19,12 +19,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <html lang="en">
             <head>
                 <title>Home</title>
-                <link rel="icon" type="image/x-icon" href={dark_logo_url} />
+                <link rel="icon" type="image/png" href={dark_logo_url} />
             </head>
             <body
-                className={inter.className + "flex flex-1 grow h-full flex-col"}
+                className={
+                    inter.className +
+                    "bottom-0 right-0 h-[100vh] flex-col w-full"
+                }
             >
-                <Header />
                 <Main children={children} />
             </body>
         </html>

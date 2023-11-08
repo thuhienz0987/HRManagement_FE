@@ -7,3 +7,7 @@ export { default as ArrowIcon } from "./arrow";
 export { default as CameraIcon } from "./camera";
 export { default as TrendUpIcon } from "./trendUp";
 export { default as CalendarIcon } from "./calendar";
+export { default as SearchIcon } from "./search";
+export { default as EyeIcon } from "./eye";
+export { default as EditIcon } from "./edit";
+export { default as DeleteIcon } from "./delete";

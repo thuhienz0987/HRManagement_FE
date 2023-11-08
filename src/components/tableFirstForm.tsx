@@ -1,4 +1,6 @@
+import { Checkbox, Pagination, Tooltip } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import { DeleteIcon, EditIcon, EyeIcon } from "src/svgs";
 
 export enum ColumnEnum {
     indexColumn,
@@ -9,104 +11,105 @@ export enum ColumnEnum {
 export interface ColumnType {
     title: string;
     type: ColumnEnum;
+    key: string;
 }
 
-const TableFirstForm = ({ columns }: { columns: ColumnType[] }) => {
+const TableFirstForm = ({
+    columns,
+    tableName,
+    viewFunction,
+    editFunction,
+    deleteFunction,
+}: {
+    columns: ColumnType[];
+    tableName?: string;
+    viewFunction?: () => void;
+    editFunction?: () => void;
+    deleteFunction?: () => void;
+}) => {
     const [checkedAll, setCheckedAll] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const rows = [
         {
-            // No: "1",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
+            requestDay: "RequestDay",
+            department: "Account",
+            status: "pending",
+        },
+        {
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
+            requestDay: "RequestDay",
+            department: "Account",
+            status: "pending",
+        },
+        {
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
         },
         {
-            // No: "2",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
         },
         {
-            // No: "1",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
         },
         {
-            // No: "2",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
         },
         {
-            // No: "1",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
         },
         {
-            // No: "2",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
         },
         {
-            // No: "1",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
         },
         {
-            // No: "2",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
         },
         {
-            // No: "1",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
         },
         {
-            // No: "2",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
-            RequestDay: "RequestDay",
-            Department: "Account",
-            Status: "pending",
-        },
-        {
-            // No: "1",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
-            RequestDay: "RequestDay",
-            Department: "Account",
-            Status: "pending",
-        },
-        {
-            // No: "2",
-            Employee: "NV001",
-            FullName: "Nguyen van A",
+            employeeCode: "NV001",
+            fullName: "Nguyen van A",
             RequestDay: "RequestDay",
             Department: "Account",
             Status: "pending",
@@ -119,38 +122,97 @@ const TableFirstForm = ({ columns }: { columns: ColumnType[] }) => {
         useEffect(() => {
             setCheckedItem(checkedAll);
         }, [checkedAll]);
-        return columns.map((key) => (
+        return columns.map((column) => (
             <th
                 className={`${index % 2 ? "bg-[#E9EFF2]" : "bg-white"} ${
-                    key.type == ColumnEnum.indexColumn && "flex-[0.5_1_0%]"
-                } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300`}
+                    column.type == ColumnEnum.indexColumn && "flex-[0.5_1_0%]"
+                } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300 items-center text-[#2C3D3A] font-normal text-xs`}
             >
-                {key.type == ColumnEnum.indexColumn && (
+                {column.type == ColumnEnum.indexColumn && (
                     <>
-                        <input
-                            checked={checkedItem}
+                        <Checkbox
+                            size="sm"
+                            color="default"
+                            classNames={{
+                                label: "text-xs text-gray-600",
+                                base: " self-start",
+                            }}
                             onClick={() => setCheckedItem(!checkedItem)}
-                            type="checkbox"
-                            className="w-4 h-4 bg-gray-100 border-gray-300 rounded dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        {index + 1}
+                            isSelected={checkedItem}
+                        >
+                            {index + 1}
+                        </Checkbox>
                     </>
                 )}
-                {row[key.title as keyof typeof row]}
+                {column.type == ColumnEnum.textColumn &&
+                    row[column.key as keyof typeof row]}
+                {column.type == ColumnEnum.functionColumn && (
+                    <div className="relative flex items-center gap-2">
+                        <Tooltip content="Details">
+                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                <EyeIcon width="16" height="16" />
+                            </span>
+                        </Tooltip>
+                        <Tooltip content="Edit user">
+                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                <EditIcon width="16" height="16" />
+                            </span>
+                        </Tooltip>
+                        <Tooltip color="danger" content="Delete user">
+                            <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                                <DeleteIcon width="16" height="16" />
+                            </span>
+                        </Tooltip>
+                    </div>
+                )}
+            </th>
+        ));
+    };
+
+    const emptyRow = (sampleRow: any, index: number) => {
+        const [checkedItem, setCheckedItem] = useState(false);
+        useEffect(() => {
+            setCheckedItem(checkedAll);
+        }, [checkedAll]);
+        return columns.map((column) => (
+            <th
+                className={`${index % 2 ? "bg-[#E9EFF2]" : "bg-white"} ${
+                    column.type == ColumnEnum.indexColumn && "flex-[0.5_1_0%]"
+                } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300 items-center text-[#2C3D3A] font-normal text-xs`}
+            >
+                {/* {column.type == ColumnEnum.indexColumn && (
+                    <>
+                        <Checkbox
+                            size="sm"
+                            color="default"
+                            classNames={{
+                                label: "text-xs text-gray-600",
+                                base: " self-start",
+                            }}
+                            onClick={() => setCheckedItem(!checkedItem)}
+                            isSelected={checkedItem}
+                        >
+                            {index + 1}
+                        </Checkbox>
+                    </>
+                )} */}
+                {"  "}
             </th>
         ));
     };
 
     return (
-        <div className="flex flex-col bg-white mx-[5%] w-full px-[14px] py-6 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg border-[rgba(18, 48, 96, 0.5)] border-2 my-2">
-            <h3 className=" text-[26px] font-semibold text-[#005FD0]">
-                Today absent requests
-            </h3>
+        <div className="flex flex-col bg-white w-full my-2">
+            {tableName && (
+                <h3 className=" text-[26px] font-semibold text-[#2C3D3A]">
+                    {tableName}
+                </h3>
+            )}
             <hr className="w-full h-[2px] bg-[#12306080] border-[1px] mt-4" />
             <table className="border-[rgba(194, 201, 250, 1)] border-[2px] mt-5 flex flex-col">
                 {/* title row */}
                 <tbody>
-                    <tr className=" font-sans text-gray-600 text-xs h-12 bg-[#dde1e6] flex w-full">
+                    <tr className=" font-sans text-[#2C3D3A] text-xs h-12 bg-[#dde1e6] flex w-full">
                         {columns.map((column, index) => (
                             <th
                                 className={`${
@@ -159,51 +221,67 @@ const TableFirstForm = ({ columns }: { columns: ColumnType[] }) => {
                                 } border-x-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300`}
                             >
                                 {column.type == ColumnEnum.indexColumn && (
-                                    <input
-                                        checked={checkedAll}
+                                    <Checkbox
+                                        isSelected={checkedAll}
                                         onClick={() =>
                                             setCheckedAll(!checkedAll)
                                         }
-                                        type="checkbox"
-                                        className="w-4 h-4 bg-gray-100 border-gray-300 rounded dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                                    />
+                                        size="sm"
+                                        color="default"
+                                        classNames={{
+                                            label: "text-xs text-gray-600",
+                                        }}
+                                    >
+                                        {column.title}
+                                    </Checkbox>
                                 )}
-                                {column.title}
+                                {column.type !== ColumnEnum.indexColumn &&
+                                    column.title}
                             </th>
                         ))}
                     </tr>
                     {/* content row */}
                     {rows.map(
                         (row, index) =>
-                            index >= currentPage - 1 &&
-                            index <= currentPage - 1 + 4 && (
+                            index >= (currentPage - 1) * 5 &&
+                            index <= (currentPage - 1) * 5 + 4 && (
                                 <tr className=" font-sans text-gray-600 text-xs h-12 flex w-full">
                                     {renderRow(row, index)}
                                 </tr>
                             )
                     )}
+                    {currentPage == page &&
+                        [...Array(5 - (rows.length % 5))].map((index) => (
+                            <tr className=" font-sans text-gray-600 text-xs h-12 flex w-full">
+                                {emptyRow(rows[1], rows.length - 1 + index)}
+                            </tr>
+                        ))}
                 </tbody>
             </table>
             <div className="flex justify-between mt-3">
                 <h5 className="text-[#0F1E5D] text-sm">
-                    Have shown from
+                    Displayed
                     <span className="font-semibold">
                         {" "}
                         {(currentPage - 1) * 5 + 1}
                     </span>{" "}
                     to{" "}
                     <span className="font-semibold">
-                        {(currentPage - 1) * 5 + 5}{" "}
+                        {currentPage == page
+                            ? rows.length
+                            : (currentPage - 1) * 5 + 5}{" "}
                     </span>
                     /<span className="font-semibold">{rows.length} </span>{" "}
                     records{" "}
                 </h5>
                 <div className=" gap-2 flex">
-                    <PreviousPageButton />
-                    <PageNumberButton />
-                    <PageNumberButton />
-                    <PageNumberButton />
-                    <NextPageButton />
+                    <Pagination
+                        showControls
+                        size="sm"
+                        total={page}
+                        initialPage={1}
+                        onChange={(page) => setCurrentPage(page)}
+                    />
                 </div>
             </div>
         </div>

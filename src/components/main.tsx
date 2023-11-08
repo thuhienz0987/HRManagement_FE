@@ -11,6 +11,7 @@ import {
     UserIcon,
 } from "src/svgs";
 import { useSelectedLayoutSegments } from "next/navigation";
+import Header from "./header";
 
 const Main = ({ children }: { children: React.ReactNode }) => {
     const initMode: SideBarMode = SideBarMode.Large;
@@ -21,6 +22,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             href: "/dashboard",
             icon: HomeIcon,
             subSidebar: [],
+            isHidden: false,
         },
         {
             name: "Attendance",
@@ -40,8 +42,12 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                     href: "/absent",
                 },
                 {
+                    name: "Absent form",
+                    href: "/absent-form",
+                },
+                {
                     name: "ArriveLate / Out early",
-                    href: "/late-or-early",
+                    href: "/arrive-late-leave-early",
                 },
                 {
                     name: "Attendance list",
@@ -52,6 +58,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                     href: "/log",
                 },
             ],
+            isHidden: false,
         },
         {
             name: "Reports",
@@ -75,12 +82,30 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                     href: "/outcome",
                 },
             ],
+            isHidden: false,
         },
         {
             name: "Salary",
             href: "/salary",
             icon: SalaryIcon,
             subSidebar: [],
+            isHidden: false,
+        },
+        {
+            name: "Account",
+            href: "/account",
+            icon: SalaryIcon,
+            subSidebar: [
+                {
+                    name: "Profile",
+                    href: "/profile",
+                },
+                {
+                    name: "Edit Profile",
+                    href: "/edit-profile",
+                },
+            ],
+            isHidden: true,
         },
     ];
     const segments = useSelectedLayoutSegments();
@@ -89,23 +114,32 @@ const Main = ({ children }: { children: React.ReactNode }) => {
         (subOpt) => subOpt.href == "/" + segments[1]
     );
     return (
-        <main className=" flex bg-red-100 flex-row">
-            <SideBar mode={mode} setMode={setMode} SideBarOps={SideBarOps} />
-            <div
-                className={
-                    "flex flex-col absolute min-h-[calc(100%-3.5rem)] right-0 top-14 overflow-y duration-300 -z-10 " +
-                    (mode == SideBarMode.Large
-                        ? "w-[calc(100%-14rem)]"
-                        : "w-[calc(100%-56px)]")
-                }
-            >
-                {option?.href !== "/dashboard" && (
-                    <TraceBar option={option} subOption={subOption} />
-                )}
-                <div className="flex flex-col flex-1">{children}</div>
-                <Footer />
+        <>
+            <Header mode={mode} setMode={setMode} />
+            <div className="flex absolute w-full pt-[3.5rem]">
+                <SideBar
+                    mode={mode}
+                    setMode={setMode}
+                    SideBarOps={SideBarOps}
+                />
+                <div
+                    className={
+                        " flex min-h-[calc(100vh-3.5rem)] flex-col absolute right-0 overflow-y duration-300 -z-10 w-full bg-[#FEFAEE] " +
+                        (mode == SideBarMode.Large
+                            ? " md:w-[calc(100%-14rem)]"
+                            : " md:w-[calc(100%-56px)]")
+                    }
+                >
+                    {option?.href !== "/dashboard" && (
+                        <TraceBar option={option} subOption={subOption} />
+                    )}
+                    <div className="flex flex-col flex-1 h-full ">
+                        {children}
+                    </div>
+                    <Footer />
+                </div>
             </div>
-        </main>
+        </>
     );
 };
 

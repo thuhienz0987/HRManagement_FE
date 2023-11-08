@@ -13,6 +13,11 @@ import {
     UserIcon,
 } from "src/svgs";
 import SubOptionButton from "./subOptionButton";
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "../../@/components/ui/hover-card";
 
 export enum SideBarMode {
     Large = "Large",
@@ -36,8 +41,8 @@ const SideBar = ({
     const [isOpenSubList, setIsOpenSubList] = useState(initList);
 
     useEffect(() => {
-        console.log(isOpenSubList);
-    }, [isOpenSubList]);
+        mode == SideBarMode.Small && setIsOpenSubList(initList);
+    }, [mode]);
 
     const isCurrent = (option: SideBarOptionType) => {
         if (isOpenSubList.includes(option.name)) return true;
@@ -57,6 +62,7 @@ const SideBar = ({
 
     const pressOption = (option: SideBarOptionType) => {
         if (option.subSidebar.length == 0) router.replace(option.href);
+        if (mode == SideBarMode.Small) return;
         if (!isOpenSubList.includes(option.name))
             setIsOpenSubList([...isOpenSubList, option.name]);
         if (isOpenSubList.includes(option.name)) {
@@ -77,116 +83,140 @@ const SideBar = ({
         router.replace(option.href + subOption.href);
     };
 
-    const pressMenu = () => {
-        switch (mode) {
-            case SideBarMode.Large: {
-                setMode(SideBarMode.Small);
-                break;
-            }
-            case SideBarMode.Small: {
-                setMode(SideBarMode.Large);
-                break;
-            }
-        }
+    const hasOpenedSubList = (option: SideBarOptionType) => {
+        return isOpenSubList.includes(option.name);
     };
 
     return (
         <div
             className={
-                "lg:fixed h-[calc(100%-3.5rem)] lg:flex lg:flex-col bottom-0 duration-300 ease-in-out  " +
-                (mode == SideBarMode.Large ? "lg:w-56" : " lg:w-[56px]")
+                "fixed h-[calc(100vh-3.5rem)] bottom-0 invisible md:visible transition opacity-0 md:opacity-100 duration-100 "
             }
         >
-            <MenuButton mode={mode} pressMenu={pressMenu} />
-            <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-blue-700 pb-4 border-r-2">
-                <nav className="flex flex-1 flex-col py-1 gap-y-7 ">
-                    <ul role="list" className=" mx-2 space-y-1">
-                        {SideBarOps.map((option) => (
-                            <li key={option.name}>
-                                <OptionButton
-                                    option={option}
-                                    checkIsCurrent={isCurrent}
-                                    pressOption={pressOption}
-                                    sidebarMode={mode}
-                                />
-                                {option.subSidebar.length ? (
-                                    <ul
-                                        role="list"
-                                        className={
-                                            "  p-2 bg-blue-600 rounded-b-md transition ease-in-out duration-1000 " +
-                                            (isOpenSubList.includes(option.name)
-                                                ? " translate-y-0 opacity-1 visible z-20 relative "
-                                                : " -translate-y-15 opacity-0 invisible -z-10 absolute ")
-                                        }
-                                    >
-                                        {option.subSidebar.map((subOption) => (
-                                            <SubOptionButton
-                                                option={option}
-                                                subOption={subOption}
-                                                pressSubOption={pressSubOption}
-                                                isSubCurrent={isSubCurrent}
-                                                sidebarMode={mode}
-                                            />
-                                        ))}
-                                    </ul>
-                                ) : null}
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
+            <div
+                className={
+                    "flex h-full flex-col duration-300 ease-in-out " +
+                    (mode == SideBarMode.Large ? "w-56" : "w-[56px]")
+                }
+            >
+                <div className="flex grow flex-col gap-y-5 overflow-y-auto overflow-x-hidden bg-bar pb-4 border-r-2">
+                    <nav className="flex flex-1 flex-col py-1 gap-y-7 ">
+                        <ul role="list" className=" mx-2 space-y-1">
+                            {SideBarOps.map((option) => (
+                                <>
+                                    {option.isHidden == false && (
+                                        <li
+                                            key={option.name}
+                                            className="relative"
+                                        >
+                                            <HoverCard>
+                                                <HoverCardTrigger>
+                                                    <OptionButton
+                                                        option={option}
+                                                        checkIsCurrent={
+                                                            isCurrent
+                                                        }
+                                                        pressOption={
+                                                            pressOption
+                                                        }
+                                                        sidebarMode={mode}
+                                                        hasOpenedSubList={
+                                                            hasOpenedSubList
+                                                        }
+                                                    />
+                                                </HoverCardTrigger>
+                                                {option.subSidebar.length &&
+                                                mode == SideBarMode.Large ? (
+                                                    <ul
+                                                        role="list"
+                                                        className={
+                                                            "  p-2 bg-[#46605B7F] rounded-b-md transition ease-in-out duration-1000" +
+                                                            (hasOpenedSubList(
+                                                                option
+                                                            )
+                                                                ? " translate-y-0 opacity-1 visible z-20 relative "
+                                                                : " -translate-y-15 opacity-0 invisible -z-10 absolute ")
+                                                        }
+                                                    >
+                                                        {option.subSidebar.map(
+                                                            (subOption) => (
+                                                                <SubOptionButton
+                                                                    option={
+                                                                        option
+                                                                    }
+                                                                    subOption={
+                                                                        subOption
+                                                                    }
+                                                                    pressSubOption={
+                                                                        pressSubOption
+                                                                    }
+                                                                    isSubCurrent={
+                                                                        isSubCurrent
+                                                                    }
+                                                                    sidebarMode={
+                                                                        mode
+                                                                    }
+                                                                />
+                                                            )
+                                                        )}
+                                                    </ul>
+                                                ) : null}
+                                                {option.subSidebar.length &&
+                                                mode == SideBarMode.Small ? (
+                                                    <HoverCardContent className=" w-60 ml-[5px] bg-white">
+                                                        <ul
+                                                            role="list"
+                                                            className={
+                                                                "  p-2 bg-[#2C3D3A] rounded-b-md transition ease-in-out duration-1000"
+                                                                // (hasOpenedSubList(
+                                                                //     option
+                                                                // )
+                                                                //     ? " translate-y-0 opacity-1 visible z-20 relative "
+                                                                //     : " -translate-y-15 opacity-0 invisible -z-10 absolute ")
+                                                            }
+                                                        >
+                                                            {option.subSidebar.map(
+                                                                (subOption) => (
+                                                                    <SubOptionButton
+                                                                        option={
+                                                                            option
+                                                                        }
+                                                                        subOption={
+                                                                            subOption
+                                                                        }
+                                                                        pressSubOption={
+                                                                            pressSubOption
+                                                                        }
+                                                                        isSubCurrent={
+                                                                            isSubCurrent
+                                                                        }
+                                                                        sidebarMode={
+                                                                            mode
+                                                                        }
+                                                                    />
+                                                                )
+                                                            )}
+                                                        </ul>
+                                                    </HoverCardContent>
+                                                ) : null}
+                                                {option.subSidebar.length ==
+                                                    0 &&
+                                                mode == SideBarMode.Small ? (
+                                                    <HoverCardContent className="bg-white text-black text-sm leading-6 font-semibold items-center py-2 ml-[5px]">
+                                                        {option.name}
+                                                    </HoverCardContent>
+                                                ) : null}
+                                            </HoverCard>
+                                        </li>
+                                    )}
+                                </>
+                            ))}
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     );
 };
 
 export default SideBar;
-
-const MenuButton = ({
-    mode,
-    pressMenu,
-}: {
-    mode: SideBarMode;
-    pressMenu: () => void;
-}) => {
-    return (
-        <button className="absolute group -top-[44px] ml-3" onClick={pressMenu}>
-            <div
-                className={
-                    "relative flex overflow-hidden items-center justify-center rounded-full w-[30px] h-[30px] transform transition-all ring-0 ring-gray-300 hover:ring-8 ring-opacity-30 duration-200 shadow-md " +
-                    (mode == SideBarMode.Large && "group-ring-4")
-                }
-            >
-                <div
-                    className={
-                        "flex flex-col justify-between w-[12px] h-[12px] transform transition-all duration-300 origin-center overflow-hidden " +
-                        (mode == SideBarMode.Large &&
-                            "rotate-180 -translate-x-1.5")
-                    }
-                >
-                    <div
-                        className={
-                            "bg-white h-[2px] transform transition-all duration-300 origin-left delay-150 " +
-                            (mode == SideBarMode.Large
-                                ? "rotate-[42deg] w-2/3"
-                                : "w-5")
-                        }
-                    ></div>
-                    <div
-                        className={
-                            "bg-white h-[2px] w-5 rounded transform transition-all duration-300 " +
-                            (mode == SideBarMode.Large && "translate-x-10")
-                        }
-                    ></div>
-                    <div
-                        className={
-                            "bg-white h-[2px] transform transition-all duration-300 origin-left delay-150 " +
-                            (mode == SideBarMode.Large
-                                ? "w-2/3 -rotate-[42deg]"
-                                : "w-5")
-                        }
-                    ></div>
-                </div>
-            </div>
-        </button>
-    );
-};

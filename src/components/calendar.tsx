@@ -70,10 +70,6 @@ function Calendar() {
     const today = startOfToday();
     const [selectedDay, setSelectedDay] = useState(today);
     const [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
-    // const newDays = eachDayOfInterval({
-    //     start: startOfWeek(startOfMonth(today)),
-    //     end: endOfWeek(endOfMonth(today)),
-    // });
     let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
 
     let days = eachDayOfInterval({
@@ -97,13 +93,16 @@ function Calendar() {
     return (
         <div className="flex flex-1 flex-col border bg-gray-50 border-blue-700 rounded-xl overflow-hidden">
             {/* <div className="flex w-full justify-between h-fit px-10  pt-7"></div> */}
-            <div className="flex flex-1 justify-center items-stretch">
-                <div className="flex flex-1 flex-col px-9 dark:bg-gray-700 bg-gray-50 rounded-l items-center border justify-center relative">
-                    <p className=" self-start top-5 block absolute text-xl font-medium">
+            <div className="flex flex-1 flex-col-reverse lg:justify-center items-stretch lg:flex-row">
+                <div className="flex flex-1 flex-col dark:bg-gray-700 bg-gray-50 rounded-l items-center border justify-center relative gap-4">
+                    <p className="pl-9 self-start mt-4 block text-xl font-medium">
                         Events
                     </p>
-                    <div className="px-4 justify-self-center self-center">
-                        <ScrollShadow size={30} className="h-[350px]">
+                    <div className="flex w-full">
+                        <ScrollShadow
+                            size={30}
+                            className="h-[400px] w-full lg:px-14 px-5"
+                        >
                             {meetings.map((meeting) => (
                                 <div className="border p-4 border-gray-400 border-solid rounded-xl mb-4">
                                     <p className="text-xs font-light leading-3 text-gray-500 dark:text-gray-300">
@@ -127,7 +126,7 @@ function Calendar() {
                         </ScrollShadow>
                     </div>
                 </div>
-                <div className="max-w-md flex w-full shadow-lg bg-white flex-col">
+                <div className="lg:max-w-md flex w-full shadow-lg bg-white flex-col">
                     <button className="self-end mt-5 mr-6">
                         <CalendarIcon />
                     </button>
@@ -193,7 +192,7 @@ function Calendar() {
                             </div>
                         </div>
                         <div className="flex items-center justify-between pt-12 overflow-x-auto flex-col">
-                            <div className="grid grid-cols-7 pt-6 w-full">
+                            <div className="grid grid-cols-7 lg:pt-6 w-full">
                                 <div className="w-full flex justify-center">
                                     <p className="text-base font-medium text-center text-gray-800 dark:text-gray-100">
                                         Mo
@@ -230,9 +229,9 @@ function Calendar() {
                                     </p>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-7 pt-6 w-full">
+                            <div className="grid grid-cols-7 lg:pt-6 w-full">
                                 {days.map((day) => (
-                                    <div className="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                    <div className="px-2 py-1 lg:py-2 cursor-pointer flex w-full justify-center">
                                         <button
                                             type="button"
                                             onClick={() => setSelectedDay(day)}
