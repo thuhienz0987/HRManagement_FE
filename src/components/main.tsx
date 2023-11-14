@@ -9,6 +9,7 @@ import {
     PresentationChartLineIcon,
     SalaryIcon,
     UserIcon,
+    FinanceIcon
 } from "src/svgs";
 import { useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
@@ -85,6 +86,18 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             isHidden: false,
         },
         {
+            name: "Finance",
+            href: "/finance",
+            icon: FinanceIcon,
+            subSidebar: [
+                {
+                    name: "Salary Payment",
+                    href: "/salary-payment",
+                }
+            ],
+            isHidden: false,
+        },
+        {
             name: "Salary",
             href: "/salary",
             icon: SalaryIcon,
@@ -124,7 +137,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                 />
                 <div
                     className={
-                        " flex min-h-[calc(100vh-3.5rem)] flex-col absolute right-0 overflow-y duration-300 -z-10 w-full bg-[#FEFAEE] " +
+                        " flex min-h-[calc(100vh-3.5rem)] flex-col absolute right-0 overflow-y duration-300 -z-10 w-full " +
                         (mode == SideBarMode.Large
                             ? " md:w-[calc(100%-14rem)]"
                             : " md:w-[calc(100%-56px)]")
