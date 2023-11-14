@@ -1,4 +1,5 @@
 import capitalizeFLetter from "src/helper/capitalizeLetter";
+import { Button } from "@nextui-org/react";
 
 const RegularButton = ({
     label,
@@ -10,12 +11,13 @@ const RegularButton = ({
     additionalStyle?: string;
 }) => {
     return (
-        <button
+        <Button
+            color="primary"
+            className={` min-w-[120px] h-[38px] rounded bg-[#C89E31] text-xs font-semibold text-white ${additionalStyle} hover:opacity-80 focus:opacity-50 `}
             onClick={callback}
-            className={` min-w-[120px] h-[38px] rounded bg-[#2F80ED] text-xs font-semibold text-white ${additionalStyle} focus:bg-[#3d7bcc] `}
         >
             {capitalizeFLetter(label)}
-        </button>
+        </Button>
     );
 };
 

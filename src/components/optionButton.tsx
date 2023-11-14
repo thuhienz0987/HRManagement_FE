@@ -14,6 +14,7 @@ export type SideBarOptionType = {
     href: string;
     icon: any;
     subSidebar: SubSidebar[];
+    isHidden: boolean;
 };
 
 export interface SubSidebar {
@@ -25,11 +26,13 @@ const OptionButton = ({
     pressOption,
     checkIsCurrent,
     sidebarMode,
+    hasOpenedSubList,
 }: {
     option: SideBarOptionType;
     pressOption: (option: SideBarOptionType) => void;
     checkIsCurrent: (option: SideBarOptionType) => boolean;
     sidebarMode: SideBarMode;
+    hasOpenedSubList: (option: SideBarOptionType) => boolean;
 }) => {
     function delay(time: number) {
         return new Promise((resolve) => setTimeout(resolve, time));
@@ -45,6 +48,7 @@ const OptionButton = ({
         setIsHovered(false);
     };
 
+    console.log(option.href, "has", hasOpenedSubList(option));
     return (
         <button
             onMouseOver={handleMouseOver}
@@ -55,9 +59,16 @@ const OptionButton = ({
                     ? "bg-white text-black z-30 "
                     : "text-gray-200 hover:text-black hover:bg-gray-100 z-10 transition duration-150 ") +
                 "group flex p-2 text-sm leading-6 font-semibold items-center justify-between w-full " +
-                (option.subSidebar.length && checkIsCurrent(option)
+                (option.subSidebar.length &&
+                checkIsCurrent(option) &&
+                sidebarMode == SideBarMode.Large
                     ? "rounded-t-md "
                     : "rounded-md ") +
+                (checkIsCurrent(option) &&
+                !hasOpenedSubList(option) &&
+                sidebarMode == SideBarMode.Large
+                    ? " rounded-md "
+                    : " ") +
                 (sidebarMode == SideBarMode.Small &&
                     !checkIsCurrent(option) &&
                     " hover:scale-110 ") +
@@ -100,7 +111,8 @@ const OptionButton = ({
                         "h-4 w-4 shrink-0 justify-self-end duration-300 group-hover:text-black" +
                         (checkIsCurrent(option)
                             ? " text-black rotate-90"
-                            : " text-gray-200")
+                            : " text-gray-200") +
+                        (hasOpenedSubList(option) && "rounded-md rotate-90")
                     }
                 />
             ) : null}
