@@ -23,8 +23,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </head>
             <body
                 className={
-                    inter.className +
-                    "bottom-0 right-0 h-[100vh] flex-col w-full"
+                    inter.className
                 }
             >
                 <Main children={children} />

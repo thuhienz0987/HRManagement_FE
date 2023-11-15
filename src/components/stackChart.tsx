@@ -50,6 +50,11 @@ function StackChart() {
         "May",
         "June",
         "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
     ];
     const data = {
         labels,
@@ -57,21 +62,21 @@ function StackChart() {
             {
                 label: "Dataset 1",
                 data: labels.map(() => -300),
-                backgroundColor: "#FF5630CC",
+                backgroundColor: "#FFA600CC",
                 borderWidth: 1,
                 borderRadius: [10],
             },
             {
                 label: "Dataset 2",
                 data: labels.map(() => -121),
-                backgroundColor: "#FFA600CC",
+                backgroundColor: "#2C3D3A",
                 borderWidth: 1,
                 borderRadius: 10,
             },
             {
                 label: "Dataset 3",
                 data: labels.map(() => 100),
-                backgroundColor: "#2C3D3A",
+                backgroundColor: "#FF5630CC",
                 borderWidth: 1,
                 borderRadius: 10,
             },
