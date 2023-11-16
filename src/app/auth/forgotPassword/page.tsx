@@ -101,7 +101,7 @@ const ForgotPassword = (props: Props) => {
             <p>Back to </p>
             <p> </p>
             <button
-              onClick={router.push("/auth/signIn")}
+              onClick={() => router.push("/auth/signIn")}
               className="underline font-bold ml-2 hover:text-[#24243f]"
             >
               {" "}
