@@ -132,12 +132,24 @@ const ResetPassword = () => {
             </span>
           )}
 
-          <div className="w-full mt-3 h-10 flex mt-5">
+          <div className="w-full h-10 flex mt-5">
             <button
               onClick={handleSubmit}
               className="w-full bg-white hover:bg-[#24243f] text-[#24243f] hover:text-[#FAF9F6] hover:border-[#FAF9F6] rounded-md font-bold"
             >
               Confirm
+            </button>
+          </div>
+
+          <div className="w-full flex text-white text-[18px] flex-row items-center justify-center mt-3">
+            <p>Back to </p>
+            <p> </p>
+            <button
+              onClick={router.push("/auth/signIn")}
+              className="underline font-bold ml-2 hover:text-[#24243f]"
+            >
+              {" "}
+              Sign in
             </button>
           </div>
         </div>

@@ -96,6 +96,18 @@ const ForgotPassword = (props: Props) => {
               Confirm
             </button>
           </div>
+
+          <div className="w-full flex text-white text-[18px] flex-row items-center justify-center mt-3">
+            <p>Back to </p>
+            <p> </p>
+            <button
+              onClick={router.push("/auth/signIn")}
+              className="underline font-bold ml-2 hover:text-[#24243f]"
+            >
+              {" "}
+              Sign in
+            </button>
+          </div>
         </div>
       </div>
     </main>
