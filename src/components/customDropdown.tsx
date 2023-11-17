@@ -12,17 +12,19 @@ import {
     SelectValue,
     SelectItem,
 } from "../../@/components/ui/select";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "../../@/components/ui/scroll-area";
 
 const CustomDropdown = ({
     label,
     placeholder,
     additionalStyle,
+    buttonStyle,
 }: {
-    label: string;
+    label?: string;
     placeholder: string;
     additionalStyle?: string;
+    buttonStyle?: string;
 }) => {
     const ref = useRef<HTMLDivElement>(null);
     const childRef = useRef<HTMLDivElement>(null);
@@ -34,11 +36,15 @@ const CustomDropdown = ({
 
     return (
         <div className={`flex flex-col ${additionalStyle}`}>
-            <p className="text-[#5B5F7B] block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none">
-                {label}
-            </p>
-            <Select className="w-full ">
-                <SelectTrigger className="rounded-lg h-full text-foreground-500 border-border border-2">
+            {label && (
+                <p className="text-[#5B5F7B] block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none">
+                    {label}
+                </p>
+            )}
+            <Select>
+                <SelectTrigger
+                    className={`rounded-lg h-full text-foreground-500 border-border border-2 ${buttonStyle}`}
+                >
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
                 <div ref={ref} className="w-full">

@@ -20,6 +20,7 @@ ChartJS.register(
 );
 
 function StackChart() {
+    const barThickness = 10;
     const options = {
         plugins: {
             title: {
@@ -38,6 +39,14 @@ function StackChart() {
             },
             y: {
                 stacked: true,
+                beginAtZero: true,
+                ticks: {
+                    callback: (value: number, index: number, values: any[]) => {
+                        console.log(value);
+                        if (value <= 100) return `${value}%`;
+                    },
+                },
+                grace: 0,
             },
         },
     };
@@ -61,24 +70,27 @@ function StackChart() {
         datasets: [
             {
                 label: "Dataset 1",
-                data: labels.map(() => -300),
+                data: labels.map(() => 30),
                 backgroundColor: "#FFA600CC",
                 borderWidth: 1,
                 borderRadius: [10],
+                barThickness: barThickness,
             },
             {
                 label: "Dataset 2",
-                data: labels.map(() => -121),
+                data: labels.map(() => 10),
                 backgroundColor: "#2C3D3A",
                 borderWidth: 1,
                 borderRadius: 10,
+                barThickness: barThickness,
             },
             {
                 label: "Dataset 3",
-                data: labels.map(() => 100),
+                data: labels.map(() => 60),
                 backgroundColor: "#FF5630CC",
                 borderWidth: 1,
                 borderRadius: 10,
+                barThickness: barThickness,
             },
         ],
     };

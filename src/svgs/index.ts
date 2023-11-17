@@ -12,3 +12,4 @@ export { default as SearchIcon } from "./search";
 export { default as EyeIcon } from "./eye";
 export { default as EditIcon } from "./edit";
 export { default as DeleteIcon } from "./delete";
+export { default as ColorCalendarIcon } from "./colorCalendar";

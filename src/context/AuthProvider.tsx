@@ -1,22 +1,13 @@
-"use client";
+'use client'
 
-import { useState, createContext, Dispatch, SetStateAction } from 'react';
+import { SessionProvider } from 'next-auth/react'
 
-type AuthContextType = {
-    auth: any;
-    setAuth: Dispatch<SetStateAction<any>>;
-};
-
-const AuthContext = createContext<AuthContextType>({ auth: {}, setAuth: () => {} });
-
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [auth, setAuth] = useState({});
-
+export default function AuthProvider({ children }: {
+    children: React.ReactNode
+}) {
     return (
-        <AuthContext.Provider value={{ auth, setAuth }}>
+        <SessionProvider>
             {children}
-        </AuthContext.Provider>
+        </SessionProvider>
     )
 }
-
-export default AuthContext;

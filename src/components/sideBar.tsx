@@ -103,12 +103,9 @@ const SideBar = ({
                     <nav className="flex flex-1 flex-col py-1 gap-y-7 ">
                         <ul role="list" className=" mx-2 space-y-1">
                             {SideBarOps.map((option) => (
-                                <>
+                                <div key={option.name}>
                                     {option.isHidden == false && (
-                                        <li
-                                            key={option.name}
-                                            className="relative"
-                                        >
+                                        <li className="relative">
                                             <HoverCard>
                                                 <HoverCardTrigger>
                                                     <OptionButton
@@ -141,6 +138,9 @@ const SideBar = ({
                                                         {option.subSidebar.map(
                                                             (subOption) => (
                                                                 <SubOptionButton
+                                                                    key={
+                                                                        subOption.name
+                                                                    }
                                                                     option={
                                                                         option
                                                                     }
@@ -178,6 +178,9 @@ const SideBar = ({
                                                             {option.subSidebar.map(
                                                                 (subOption) => (
                                                                     <SubOptionButton
+                                                                        key={
+                                                                            subOption.name
+                                                                        }
                                                                         option={
                                                                             option
                                                                         }
@@ -209,7 +212,7 @@ const SideBar = ({
                                             </HoverCard>
                                         </li>
                                     )}
-                                </>
+                                </div>
                             ))}
                         </ul>
                     </nav>

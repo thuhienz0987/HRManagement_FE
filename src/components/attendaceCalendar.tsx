@@ -18,6 +18,7 @@ import {
 import { useState } from "react";
 import { CalendarIcon } from "src/svgs";
 import { ScrollShadow } from "@nextui-org/react";
+import { Tenor_Sans } from "next/font/google";
 
 const meetings = [
     {
@@ -62,11 +63,13 @@ const meetings = [
     },
 ];
 
+const tenor_sans = Tenor_Sans({ subsets: ["latin"], weight: "400" });
+
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
-function Calendar() {
+function AttendanceCalendar() {
     const today = startOfToday();
     const [selectedDay, setSelectedDay] = useState(today);
     const [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
@@ -91,49 +94,15 @@ function Calendar() {
         isSameDay(parseISO(meeting.startDatetime), selectedDay)
     );
     return (
-        <div className="flex flex-1 flex-col border bg-gray-50 border-blue-700 rounded-xl overflow-hidden">
-            {/* <div className="flex w-full justify-between h-fit px-10  pt-7"></div> */}
-            <div className="flex flex-1 justify-center items-stretch">
-                <div className="flex flex-1 flex-col px-2 lg:px-9 bg-gray-50 rounded-l items-center border justify-center relative">
-                    <p className=" self-start top-5 block absolute text-xl font-medium">
-                        Events
-                    </p>
-                    <div className=" px-0 lg:px-4 justify-self-center self-center ">
-                        <ScrollShadow
-                            size={30}
-                            className="lg:h-[350px] h-[270px]"
-                            hideScrollBar
-                        >
-                            {meetings.map((meeting) => (
-                                <div className="w-full" key={meeting.id}>
-                                    <div className="border p-4 border-gray-400 border-solid rounded-xl mb-4">
-                                        <p className="text-xs font-light leading-3 text-gray-500">
-                                            9:00 AM
-                                        </p>
-                                        <a
-                                            // tabindex="0"
-                                            className="focus:outline-none text-lg font-medium leading-5 text-gray-800 mt-2"
-                                        >
-                                            Zoom call with design team
-                                        </a>
-                                        <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
-                                            Discussion on UX sprint and
-                                            Wireframe review
-                                        </p>
-                                        <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
-                                            Room 3.2
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </ScrollShadow>
-                    </div>
-                </div>
-                <div className="lg:max-w-md flex w-full shadow-lg bg-white flex-col">
-                    <button className="self-end mt-5 mr-6">
-                        <CalendarIcon />
-                    </button>
-                    <div className=" p-5 bg-white rounded-r">
+        <div className="flex flex-1 flex-col border bg-bar p-2 rounded-xl overflow-hidden self-center">
+            <h3
+                className={`self-center my-2 text-xl font-medium text-[#C89E31] ${tenor_sans.className}`}
+            >
+                Your Attendance
+            </h3>
+            <div className="flex flex-1 justify-center">
+                <div className=" flex w-full shadow-lg flex-col">
+                    <div className=" rounded-md bg-white pt-2">
                         <div className="px-4 flex items-center justify-between">
                             <span
                                 // tabindex="0"
@@ -194,8 +163,8 @@ function Calendar() {
                                 </button>
                             </div>
                         </div>
-                        <div className="flex items-center justify-between pt-12 overflow-x-auto flex-col">
-                            <div className="grid grid-cols-7 lg:pt-6 w-full">
+                        <div className="flex items-center justify-between overflow-x-auto flex-col">
+                            <div className="grid grid-cols-7 pt-3 w-full">
                                 <div className="w-full flex justify-center">
                                     <p className="text-base font-medium text-center text-gray-800">
                                         Mo
@@ -234,7 +203,10 @@ function Calendar() {
                             </div>
                             <div className="grid grid-cols-7 lg:pt-6 w-full">
                                 {days.map((day) => (
-                                    <div className="px-2 py-1 lg:py-2 cursor-pointer flex w-full justify-center">
+                                    <div
+                                        key={day.setDate.toString()}
+                                        className="px-2 py-1 lg:py-2 cursor-pointer flex w-full justify-center"
+                                    >
                                         <button
                                             type="button"
                                             onClick={() => setSelectedDay(day)}
@@ -328,4 +300,4 @@ function Calendar() {
     );
 }
 
-export default Calendar;
+export default AttendanceCalendar;

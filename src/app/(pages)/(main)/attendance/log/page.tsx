@@ -7,8 +7,20 @@ import TableFirstForm, {
     ColumnType,
 } from "src/components/tableFirstForm";
 import { SearchIcon } from "src/svgs";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "../../../../../../@/components/ui/select";
+import { format, startOfToday } from "date-fns";
+import { useState } from "react";
+import StackChart from "src/components/stackChart";
 
-const ArriveLateOrLeaveEarly = () => {
+const Log = () => {
     const columns: ColumnType[] = [
         {
             title: "No",
@@ -46,13 +58,13 @@ const ArriveLateOrLeaveEarly = () => {
             key: "action",
         },
     ];
+    const today = startOfToday();
+    const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+    console.log(currentMonth);
     const handleSearch = () => {};
     return (
-        <div className="flex flex-1 flex-col px-[4%] items-center pb-4 rounded gap-y-9">
+        <div className="flex flex-1 flex-col px-[4%] pb-4 rounded gap-y-9">
             <div className=" flex w-full gap-x-7 items-end ">
-                <p className="text-[#2C3D3A] text-4xl font-bold">
-                    Today records
-                </p>
                 <Input
                     className="rounded w-auto flex-1"
                     classNames={{
@@ -74,22 +86,36 @@ const ArriveLateOrLeaveEarly = () => {
                 <CustomDropdown
                     label="Department"
                     placeholder="Select department"
-                    additionalStyle="flex-1"
+                    additionalStyle="flex-1 h-full"
+                    buttonStyle="bg-white border h-[39px]"
                 />
                 <RegularButton label="search" callback={handleSearch} />
             </div>
             <div className="flex flex-1 flex-col bg-white w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
-                <div className="w-[95%] self-center flex">
-                    <TableFirstForm columns={columns} tableName="Arrive late" />
+                <div className="w-[95%] self-center flex flex-col">
+                    <div className="w-full flex flex-row justify-between items-center">
+                        <h3 className=" text-[26px] font-semibold text-[#2C3D3A]">
+                            Attendance log
+                        </h3>
+                        <div className="flex gap-3">
+                            <CustomDropdown
+                                placeholder="Month"
+                                additionalStyle="w-[100px]"
+                                buttonStyle="border"
+                            />
+                            <RegularButton
+                                label="edit"
+                                callback={handleSearch}
+                                additionalStyle="min-w-[100px]"
+                            />
+                        </div>
+                    </div>
+                    <TableFirstForm columns={columns} />
                 </div>
             </div>
-            <div className="flex flex-1 flex-col bg-white w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
-                <div className="w-[95%] self-center flex">
-                    <TableFirstForm columns={columns} tableName="Leave early" />
-                </div>
-            </div>
+            <StackChart />
         </div>
     );
 };
 
-export default ArriveLateOrLeaveEarly;
+export default Log;

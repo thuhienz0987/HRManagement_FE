@@ -9,10 +9,11 @@ import {
     PresentationChartLineIcon,
     SalaryIcon,
     UserIcon,
-    FinanceIcon
+    FinanceIcon,
 } from "src/svgs";
-import { useSelectedLayoutSegments } from "next/navigation";
+import { redirect, useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
+import { useSession } from "next-auth/react";
 
 const Main = ({ children }: { children: React.ReactNode }) => {
     const initMode: SideBarMode = SideBarMode.Large;
@@ -35,8 +36,8 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                     href: "/form",
                 },
                 {
-                    name: "Monthly Attendance",
-                    href: "/monthly",
+                    name: "Daily Attendance",
+                    href: "/daily",
                 },
                 {
                     name: "Absent",
@@ -45,10 +46,6 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                 {
                     name: "Absent form",
                     href: "/absent-form",
-                },
-                {
-                    name: "ArriveLate / Out early",
-                    href: "/arrive-late-leave-early",
                 },
                 {
                     name: "Attendance list",
@@ -93,7 +90,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                 {
                     name: "Salary Payment",
                     href: "/salary-payment",
-                }
+                },
             ],
             isHidden: false,
         },
@@ -126,34 +123,41 @@ const Main = ({ children }: { children: React.ReactNode }) => {
     const subOption = option?.subSidebar.find(
         (subOpt) => subOpt.href == "/" + segments[1]
     );
-    return (
-        <>
-            <Header mode={mode} setMode={setMode} />
-            <div className="flex absolute w-full pt-[3.5rem]">
-                <SideBar
-                    mode={mode}
-                    setMode={setMode}
-                    SideBarOps={SideBarOps}
-                />
-                <div
-                    className={
-                        " flex min-h-[calc(100vh-3.5rem)] flex-col absolute right-0 overflow-y duration-300 -z-10 w-full " +
-                        (mode == SideBarMode.Large
-                            ? " md:w-[calc(100%-14rem)]"
-                            : " md:w-[calc(100%-56px)]")
-                    }
-                >
-                    {option?.href !== "/dashboard" && (
-                        <TraceBar option={option} subOption={subOption} />
-                    )}
-                    <div className="flex flex-col flex-1 h-full ">
-                        {children}
+    const { data: session } = useSession({
+        required: true,
+        onUnauthenticated() {
+            redirect("/login");
+        },
+    });
+    if (session)
+        return (
+            <>
+                <Header mode={mode} setMode={setMode} />
+                <div className="flex absolute w-full pt-[3.5rem]">
+                    <SideBar
+                        mode={mode}
+                        setMode={setMode}
+                        SideBarOps={SideBarOps}
+                    />
+                    <div
+                        className={
+                            " flex min-h-[calc(100vh-3.5rem)] flex-col absolute right-0 overflow-y duration-300 -z-10 w-full bg-bg " +
+                            (mode == SideBarMode.Large
+                                ? " md:w-[calc(100%-14rem)]"
+                                : " md:w-[calc(100%-56px)]")
+                        }
+                    >
+                        {option?.href !== "/dashboard" && (
+                            <TraceBar option={option} subOption={subOption} />
+                        )}
+                        <div className="flex flex-col flex-1 h-full ">
+                            {children}
+                        </div>
+                        <Footer />
                     </div>
-                    <Footer />
                 </div>
-            </div>
-        </>
-    );
+            </>
+        );
 };
 
 export default Main;

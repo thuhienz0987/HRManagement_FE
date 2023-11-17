@@ -3,7 +3,7 @@ import { Input } from "@nextui-org/react";
 import CustomDropdown from "src/components/customDropdown";
 import RegularButton from "src/components/regularButton";
 import { SearchIcon } from "src/svgs";
-import { Textarea } from "../../../../../@/components/ui/textarea";
+import { Textarea } from "../../../../../../@/components/ui/textarea";
 import { Button } from "react-day-picker";
 import { DatePicker } from "src/components/datePicket";
 

@@ -48,7 +48,6 @@ const OptionButton = ({
         setIsHovered(false);
     };
 
-    console.log(option.href, "has", hasOpenedSubList(option));
     return (
         <button
             onMouseOver={handleMouseOver}

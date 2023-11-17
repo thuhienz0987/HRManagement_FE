@@ -21,11 +21,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <title>Home</title>
                 <link rel="icon" type="image/png" href={dark_logo_url} />
             </head>
-            <body
-                className={
-                    inter.className
-                }
-            >
+            <body className={inter.className}>
                 <Main children={children} />
             </body>
         </html>
