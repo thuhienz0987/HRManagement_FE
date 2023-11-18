@@ -21,15 +21,19 @@ const DashBoard = () => {
     const [userPosition, setUserPosition] = useState<Position>();
     useEffect(() => {
         const getPosition = async () => {
-            const res = await axiosPrivate.get<Position>(
-                "/position/" + session?.user.positionId,
-                {
-                    headers: { "Content-Type": "application/json" },
-                    withCredentials: true,
-                }
-            );
-            console.log(res.data);
-            setUserPosition(res.data);
+            try {
+                const res = await axiosPrivate.get<Position>(
+                    "/position/" + session?.user.positionId,
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        withCredentials: true,
+                    }
+                );
+                console.log(res.data);
+                setUserPosition(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
         };
         getPosition();
     }, []);

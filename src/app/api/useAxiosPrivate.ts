@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { axiosPrivate } from "src/apis/axios";
 import useRefreshToken from "src/hooks/useRefreshToken";
@@ -29,10 +29,17 @@ const useAxiosPrivate = () => {
                 if (error?.response?.status === 403 && !prevRequest?.sent) {
                     prevRequest.sent = true;
                     const newAccessToken = await refresh();
-                    prevRequest.headers[
-                        "Authorization"
-                    ] = `Bearer ${newAccessToken}`;
-                    return axiosPrivate(prevRequest);
+                    if (newAccessToken) {
+                        prevRequest.headers[
+                            "Authorization"
+                        ] = `Bearer ${newAccessToken}`;
+                        return axiosPrivate(prevRequest);
+                    } else {
+                        await signOut({
+                            callbackUrl: "/",
+                            redirect: true,
+                        });
+                    }
                 }
                 return Promise.reject(error);
             }
