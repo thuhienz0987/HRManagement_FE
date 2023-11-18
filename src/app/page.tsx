@@ -1,5 +1,4 @@
 import { getServerSession } from "next-auth";
-import SignInForm from "src/components/signInForm";
 import { options } from "./api/auth/[...nextauth]/option";
 import { redirect } from "next/navigation";
 

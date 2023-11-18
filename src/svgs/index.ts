@@ -1,6 +1,7 @@
 export { default as HomeIcon } from "./home";
 export { default as UserIcon } from "./user";
 export { default as SalaryIcon } from "./salary";
+export { default as SystemModifyIcon } from "./systemModify";
 export { default as PresentationChartLineIcon } from "./presentationChartLine";
 export { default as FinanceIcon } from "./finance";
 export { default as BackIcon } from "./back";
