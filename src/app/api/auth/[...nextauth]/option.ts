@@ -28,6 +28,7 @@ export const options: NextAuthOptions = {
                     const accessToken = response?.data?.accessToken;
                     const user = response?.data?.user;
                     console.log(response.data);
+                    user.accessToken = response.data.accessToken;
                     return user;
                     // setAuth({ email: user.email, accessToken });
                     // router.push("/dashboard");
@@ -35,22 +36,18 @@ export const options: NextAuthOptions = {
                     console.log("err", err.response.data);
                     return null;
                 }
-                // const res = await fetch("/your/endpoint", {
-                //     method: "POST",
-                //     body: JSON.stringify(credentials),
-                //     headers: { "Content-Type": "application/json" },
-                // });
-                // const user = await res.json();
-
-                // // If no error and we have user data, return it
-                // if (res.ok && user) {
-                //     return user;
-                // }
-                // // Return null if user data could not be retrieved
-                // return null;
             },
         }),
     ],
+    callbacks: {
+        async jwt({ token, user }) {
+            return { ...token, ...user };
+        },
+        async session({ session, token, user }) {
+            session.user = token as any;
+            return session;
+        },
+    },
     pages: {
         signIn: "/login",
     },

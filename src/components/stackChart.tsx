@@ -42,7 +42,6 @@ function StackChart() {
                 beginAtZero: true,
                 ticks: {
                     callback: (value: number, index: number, values: any[]) => {
-                        console.log(value);
                         if (value <= 100) return `${value}%`;
                     },
                 },

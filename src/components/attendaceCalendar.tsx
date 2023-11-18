@@ -202,9 +202,9 @@ function AttendanceCalendar() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-7 lg:pt-6 w-full">
-                                {days.map((day) => (
+                                {days.map((day, index) => (
                                     <div
-                                        key={day.setDate.toString()}
+                                        key={index}
                                         className="px-2 py-1 lg:py-2 cursor-pointer flex w-full justify-center"
                                     >
                                         <button
