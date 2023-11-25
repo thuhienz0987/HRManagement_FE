@@ -15,10 +15,13 @@ import {
     isToday,
     isSameMonth,
 } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarIcon } from "src/svgs";
 import { ScrollShadow } from "@nextui-org/react";
 import { Tenor_Sans } from "next/font/google";
+import { Attendance } from "src/types/attendanceType";
+import useAxiosPrivate from "src/app/api/useAxiosPrivate";
+import { useSession } from "next-auth/react";
 
 const meetings = [
     {
@@ -69,10 +72,19 @@ function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
+type MonthAttendance = {
+    year: number;
+    month: number;
+    attendance: Attendance[];
+};
+
 function AttendanceCalendar() {
     const today = startOfToday();
     const [selectedDay, setSelectedDay] = useState(today);
     const [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
+    const [attendances, setAttendances] = useState<MonthAttendance[]>([]);
+    const axiosPrivate = useAxiosPrivate();
+    console.log(attendances);
     let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
 
     let days = eachDayOfInterval({
@@ -93,8 +105,53 @@ function AttendanceCalendar() {
     let selectedDayMeetings = meetings.filter((meeting) =>
         isSameDay(parseISO(meeting.startDatetime), selectedDay)
     );
+
+    const { data: session } = useSession();
+
+    useEffect(() => {
+        const getMonthAttendance = async (month: number, year: number) => {
+            try {
+                const res = await axiosPrivate.get<Attendance[]>(
+                    `/attendanceByMonth/${month}/${year}/${session?.user._id}`,
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        withCredentials: true,
+                    }
+                );
+                setAttendances([
+                    ...attendances,
+                    {
+                        month,
+                        year,
+                        attendance: res.data,
+                    },
+                ]);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getMonthAttendance(today.getMonth(), today.getFullYear());
+    }, []);
+
+    const dateStatus = (date: Date) => {
+        const monthAttendance = attendances.find(
+            (d) => d.month == date.getMonth() && d.year == date.getFullYear()
+        );
+        if (!monthAttendance) return "null";
+        const dateAttendance = monthAttendance.attendance.find(
+            (d) => d.attendanceDate.getDate() == date.getDate()
+        );
+        if (!dateAttendance) return "absent";
+        if (dateAttendance.checkInTime.getHours() >= 7) return "late";
+        if (
+            dateAttendance.checkOutTime &&
+            dateAttendance.checkOutTime.getHours() <= 17
+        )
+            return "late";
+        return "ok";
+    };
     return (
-        <div className="flex flex-1 flex-col border bg-bar p-2 rounded-xl overflow-hidden self-center">
+        <div className="flex flex-col border bg-bar p-2 rounded-xl overflow-hidden self-center">
             <h3
                 className={`self-center my-2 text-xl font-medium text-[#C89E31] ${tenor_sans.className}`}
             >
@@ -248,12 +305,20 @@ function AttendanceCalendar() {
                                                         "text-gray-400"
                                                     }
                                                     ${
-                                                        isEqual(
-                                                            day,
-                                                            selectedDay
-                                                        ) &&
-                                                        isToday(day) &&
+                                                        dateStatus(day) ==
+                                                            "absent" &&
                                                         "bg-red-500"
+                                                    }
+                                                    ${
+                                                        dateStatus(day) ==
+                                                            "late" ||
+                                                        (dateStatus(day) &&
+                                                            "bg-yellow-500")
+                                                    }
+                                                    ${
+                                                        dateStatus(day) ==
+                                                            "ok" &&
+                                                        "bg-blue-500"
                                                     }
                                                     ${
                                                         isEqual(

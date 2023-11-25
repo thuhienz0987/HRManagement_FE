@@ -20,6 +20,7 @@ export type SideBarOptionType = {
 export interface SubSidebar {
     name: string;
     href: string;
+    searchParams?: string;
 }
 const OptionButton = ({
     option,

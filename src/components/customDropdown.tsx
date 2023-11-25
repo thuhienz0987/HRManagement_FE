@@ -5,26 +5,31 @@ import {
     DropdownMenu,
     DropdownTrigger,
 } from "@nextui-org/react";
-import {
-    Select,
-    SelectContent,
-    SelectTrigger,
-    SelectValue,
-    SelectItem,
-} from "../../@/components/ui/select";
+import { Select, SelectItem } from "@nextui-org/react";
 import { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "../../@/components/ui/scroll-area";
+
+type Item = {
+    name: string;
+    value: string;
+};
 
 const CustomDropdown = ({
     label,
     placeholder,
     additionalStyle,
     buttonStyle,
+    options = [],
+    onSelect,
+    value,
 }: {
     label?: string;
     placeholder: string;
     additionalStyle?: string;
     buttonStyle?: string;
+    options?: Array<Item>;
+    onSelect: (value: string) => void;
+    value?: string;
 }) => {
     const ref = useRef<HTMLDivElement>(null);
     const childRef = useRef<HTMLDivElement>(null);
@@ -41,69 +46,46 @@ const CustomDropdown = ({
                     {label}
                 </p>
             )}
-            <Select>
-                <SelectTrigger
-                    className={`rounded-lg h-full text-foreground-500 border-border border-2 ${buttonStyle}`}
-                >
-                    <SelectValue placeholder={placeholder} />
-                </SelectTrigger>
-                <div ref={ref} className="w-full">
-                    <SelectContent
-                        className={"bg-white border-white h-[250px]"}
-                        style={{ width: width }}
+            <Select
+                aria-label="Dropdown"
+                radius="sm"
+                classNames={{
+                    trigger: `rounded-lg h-full text-foreground-500 border-border border-2 ${buttonStyle}`,
+                }}
+                placeholder={placeholder}
+                onChange={(e) => onSelect(e.target.value)}
+            >
+                {options.map((item) => (
+                    <SelectItem
+                        className={"w-full bg-white hover:bg-slate-100"}
+                        key={item.value}
+                        value={item.value}
                     >
-                        {[...Array(15)].map((item) => (
-                            <SelectItem
-                                className={"w-full bg-white hover:bg-slate-100"}
-                                value="m@example.com"
-                            >
-                                m@example.com
-                            </SelectItem>
-                        ))}
-                        <SelectItem
-                            className={"w-full bg-white"}
-                            value="m@google.com"
-                        >
-                            m@google.com
-                        </SelectItem>
-                        <SelectItem
-                            className={"w-full bg-white"}
-                            value="m@support.com"
-                        >
-                            m@support.com
-                        </SelectItem>
-                    </SelectContent>
-                </div>
+                        {item.name}
+                    </SelectItem>
+                ))}
+                {/* {animals.map((animal) => (
+                    <SelectItem key={animal.value} value={animal.value}>
+                        {animal.label}
+                    </SelectItem>
+                ))} */}
             </Select>
-            {/* <Dropdown className="w-full">
-                <DropdownTrigger>
-                    <Button
-                        variant="bordered"
-                        className="rounded-lg justify-start text-foreground-500 border-border"
+            {/* <Select
+                onChange={(e) => {
+                    onSelect(e.target.value);
+                }}
+                placeholder={placeholder}
+            >
+                {(item) => (
+                    <SelectItem
+                        className={"w-full bg-white hover:bg-slate-100"}
+                        key={item.value}
+                        value={item.value}
                     >
-                        {placeholder}
-                    </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                    aria-label="Static Actions"
-                    className="relative w-full "
-                >
-                    <DropdownItem key="new" className="w-full">
-                        New file
-                    </DropdownItem>
-                    <DropdownItem key="copy" className=" w-full">
-                        Copy link
-                    </DropdownItem>
-                    <DropdownItem key="edit">Edit file</DropdownItem>
-                    <DropdownItem
-                        key="delete"
-                        className="text-danger"
-                        color="danger"
-                    >
-                        Delete file
-                    </DropdownItem>
-                </DropdownMenu>
-            </Dropdown> */}
+                        {item.name}
+                    </SelectItem>
+                )}
+            // </Select> */}
         </div>
     );
 };
