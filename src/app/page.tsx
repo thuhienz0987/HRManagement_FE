@@ -5,12 +5,12 @@ import { redirect } from "next/navigation";
 type Props = {};
 
 export default async function Home(props: Props) {
-    const session = await getServerSession(options);
-    console.log({ session });
+  const session = await getServerSession(options);
+  console.log({ session });
 
-    if (!session) {
-        redirect("/login");
-    } else {
-        redirect("/dashboard");
-    }
+  if (!session) {
+    redirect("/signIn");
+  } else {
+    redirect("/dashboard");
+  }
 }

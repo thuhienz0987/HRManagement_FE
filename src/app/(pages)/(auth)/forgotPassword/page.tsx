@@ -1,8 +1,6 @@
 "use client";
-
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import InputText from "src/components/inputText";
 import axios from "src/apis/axios";
 import * as yup from "yup";
@@ -18,8 +16,11 @@ const forgotPayLoadSchema = yup.object({
     .max(50, "Email length must be less than 50 characters"),
 });
 
-const ForgotPassword = (props: Props) => {
-  // const { setAuth } = useAuth();
+export interface IFormValues {
+  email: string;
+}
+
+const ForgotPasswordForm = (props: Props) => {
   const router = useRouter();
   const [user, setUser] = useState({
     email: "",
@@ -48,7 +49,7 @@ const ForgotPassword = (props: Props) => {
         // const accessToken = response?.data?.accessToken;
         console.log(response.data);
         // setAuth({ email, });
-        router.push("/auth/resetPassword");
+        router.push("/resetPassword");
       } catch (err: any) {
         console.log("err", err.response.data);
       }
@@ -63,6 +64,40 @@ const ForgotPassword = (props: Props) => {
     // Prefetch the dashboard page
     router.prefetch("/");
   }, [router]);
+
+  // const onSubmit: SubmitHandler<IFormValues> = async (data, e) => {
+  //     e?.preventDefault();
+  //     await signIn("credentials", {
+  //         email: data.email,
+  //         redirect: true,
+  //         callbackUrl: "http://localhost:3000/dashboard",
+  //     });
+  // };
+
+  // const SignIn = async () => {
+  //     try {
+  //         const response = await axios.post(
+  //             "/login",
+  //             JSON.stringify({ email: user.email, password: user.password }),
+  //             {
+  //                 headers: { "Content-Type": "application/json" },
+  //                 withCredentials: true,
+  //             }
+  //         );
+  //         console.log("success", JSON.stringify(response.data));
+  //         const accessToken = response?.data?.accessToken;
+  //         console.log(response.data);
+  //         setAuth({ email: user.email, accessToken });
+  //         router.push("/dashboard");
+  //     } catch (err: any) {
+  //         console.log("err", err.response.data);
+  //     }
+  // };
+  //   useEffect(() => {
+  //     // Prefetch the dashboard page
+  //     router.prefetch("/dashboard");
+  //   }, [router]);
+
   return (
     <main className="flex bg-center h-screen w-screen flex-col items-center justify-center p-5 bg-no-repeat bg-fixed bg-cover bg-[url('../../public/assets/images/background.png')] min-h-[75%]">
       <div className="flex flex-col w-5/6 md:w-5/6 lg:w-1/3 lg:self-end sm:w-5/6 h-3/4 self-center lg:self_end sm:self-center justify-start items-center bg-primaryAuth rounded-2xl ">
@@ -100,7 +135,7 @@ const ForgotPassword = (props: Props) => {
             <p>Back to </p>
             <p> </p>
             <button
-              onClick={() => router.push("/auth/signIn")}
+              onClick={() => router.push("/signIn")}
               className="underline font-bold ml-2 hover:text-[#24243f]"
             >
               {" "}
@@ -113,4 +148,4 @@ const ForgotPassword = (props: Props) => {
   );
 };
 
-export default ForgotPassword;
+export default ForgotPasswordForm;
