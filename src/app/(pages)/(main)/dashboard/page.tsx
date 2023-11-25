@@ -22,13 +22,13 @@ const DashBoard = () => {
     useEffect(() => {
         const getPosition = async () => {
             const res = await axiosPrivate.get<Position>(
-                "/position/" + session?.user.positionId,
+                "/position/" + session?.user.positionId._id,
                 {
                     headers: { "Content-Type": "application/json" },
                     withCredentials: true,
                 }
             );
-            console.log(res.data);
+            console.log('POSITION', res.data);
             setUserPosition(res.data);
         };
         getPosition();
@@ -42,12 +42,12 @@ const DashBoard = () => {
                         className="self-start"
                         name={
                             <p className=" text-2xl font-medium">
-                                Hi, {"Joe Henry"}
+                                {"Hi, " + session?.user.name}
                             </p>
                         }
                         description={
                             <p className="text-[#C89E31]">
-                                {userPosition?.name}
+                                {session?.user.positionId.name}
                             </p>
                         }
                         avatarProps={{

@@ -5,6 +5,8 @@ declare module "next-auth" {
     interface Session {
         user: {
             _id: string;
+            email: string;
+            name: string;
             accessToken: string;
             roles: string[];
             phoneNumber: string;
@@ -15,7 +17,29 @@ declare module "next-auth" {
             ethnicGroup: string;
             avatarImage: string;
             code: string;
-            positionId: string;
+            isEmployee: boolean;
+            positionId: {
+                _id: string;
+                code: string;
+                name: string;
+                basicSalary: number;
+                isDeleted: boolean;
+            };
+            departmentId: {
+                _id: string;
+                code: string;
+                name: string;
+                managerId: string;
+                isDeleted: boolean;
+            };
+            teamId: {
+                _id: string;
+                code: string;
+                name: string;
+                managerId: string;
+                departmentId: string;
+                isDeleted: boolean;
+            };
         } & DefaultSession;
     }
 
