@@ -10,6 +10,7 @@ import {
     SalaryIcon,
     UserIcon,
     FinanceIcon,
+    SystemModifyIcon
 } from "src/svgs";
 import { redirect, useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
@@ -117,6 +118,26 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             ],
             isHidden: true,
         },
+        {
+            name: "System Modify",
+            href: "/system-modify",
+            icon: SystemModifyIcon,
+            subSidebar: [
+                {
+                    name: "Department",
+                    href: "/department",
+                },
+                {
+                    name: "Position",
+                    href: "/position",
+                },
+                {
+                    name: "Salary",
+                    href: "/salary",
+                },
+            ],
+            isHidden: false,
+        }
     ];
     const segments = useSelectedLayoutSegments();
     const option = SideBarOps.find((opt) => opt.href == "/" + segments[0]);
