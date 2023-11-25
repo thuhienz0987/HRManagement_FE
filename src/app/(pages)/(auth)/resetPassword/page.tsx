@@ -1,13 +1,18 @@
 "use client";
-
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import InputText from "src/components/inputText";
 import axios from "src/apis/axios";
-import { useSearchParams } from "next/navigation";
-
 import * as yup from "yup";
 import { useFormik } from "formik";
+
+type Props = {};
+
+// export interface IFormValues {
+//   passwordConfirm: string;
+//   password: number;
+//   otp: string;
+// }
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
@@ -27,13 +32,11 @@ const resetPayLoadSchema = yup.object({
     .oneOf([yup.ref("password")], "Passwords must match"),
 });
 
-type Props = {};
+export interface IFormValues {
+  email: string;
+}
 
-const ResetPassword = () => {
-  // const searchParams = useSearchParams();
-  // console.log(searchParams.get("email"));
-
-  // const { setAuth } = useAuth();
+const ResetPasswordForm = (props: Props) => {
   const router = useRouter();
   const [user, setUser] = useState({
     otp: "",
@@ -41,7 +44,6 @@ const ResetPassword = () => {
     passwordConfirm: "",
   });
 
-  // Formik hook to handle the form state
   const formik = useFormik({
     initialValues: {
       otp: "",
@@ -77,7 +79,6 @@ const ResetPassword = () => {
   // Destructure the formik object
   const { errors, touched, handleChange, handleSubmit }: any = formik;
 
-  // const { owner } = router.query;
   useEffect(() => {
     // Prefetch the dashboard page
     router.prefetch("/");
@@ -144,7 +145,7 @@ const ResetPassword = () => {
             <p>Back to </p>
             <p> </p>
             <button
-              onClick={() => router.push("/auth/signIn")}
+              onClick={() => router.push("/signIn")}
               className="underline font-bold ml-2 hover:text-[#24243f]"
             >
               {" "}
@@ -157,4 +158,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default ResetPasswordForm;
