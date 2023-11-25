@@ -54,7 +54,7 @@ const EditUserProfile = () => {
                             alt="Employee avatar"
                             className="h-full rounded-full "
                         />
-                        <button className=" w-12 h-12 bg-[#5F66EA] rounded-[14px] border-4 border-white items-center justify-center flex absolute">
+                        <button className=" w-12 h-12 bg-bar rounded-[14px] border-4 border-white items-center justify-center flex absolute">
                             <CameraIcon width="22" height="18" />
                         </button>
                     </div>

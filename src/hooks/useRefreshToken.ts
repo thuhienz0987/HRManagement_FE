@@ -7,10 +7,16 @@ const useRefreshToken = () => {
     const { data: session } = useSession();
     const refresh = async () => {
         try {
-            const response = await axios.get("/refresh", {
-                withCredentials: true,
-            });
-            if (session) session.user.accessToken = response.data.accessToken;
+            const response = await axios.post(
+                "/refresh",
+                {
+                    refreshToken: session?.user.refreshToken,
+                },
+                {
+                    withCredentials: true,
+                }
+            );
+            if (session) session.accessToken = response.data.accessToken;
             console.log("refreshed");
             return response.data.accessToken;
         } catch (e) {

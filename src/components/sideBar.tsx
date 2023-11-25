@@ -80,7 +80,11 @@ const SideBar = ({
         option: SideBarOptionType,
         subOption: SubSidebar
     ) => {
-        router.replace(option.href + subOption.href);
+        if (subOption.searchParams)
+            return router.replace(
+                option.href + subOption.href + subOption.searchParams
+            );
+        return router.replace(option.href + subOption.href);
     };
 
     const hasOpenedSubList = (option: SideBarOptionType) => {

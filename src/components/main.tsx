@@ -10,15 +10,23 @@ import {
     SalaryIcon,
     UserIcon,
     FinanceIcon,
-    SystemModifyIcon
+    SystemModifyIcon,
+    AccountIcon,
 } from "src/svgs";
 import { redirect, useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
 import { useSession } from "next-auth/react";
+import { Toaster } from "../../@/components/ui/toaster";
 
 const Main = ({ children }: { children: React.ReactNode }) => {
     const initMode: SideBarMode = SideBarMode.Large;
     const [mode, setMode] = useState<SideBarMode>(initMode);
+    const { data: session } = useSession({
+        required: true,
+        onUnauthenticated() {
+            redirect("/login");
+        },
+    });
     const SideBarOps: SideBarOptionType[] = [
         {
             name: "Dashboard",
@@ -28,7 +36,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             isHidden: false,
         },
         {
-            name: "Attendance",
+            name: "Attendance ",
             href: "/attendance",
             icon: UserIcon,
             subSidebar: [
@@ -49,8 +57,8 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                     href: "/absent-form",
                 },
                 {
-                    name: "Attendance list",
-                    href: "/list",
+                    name: "Employee list",
+                    href: "/employee-list",
                 },
                 {
                     name: "Attendance log",
@@ -105,18 +113,19 @@ const Main = ({ children }: { children: React.ReactNode }) => {
         {
             name: "Account",
             href: "/account",
-            icon: SalaryIcon,
+            icon: AccountIcon,
             subSidebar: [
                 {
                     name: "Profile",
                     href: "/profile",
+                    searchParams: "?id=" + session?.user._id,
                 },
                 {
                     name: "Edit Profile",
                     href: "/edit-profile",
                 },
             ],
-            isHidden: true,
+            isHidden: false,
         },
         {
             name: "System Modify",
@@ -137,19 +146,14 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                 },
             ],
             isHidden: false,
-        }
+        },
     ];
     const segments = useSelectedLayoutSegments();
     const option = SideBarOps.find((opt) => opt.href == "/" + segments[0]);
     const subOption = option?.subSidebar.find(
         (subOpt) => subOpt.href == "/" + segments[1]
     );
-    const { data: session } = useSession({
-        required: true,
-        onUnauthenticated() {
-            redirect("/login");
-        },
-    });
+
     if (session)
         return (
             <>

@@ -15,7 +15,7 @@ const useAxiosPrivate = () => {
                 if (!config.headers["Authorization"]) {
                     config.headers[
                         "Authorization"
-                    ] = `Bearer ${session?.user.accessToken}`;
+                    ] = `Bearer ${session?.accessToken}`;
                 }
                 return config;
             },
@@ -49,7 +49,7 @@ const useAxiosPrivate = () => {
             axiosPrivate.interceptors.request.eject(requestIntercept);
             axiosPrivate.interceptors.response.eject(responseIntercept);
         };
-    }, [session?.user.accessToken, refresh]);
+    }, [session?.accessToken, refresh]);
 
     return axiosPrivate;
 };

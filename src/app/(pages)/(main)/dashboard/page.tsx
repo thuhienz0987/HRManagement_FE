@@ -18,24 +18,24 @@ type Position = {
 const DashBoard = () => {
     const { data: session } = useSession();
     const axiosPrivate = useAxiosPrivate();
-    const [userPosition, setUserPosition] = useState<Position>();
+    // const [userPosition, setUserPosition] = useState<Position>();
     useEffect(() => {
-        const getPosition = async () => {
-            try {
-                const res = await axiosPrivate.get<Position>(
-                    "/position/" + session?.user.positionId,
-                    {
-                        headers: { "Content-Type": "application/json" },
-                        withCredentials: true,
-                    }
-                );
-                console.log(res.data);
-                setUserPosition(res.data);
-            } catch (e) {
-                console.log({ e });
-            }
-        };
-        getPosition();
+        // const getPosition = async () => {
+        //     try {
+        //         const res = await axiosPrivate.get<Position>(
+        //             "/position/" + session?.user.positionId,
+        //             {
+        //                 headers: { "Content-Type": "application/json" },
+        //                 withCredentials: true,
+        //             }
+        //         );
+        //         console.log(res.data);
+        //         setUserPosition(res.data);
+        //     } catch (e) {
+        //         console.log({ e });
+        //     }
+        // };
+        // getPosition();
     }, []);
 
     return (
@@ -46,16 +46,16 @@ const DashBoard = () => {
                         className="self-start"
                         name={
                             <p className=" text-2xl font-medium">
-                                Hi, {"Joe Henry"}
+                                Hi, {session?.user.name}
                             </p>
                         }
                         description={
                             <p className="text-[#C89E31]">
-                                {userPosition?.name}
+                                {session?.user.positionId.name}
                             </p>
                         }
                         avatarProps={{
-                            src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
+                            src: session?.user.avatarImage,
                             size: "lg",
                         }}
                     />
