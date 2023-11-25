@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import InputText from "src/components/inputText";
 import axios from "src/apis/axios";
-import useAuth from "src/hooks/useAuth";
 import * as yup from "yup";
 import { useFormik } from "formik";
 

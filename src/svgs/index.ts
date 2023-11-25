@@ -14,3 +14,4 @@ export { default as EyeIcon } from "./eye";
 export { default as EditIcon } from "./edit";
 export { default as DeleteIcon } from "./delete";
 export { default as ColorCalendarIcon } from "./colorCalendar";
+export { default as AccountIcon } from "./account";
