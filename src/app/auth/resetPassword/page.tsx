@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import InputText from "src/components/inputText";
 import axios from "src/apis/axios";
-import useAuth from "src/hooks/useAuth";
 import { useSearchParams } from "next/navigation";
 
 import * as yup from "yup";
