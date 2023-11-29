@@ -1,13 +1,15 @@
 "use client";
-import React, { useEffect } from "react";
+
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import InputText from "src/components/inputText";
 import axios from "src/apis/axios";
-import useAuth from "src/hooks/useAuth";
 import Link from "next/link";
-
+import { signIn } from "next-auth/react";
 import * as yup from "yup";
 import { useFormik } from "formik";
+
+type Props = {};
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
@@ -28,8 +30,12 @@ const signInPayLoadSchema = yup.object({
     ),
 });
 
-const SignIn = () => {
-  const { setAuth } = useAuth();
+// export interface IFormValues {
+//   email: string;
+//   password: number;
+// }
+
+const SignInForm = (props: Props) => {
   const router = useRouter();
 
   // Formik hook to handle the form state
@@ -57,7 +63,12 @@ const SignIn = () => {
         console.log("success", JSON.stringify(response.data));
         const accessToken = response?.data?.accessToken;
         console.log(response.data);
-        setAuth({ email, accessToken });
+        await signIn("credentials", {
+          email: email,
+          password: password,
+          redirect: true,
+          callbackUrl: "http://localhost:3000/dashboard",
+        });
         router.push("/dashboard");
       } catch (err: any) {
         console.log("err", err.response.data);
@@ -108,7 +119,7 @@ const SignIn = () => {
 
           <div className="self-end">
             <p className="text-[#FAF9F6] text-xs font-medium">
-              <Link href="/auth/forgotPassword">Forgot password ?</Link>
+              <Link href="/forgotPassword">Forgot password ?</Link>
             </p>
           </div>
 
@@ -142,4 +153,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignInForm;
