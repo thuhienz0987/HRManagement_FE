@@ -1,8 +1,8 @@
 export interface Attendance {
     userId: string;
-    attendanceDate: Date;
-    checkInTime: Date;
-    checkOutTime?: Date;
+    attendanceDate: string;
+    checkInTime: string;
+    checkOutTime?: string;
     overTime: number;
     _id: string;
 }

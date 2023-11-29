@@ -30,9 +30,9 @@ const TableFirstForm = ({
     columns: ColumnType[];
     tableName?: string;
     rows?: Array<any>;
-    viewFunction?: () => void;
-    editFunction?: () => void;
-    deleteFunction?: () => void;
+    viewFunction?: (id: string) => void;
+    editFunction?: (id: string) => void;
+    deleteFunction?: (id: string) => void;
 }) => {
     const [checkedAll, setCheckedAll] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -200,6 +200,9 @@ const TableFirstForm = ({
                                         checkedAll={checkedAll}
                                         columns={columns}
                                         key={index}
+                                        viewFunction={viewFunction}
+                                        editFunction={editFunction}
+                                        deleteFunction={deleteFunction}
                                     />
                                 </tr>
                             )

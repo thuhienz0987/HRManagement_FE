@@ -343,9 +343,6 @@ const AttendanceForm = () => {
                     parseISO(attendance.checkInTime.toString()),
                     "EEEE, MMMM dd, yyyy 'at' h:mm a"
                 ),
-                // action: (
-                //     <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
-                // ),
             });
         } catch (e) {
             if (axios.isAxiosError(e)) {

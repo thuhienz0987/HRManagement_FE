@@ -129,6 +129,10 @@ const AttendanceList = () => {
     const moveToAddNew = () => {
         return router.replace("/attendance/add-employee");
     };
+
+    const handleView = (id: string) => {
+        router.replace("/account/profile?id=" + id);
+    };
     return (
         <div className="flex flex-1 flex-col px-[4%] pb-4 rounded gap-y-9">
             <div className="flex flex-1 flex-col bg-white w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
@@ -171,7 +175,11 @@ const AttendanceList = () => {
                             />
                         </div>
                     </div>
-                    <TableFirstForm columns={columns} rows={rows()} />
+                    <TableFirstForm
+                        columns={columns}
+                        rows={rows()}
+                        viewFunction={handleView}
+                    />
                 </div>
             </div>
         </div>

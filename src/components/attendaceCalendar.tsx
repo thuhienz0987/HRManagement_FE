@@ -22,6 +22,12 @@ import { Tenor_Sans } from "next/font/google";
 import { Attendance } from "src/types/attendanceType";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import { useSession } from "next-auth/react";
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "../../@/components/ui/hover-card";
+import capitalizeFLetter from "src/helper/capitalizeLetter";
 
 const meetings = [
     {
@@ -82,6 +88,7 @@ function AttendanceCalendar() {
     const today = startOfToday();
     const [selectedDay, setSelectedDay] = useState(today);
     const [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
+    const [loading, setLoading] = useState<boolean>(false);
     const [attendances, setAttendances] = useState<MonthAttendance[]>([]);
     const axiosPrivate = useAxiosPrivate();
     console.log(attendances);
@@ -95,59 +102,89 @@ function AttendanceCalendar() {
     function previousMonth() {
         let firstDayNextMonth = add(firstDayCurrentMonth, { months: -1 });
         setCurrentMonth(format(firstDayNextMonth, "MMM-yyyy"));
+        const existedMonthData = attendances.find(
+            (monthAttendance) =>
+                monthAttendance.month == firstDayNextMonth.getMonth() + 1 &&
+                monthAttendance.year == firstDayNextMonth.getFullYear()
+        );
+        if (!existedMonthData) {
+            getMonthAttendance(
+                firstDayNextMonth.getMonth() + 1,
+                firstDayNextMonth.getFullYear()
+            );
+        }
     }
 
     function nextMonth() {
         let firstDayNextMonth = add(firstDayCurrentMonth, { months: 1 });
         setCurrentMonth(format(firstDayNextMonth, "MMM-yyyy"));
+        const existedMonthData = attendances.find(
+            (monthAttendance) =>
+                monthAttendance.month == firstDayNextMonth.getMonth() + 1 &&
+                monthAttendance.year == firstDayNextMonth.getFullYear()
+        );
+        if (!existedMonthData) {
+            getMonthAttendance(
+                firstDayNextMonth.getMonth() + 1,
+                firstDayNextMonth.getFullYear()
+            );
+        }
     }
-
-    let selectedDayMeetings = meetings.filter((meeting) =>
-        isSameDay(parseISO(meeting.startDatetime), selectedDay)
-    );
 
     const { data: session } = useSession();
 
     useEffect(() => {
-        const getMonthAttendance = async (month: number, year: number) => {
-            try {
-                const res = await axiosPrivate.get<Attendance[]>(
-                    `/attendanceByMonth/${month}/${year}/${session?.user._id}`,
-                    {
-                        headers: { "Content-Type": "application/json" },
-                        withCredentials: true,
-                    }
-                );
-                setAttendances([
-                    ...attendances,
-                    {
-                        month,
-                        year,
-                        attendance: res.data,
-                    },
-                ]);
-            } catch (e) {
-                console.log({ e });
-            }
-        };
-        getMonthAttendance(today.getMonth(), today.getFullYear());
+        getMonthAttendance(today.getMonth() + 1, today.getFullYear());
     }, []);
+
+    const getMonthAttendance = async (month: number, year: number) => {
+        setLoading(true);
+        try {
+            const res = await axiosPrivate.get<Attendance[]>(
+                `/attendanceByMonth/${month}/${year}/${session?.user._id}`,
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                }
+            );
+            setAttendances([
+                ...attendances,
+                {
+                    month,
+                    year,
+                    attendance: res.data,
+                },
+            ]);
+        } catch (e) {
+            console.log({ e });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const dateStatus = (date: Date) => {
         const monthAttendance = attendances.find(
-            (d) => d.month == date.getMonth() && d.year == date.getFullYear()
+            (d) =>
+                d.month == date.getMonth() + 1 && d.year == date.getFullYear()
         );
         if (!monthAttendance) return "null";
-        const dateAttendance = monthAttendance.attendance.find(
-            (d) => d.attendanceDate.getDate() == date.getDate()
-        );
+        const dateAttendance = monthAttendance.attendance.find((d) => {
+            const attendanceDate = new Date(d.attendanceDate);
+            return attendanceDate.getDate() == date.getDate();
+        });
         if (!dateAttendance) return "absent";
-        if (dateAttendance.checkInTime.getHours() >= 7) return "late";
+        const checkInTime = new Date(dateAttendance.checkInTime);
+
+        console.log(checkInTime.getHours());
         if (
-            dateAttendance.checkOutTime &&
-            dateAttendance.checkOutTime.getHours() <= 17
+            checkInTime.getHours() > 7 ||
+            (checkInTime.getHours() == 7 && checkInTime.getMinutes() >= 30)
         )
             return "late";
+        if (dateAttendance.checkOutTime) {
+            const checkOutTime = new Date(dateAttendance.checkOutTime);
+            if (checkOutTime.getHours() <= 17) return "late";
+        }
         return "ok";
     };
     return (
@@ -159,7 +196,11 @@ function AttendanceCalendar() {
             </h3>
             <div className="flex flex-1 justify-center">
                 <div className=" flex w-full shadow-lg flex-col">
-                    <div className=" rounded-md bg-white pt-2">
+                    <div
+                        className={`rounded-md bg-white pt-2 ${
+                            loading && " blur-sm"
+                        }`}
+                    >
                         <div className="px-4 flex items-center justify-between">
                             <span
                                 // tabindex="0"
@@ -264,10 +305,12 @@ function AttendanceCalendar() {
                                         key={index}
                                         className="px-2 py-1 lg:py-2 cursor-pointer flex w-full justify-center"
                                     >
-                                        <button
-                                            type="button"
-                                            onClick={() => setSelectedDay(day)}
-                                            className={`
+                                        <HoverCard>
+                                            <HoverCardTrigger>
+                                                <button
+                                                    type="button"
+                                                    // onClick={() => setSelectedDay(day)}
+                                                    className={`
                                                 ${
                                                     isEqual(day, selectedDay) &&
                                                     "text-white"
@@ -278,7 +321,7 @@ function AttendanceCalendar() {
                                                             selectedDay
                                                         ) &&
                                                         isToday(day) &&
-                                                        "text-red-500"
+                                                        "text-pink-700"
                                                     }
                                                     ${
                                                         !isEqual(
@@ -302,7 +345,7 @@ function AttendanceCalendar() {
                                                             day,
                                                             firstDayCurrentMonth
                                                         ) &&
-                                                        "text-gray-400"
+                                                        "text-slate-500"
                                                     }
                                                     ${
                                                         dateStatus(day) ==
@@ -311,9 +354,8 @@ function AttendanceCalendar() {
                                                     }
                                                     ${
                                                         dateStatus(day) ==
-                                                            "late" ||
-                                                        (dateStatus(day) &&
-                                                            "bg-yellow-500")
+                                                            "late" &&
+                                                        "bg-yellow-500"
                                                     }
                                                     ${
                                                         dateStatus(day) ==
@@ -344,16 +386,24 @@ function AttendanceCalendar() {
                                                         "mx-auto flex h-8 w-8 items-center justify-center rounded-full")
                                                     }
                                             `}
-                                        >
-                                            <time
-                                                dateTime={format(
-                                                    day,
-                                                    "yyyy-MM-dd"
+                                                >
+                                                    <time
+                                                        dateTime={format(
+                                                            day,
+                                                            "yyyy-MM-dd"
+                                                        )}
+                                                    >
+                                                        {format(day, "d")}
+                                                    </time>
+                                                </button>
+                                            </HoverCardTrigger>
+
+                                            <HoverCardContent className="bg-white py-1">
+                                                {capitalizeFLetter(
+                                                    dateStatus(day)
                                                 )}
-                                            >
-                                                {format(day, "d")}
-                                            </time>
-                                        </button>
+                                            </HoverCardContent>
+                                        </HoverCard>
                                     </div>
                                 ))}
                             </div>
