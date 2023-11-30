@@ -1,16 +1,30 @@
 "use client";
-import { Input } from "@nextui-org/react";
-import CustomDropdown from "src/components/customDropdown";
-import RegularButton from "src/components/regularButton";
+import { useEffect, useState } from "react";
+import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import TableFirstForm, {
     ColumnEnum,
     ColumnType,
 } from "src/components/tableFirstForm";
-import StackChart from "src/components/stackChart";
-import { SearchIcon } from "src/svgs";
-import { Label } from "@radix-ui/react-select";
+import { Position } from "src/types/userType";
 
-const Department = () => {
+
+const Position = () => {
+    const axiosPrivate = useAxiosPrivate();
+    const [positions, setPositions] = useState<Position[]>();
+
+    useEffect(() => {
+        const getPositions = async () => {
+            try {
+                const res = await axiosPrivate.get<Position[]>(
+                    "/positions"
+                );
+                setPositions(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getPositions();
+    }, []);
     const columns: ColumnType[] = [
         {
             title: "No",
@@ -20,7 +34,7 @@ const Department = () => {
         {
             title: "Position Code",
             type: ColumnEnum.textColumn,
-            key: "positionCode",
+            key: "code",
         },
         {
             title: "Name",
@@ -28,14 +42,9 @@ const Department = () => {
             key: "name",
         },
         {
-            title: "Department",
+            title: "Basic Salary",
             type: ColumnEnum.textColumn,
-            key: "department",
-        },
-        {
-            title: "Created Date",
-            type: ColumnEnum.textColumn,
-            key: "createdDate",
+            key: "basicSalary",
         },
         {
             title: "Action",
@@ -43,34 +52,8 @@ const Department = () => {
             key: "action",
         },
     ];
-    const handleSearch = () => {};
     return (
         <div className="flex flex-1 flex-col px-[4%] items-center pb-4 rounded gap-y-9">
-            <div className=" flex w-full gap-x-16 items-end">
-                <Input
-                    className="rounded w-auto flex-1"
-                    classNames={{
-                        inputWrapper: "bg-white border",
-                    }}
-                    radius="sm"
-                    variant="bordered"
-                    key={"a"}
-                    type="email"
-                    placeholder="Search"
-                    labelPlacement={"outside"}
-                    endContent={
-                        <button className="bg-black p-1 rounded">
-                            <SearchIcon />
-                        </button>
-                    }
-                />
-                <CustomDropdown
-                    label="Department"
-                    placeholder="Select department"
-                    additionalStyle="flex-1"
-                />
-                <RegularButton label="search" callback={handleSearch} />
-            </div>
             <div className="flex flex-1 flex-col w-full items-center rounded ">
                 <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
                     <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
@@ -79,7 +62,7 @@ const Department = () => {
                         </div>                       
                     </div>
                     <div className="w-[95%] self-center flex">
-                        <TableFirstForm columns={columns}/>
+                        <TableFirstForm columns={columns} rows={positions}/>
                     </div>
                 </div>
             </div>
@@ -87,4 +70,4 @@ const Department = () => {
     );
 };
 
-export default Department;
+export default Position;

@@ -137,6 +137,10 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                     href: "/department",
                 },
                 {
+                    name: "Team",
+                    href: "/department-details",
+                },
+                {
                     name: "Position",
                     href: "/position",
                 },

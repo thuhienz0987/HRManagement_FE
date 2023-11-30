@@ -79,7 +79,7 @@ const DashBoard = () => {
                     <StackChart />
                 </div>
                 <div className="flex flex-col gap-y-8 w-2/6 pl-5 items-center">
-                    <AttendanceCalendar />
+                    {/* <AttendanceCalendar /> */}
                     <DayCounter />
                 </div>
             </div>

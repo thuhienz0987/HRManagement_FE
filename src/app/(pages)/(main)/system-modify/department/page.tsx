@@ -1,16 +1,36 @@
 "use client";
-import { Input } from "@nextui-org/react";
-import CustomDropdown from "src/components/customDropdown";
-import RegularButton from "src/components/regularButton";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import TableFirstForm, {
     ColumnEnum,
     ColumnType,
 } from "src/components/tableFirstForm";
-import StackChart from "src/components/stackChart";
-import { SearchIcon } from "src/svgs";
-import { Label } from "@radix-ui/react-select";
+import { Department } from "src/types/userType";
+
+type dDepartment = Department & {
+    manager: string;
+};
 
 const Department = () => {
+    const router = useRouter();
+    const axiosPrivate = useAxiosPrivate();
+    const [departments, setDepartments] = useState<dDepartment[]>();
+
+    useEffect(() => {
+        const getDepartments = async () => {
+            try {
+                const res = await axiosPrivate.get<dDepartment[]>(
+                    "/departments"
+                );
+                res.data.map((dept) => dept.manager = dept.managerId.name);
+                setDepartments(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getDepartments();
+    }, []);
     const columns: ColumnType[] = [
         {
             title: "No",
@@ -20,7 +40,7 @@ const Department = () => {
         {
             title: "Department Code",
             type: ColumnEnum.textColumn,
-            key: "departmentCode",
+            key: "code",
         },
         {
             title: "Name",
@@ -33,44 +53,16 @@ const Department = () => {
             key: "manager",
         },
         {
-            title: "Created Date",
-            type: ColumnEnum.textColumn,
-            key: "createdDate",
-        },
-        {
             title: "Action",
             type: ColumnEnum.functionColumn,
             key: "action",
         },
     ];
-    const handleSearch = () => {};
+    const editDepartment = () => {
+        return router.replace("/system-modify/department-details");
+    };
     return (
         <div className="flex flex-1 flex-col px-[4%] items-center pb-4 rounded gap-y-9">
-            <div className=" flex w-full gap-x-16 items-end">
-                <Input
-                    className="rounded w-auto flex-1"
-                    classNames={{
-                        inputWrapper: "bg-white border",
-                    }}
-                    radius="sm"
-                    variant="bordered"
-                    key={"a"}
-                    type="email"
-                    placeholder="Search"
-                    labelPlacement={"outside"}
-                    endContent={
-                        <button className="bg-black p-1 rounded">
-                            <SearchIcon />
-                        </button>
-                    }
-                />
-                <CustomDropdown
-                    label="Department"
-                    placeholder="Select department"
-                    additionalStyle="flex-1"
-                />
-                <RegularButton label="search" callback={handleSearch} />
-            </div>
             <div className="flex flex-1 flex-col w-full items-center rounded ">
                 <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
                     <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
@@ -79,7 +71,8 @@ const Department = () => {
                         </div>                       
                     </div>
                     <div className="w-[95%] self-center flex">
-                        <TableFirstForm columns={columns}/>
+                        <TableFirstForm columns={columns} rows={departments} 
+                            editFunction={editDepartment}/>
                     </div>
                 </div>
             </div>

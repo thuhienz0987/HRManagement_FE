@@ -11,6 +11,7 @@ export interface User {
     code: string;
     positionId: Position;
     departmentId: Department;
+    teamId: Team;
     level: string;
     name: string;
     email: string;
@@ -19,7 +20,14 @@ export interface User {
 export interface Department {
     code: string;
     name: string;
-    managerId: string;
+    managerId: User;
+}
+
+export interface Team {
+    code: string;
+    departmentId: string;
+    name: string;
+    managerId: User;
 }
 
 export interface Position {
