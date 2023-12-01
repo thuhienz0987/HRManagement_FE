@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { CalendarIcon } from "@radix-ui/react-icons";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 
 import { cn } from "../../@/lib/utils";
 import { Button } from "../../@/components/ui/button";
@@ -12,6 +12,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "../../@/components/ui/popover";
+import { DateRange } from "react-day-picker";
 
 export function DatePicker({
     label,
@@ -20,10 +21,13 @@ export function DatePicker({
     label?: string;
     buttonStyle?: string;
 }) {
-    const [date, setDate] = React.useState<Date>();
+    const [date, setDate] = React.useState<DateRange | undefined>({
+        from: new Date(),
+        to: addDays(new Date(), 1),
+    });
 
     return (
-        <div className="w-full">
+        <div className="w-full bg-white">
             <p className="text-[#5B5F7B] block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none">
                 {label}
             </p>
@@ -38,15 +42,28 @@ export function DatePicker({
                         )}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                        {date?.from ? (
+                            date.to ? (
+                                <>
+                                    {format(date.from, "LLL dd, y")} -{" "}
+                                    {format(date.to, "LLL dd, y")}
+                                </>
+                            ) : (
+                                format(date.from, "LLL dd, y")
+                            )
+                        ) : (
+                            <span>Pick a date</span>
+                        )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-white" align="start">
+                <PopoverContent className="w-full p-0 bg-white" align="start">
                     <Calendar
-                        mode="single"
+                        initialFocus
+                        mode="range"
+                        defaultMonth={date?.from}
                         selected={date}
                         onSelect={setDate}
-                        initialFocus
+                        numberOfMonths={2}
                     />
                 </PopoverContent>
             </Popover>

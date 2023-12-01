@@ -9,33 +9,36 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 
-type Position = {
-    name: string;
-    code: string;
-    basicSalary: string;
+type TodayStatuses = {
+    onTimeEmployeesToday: number;
+    lateEmployeesToday: number;
+    onTimePercentageChange: number;
+    latePercentageChange: number;
+    totalEmployees: number;
 };
 
 const DashBoard = () => {
     const { data: session } = useSession();
     const axiosPrivate = useAxiosPrivate();
-    // const [userPosition, setUserPosition] = useState<Position>();
+    const [status, setStatus] = useState<TodayStatuses>();
+
     useEffect(() => {
-        // const getPosition = async () => {
-        //     try {
-        //         const res = await axiosPrivate.get<Position>(
-        //             "/position/" + session?.user.positionId,
-        //             {
-        //                 headers: { "Content-Type": "application/json" },
-        //                 withCredentials: true,
-        //             }
-        //         );
-        //         console.log(res.data);
-        //         setUserPosition(res.data);
-        //     } catch (e) {
-        //         console.log({ e });
-        //     }
-        // };
-        // getPosition();
+        const getTodayStatuses = async () => {
+            try {
+                const res = await axiosPrivate.get<TodayStatuses>(
+                    "/attendanceEmployeeToday",
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        withCredentials: true,
+                    }
+                );
+                console.log(res.data);
+                setStatus(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getTodayStatuses();
     }, []);
 
     return (
@@ -59,23 +62,43 @@ const DashBoard = () => {
                             size: "lg",
                         }}
                     />
-                    <div className="flex gap-5 flex-col flex-wrap md:flex-row xl:flex-nowrap">
-                        <CircleProgress
-                            label="Total employees"
-                            percentage={100}
-                            color="success"
-                        />
-                        <CircleProgress
-                            label="Late employees"
-                            percentage={70}
-                            color="warning"
-                        />
-                        <CircleProgress
-                            label="Absent employees"
-                            percentage={30}
-                            color="danger"
-                        />
-                    </div>
+                    {status && (
+                        <div className="flex gap-5 flex-col flex-wrap md:flex-row xl:flex-nowrap">
+                            <CircleProgress
+                                label="Total employees"
+                                value={status.totalEmployees.toString()}
+                                percentage={
+                                    ((status.onTimeEmployeesToday +
+                                        status.lateEmployeesToday) /
+                                        status.totalEmployees) *
+                                    100
+                                }
+                                color={undefined}
+                            />
+                            <CircleProgress
+                                label="Present on time"
+                                percentage={
+                                    (status.onTimeEmployeesToday /
+                                        status.totalEmployees) *
+                                    100
+                                }
+                                value={status.onTimeEmployeesToday.toString()}
+                                color="success"
+                                incOrDec={status.onTimePercentageChange}
+                            />
+                            <CircleProgress
+                                label="Late employees"
+                                percentage={
+                                    (status.lateEmployeesToday /
+                                        status.totalEmployees) *
+                                    100
+                                }
+                                value={status?.lateEmployeesToday.toString()}
+                                color="warning"
+                                incOrDec={status.latePercentageChange}
+                            />
+                        </div>
+                    )}
                     <StackChart />
                 </div>
                 <div className="flex flex-col gap-y-8 w-2/6 pl-5 items-center">

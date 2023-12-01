@@ -2,7 +2,7 @@
 import { Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import CustomDropdown from "src/components/customDropdown";
-import { DatePicker } from "src/components/datePicket";
+import { DatePicker } from "src/components/datePicker";
 import RegularButton from "src/components/regularButton";
 import { CameraIcon } from "src/svgs";
 

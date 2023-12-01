@@ -40,6 +40,7 @@ const AttendanceForm = () => {
     const [sortedDept, setSortedDept] = useState<string>();
     const [searchQuery, setSearchQuery] = useState<string>();
     const [selectedEmpId, setSelectedEmpId] = useState<string>();
+    const [values, setValues] = useState<Selection>();
 
     const { toast } = useToast();
 
@@ -49,7 +50,6 @@ const AttendanceForm = () => {
 
     console.log(selectedEmpId);
 
-    const [values, setValues] = useState<Selection>();
     //     {
     //         id: 1,
     //         name: "Tony Reichert",
@@ -362,7 +362,7 @@ const AttendanceForm = () => {
     };
     const handleSave = () => {
         if (!selectedEmpId) onOpen();
-        checkIn();
+        else checkIn();
     };
     const handleCancel = () => {};
     return (
@@ -375,11 +375,6 @@ const AttendanceForm = () => {
             />
             <div className="flex gap-3 self-end mb-2">
                 <RegularButton label="save" callback={handleSave} />
-                <RegularButton
-                    label="cancel"
-                    additionalStyle="bg-[#BDBDBD]"
-                    callback={handleCancel}
-                />
             </div>
             <div className="flex flex-1 bg-white w-full min-h-unit-3 items-start py-16 px-28 gap-14">
                 <CustomDropdown

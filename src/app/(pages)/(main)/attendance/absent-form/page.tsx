@@ -5,16 +5,20 @@ import RegularButton from "src/components/regularButton";
 import { SearchIcon } from "src/svgs";
 import { Textarea } from "../../../../../../@/components/ui/textarea";
 import { Button } from "react-day-picker";
-import { DatePicker } from "src/components/datePicket";
+import { DatePicker } from "src/components/datePicker";
+import { useSession } from "next-auth/react";
+import { format } from "date-fns";
 
 const AbsentForm = () => {
     const handleSave = () => {};
     const handleCancel = () => {};
+    const today = new Date();
+    const { data: session } = useSession();
     const basicInformation = [
-        { label: "Full name", value: "Nguyen Van A" },
-        { label: "Department", value: "Marketing" },
-        { label: "Employee code", value: "NV001" },
-        { label: "Position", value: "Manager" },
+        { label: "Full name", value: session?.user.name },
+        { label: "Department", value: session?.user.departmentId.name },
+        { label: "Employee code", value: session?.user.code },
+        { label: "Position", value: session?.user.positionId.name },
     ];
     return (
         <div className="flex flex-1 flex-col px-[4%] items-center pb-4">
@@ -44,7 +48,7 @@ const AbsentForm = () => {
                             Date:
                         </p>
                         <p className=" text-start font-normal inline">
-                            03/11/2023
+                            {format(today, "dd/MM/yyyy")}
                         </p>
                     </div>
                 </div>
