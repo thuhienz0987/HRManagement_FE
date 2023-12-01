@@ -1,9 +1,6 @@
-"use client";
-
 import * as React from "react";
 import { CalendarIcon } from "@radix-ui/react-icons";
-import { format, addDays } from "date-fns";
-
+import { format, addDays, isBefore } from "date-fns";
 import { cn } from "../../@/lib/utils";
 import { Button } from "../../@/components/ui/button";
 import { Calendar } from "../../@/components/ui/calendar";
@@ -14,17 +11,34 @@ import {
 } from "../../@/components/ui/popover";
 import { DateRange } from "react-day-picker";
 
-export function DatePicker({
+export function FormikDatePicker({
   label,
   buttonStyle,
+  selected,
+  onChange,
 }: {
   label?: string;
   buttonStyle?: string;
+  selected: DateRange | undefined;
+  onChange: (date: DateRange) => void;
 }) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 1),
-  });
+  const [date, setDate] = React.useState<DateRange | undefined>(selected);
+
+  const handleDateChange = (newDate: DateRange) => {
+    // Validate the selected date range
+    if (newDate && newDate.from && isBefore(newDate.from, new Date())) {
+      // If the selected date is before the current date, set it to the current date
+      const correctedDate = {
+        ...newDate,
+        from: new Date(),
+      };
+      setDate(correctedDate);
+      onChange(correctedDate);
+    } else {
+      setDate(newDate);
+      onChange(newDate);
+    }
+  };
 
   return (
     <div className="w-full bg-white">
@@ -62,7 +76,9 @@ export function DatePicker({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={(newDate: DateRange | undefined) =>
+              handleDateChange(newDate!)
+            }
             numberOfMonths={2}
           />
         </PopoverContent>
