@@ -13,11 +13,13 @@ export default function BlurModal({
     body,
     isOpen,
     onClose,
+    footerButton = true,
 }: {
     title: string;
-    body: string;
+    body: React.ReactNode;
     isOpen: boolean;
-    onClose: () => void;
+    onClose?: () => void;
+    footerButton?: boolean;
 }) {
     return (
         <Modal backdrop="blur" isOpen={isOpen} onClose={onClose}>
@@ -28,15 +30,17 @@ export default function BlurModal({
                             {title}
                         </ModalHeader>
                         <ModalBody>{body}</ModalBody>
-                        <ModalFooter>
-                            <Button
-                                color="danger"
-                                variant="light"
-                                onPress={onClose}
-                            >
-                                OK
-                            </Button>
-                        </ModalFooter>
+                        {footerButton ? (
+                            <ModalFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    OK
+                                </Button>
+                            </ModalFooter>
+                        ) : null}
                     </>
                 )}
             </ModalContent>

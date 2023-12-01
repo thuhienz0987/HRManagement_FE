@@ -123,6 +123,9 @@ const TableFirstForm = ({
     //     },
     // ];
     const page = Math.ceil((rows && rows.length / 5) || 1);
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [rows]);
 
     return (
         <div className="flex flex-col bg-white w-full my-2">
@@ -209,6 +212,7 @@ const TableFirstForm = ({
                     )}
                     {currentPage == page &&
                         rows &&
+                        rows.length % 5 != 0 &&
                         [...Array(5 - (rows.length % 5))].map((index) => (
                             <tr className=" font-sans text-gray-600 text-xs h-12 flex w-full">
                                 <EmptyRow

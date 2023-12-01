@@ -6,12 +6,6 @@ import {
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import OptionButton, { SideBarOptionType, SubSidebar } from "./optionButton";
 import { useRouter } from "next13-progressbar";
-import {
-    HomeIcon,
-    PresentationChartLineIcon,
-    SalaryIcon,
-    UserIcon,
-} from "src/svgs";
 import SubOptionButton from "./subOptionButton";
 import {
     HoverCard,

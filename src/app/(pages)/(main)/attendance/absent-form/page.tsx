@@ -6,9 +6,14 @@ import RegularButton from "src/components/regularButton";
 import { SearchIcon } from "src/svgs";
 import { Textarea } from "../../../../../../@/components/ui/textarea";
 import { Button } from "react-day-picker";
-import { DatePicker } from "src/components/datePicket";
+import { DatePicker } from "src/components/datePicker";
+import { useSession } from "next-auth/react";
+import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
+
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { FormikDatePicker } from "src/components/formikDatePicker";
 
 const absentFormSchema = yup.object({
   reason: yup
@@ -19,47 +24,76 @@ const absentFormSchema = yup.object({
     .string()
     .required("Commitment cannot be blank")
     .max(500, "Commitment length must be less than 500 characters"),
-  date: yup.date().required("You must choose a date"),
+  date: yup.object().shape({
+    from: yup
+      .date()
+      .required("you must choose date")
+      .min(new Date(), "Selected date must be today or in the future"),
+    to: yup
+      .date()
+      .min(new Date(), "Selected date must be today or in the future"),
+  }),
 });
-
+type TypeAbsent = {
+  reason: string;
+  commitment: string;
+  date: DateRange;
+};
 const AbsentForm = () => {
   const handleSave = () => {};
   const handleCancel = () => {};
+  const today = new Date();
+  const { data: session } = useSession();
 
   const basicInformation = [
-    { label: "Full name", value: "Nguyen Van A" },
-    { label: "Department", value: "Marketing" },
-    { label: "Employee code", value: "NV001" },
-    { label: "Position", value: "Manager" },
+    { label: "Full name", value: session?.user.name },
+    { label: "Department", value: session?.user.departmentId.name },
+    { label: "Employee code", value: session?.user.code },
+    { label: "Position", value: session?.user.positionId.name },
   ];
 
-  const [absent, setAbsent] = useState({
+  const [absent, setAbsent] = useState<TypeAbsent>({
     reason: "",
     commitment: "",
-    date: "",
+    date: {
+      from: new Date(),
+      to: new Date(),
+    },
   });
 
   const formik = useFormik({
     initialValues: {
       reason: "",
       commitment: "",
-      date: "",
+      date: {
+        from: new Date(),
+        to: new Date(),
+      },
     },
     validationSchema: absentFormSchema,
 
     onSubmit: async ({ reason, commitment, date }) => {
-      // logic
-      handleSave();
+      const selectedDate = new Date(date.from);
+
+      if (selectedDate < today) {
+        // Handle the case where the selected date is in the past
+        formik.setFieldError(
+          "date",
+          "Selected date must be today or in the future"
+        );
+      } else {
+        // Logic for submitting the form
+        handleSave();
+      }
     },
   });
 
   // Destructure the formik object
   const { errors, touched, handleChange, handleSubmit }: any = formik;
-
   return (
     <div className="flex flex-1 flex-col px-[4%] items-center pb-4">
       <div className="flex gap-3 self-end mb-2">
-        <RegularButton label="save" callback={handleSave} />
+        <RegularButton label="save" callback={handleSubmit} />
         <RegularButton
           label="cancel"
           additionalStyle="bg-[#BDBDBD]"
@@ -77,7 +111,9 @@ const AbsentForm = () => {
           </div>
           <div className="flex text-[#5B5F7B] gap-2">
             <p className="inline text-start break-words font-semibold">Date:</p>
-            <p className=" text-start font-normal inline">03/11/2023</p>
+            <p className=" text-start font-normal inline">
+              {format(today, "dd/MM/yyyy")}
+            </p>
           </div>
         </div>
         <div className="md:grid flex flex-col grid-cols-1 md:grid-cols-2 md:grid-flow-row w-full gap-y-4 gap-x-7">
@@ -92,15 +128,49 @@ const AbsentForm = () => {
         </div>
         <div>
           <p className="text-start font-semibold inline">Requested day off:</p>
-          <DatePicker buttonStyle="border-1 rounded-sm" />
+          <FormikDatePicker
+            // label="Requested day off:"
+            buttonStyle="border-1 rounded-sm"
+            selected={formik.values.date}
+            onChange={(date) => {
+              formik.setFieldValue("date", date);
+              formik.setFieldTouched("date", true);
+              // Mark the field as touched
+            }}
+          />
+          {!formik.values.date?.from && (
+            <span className="text-[#ff2626] mt-2 text-[7px] font-bold self-start ml-4">
+              You must choose a date range
+            </span>
+          )}
         </div>
         <div className="w-full gap-2 flex flex-col">
           <p className="text-start break-words font-semibold">Reason:</p>
-          <Textarea className="h-[100px]" />
+          <Textarea
+            className="h-[100px]"
+            name="reason"
+            value={formik.values.reason}
+            onChange={handleChange}
+          />
+          {errors.reason && touched.reason && (
+            <span className="text-[#ff2626] mt-2 text-[7px] font-bold self-start ml-4">
+              {errors.reason}
+            </span>
+          )}
         </div>
         <div className="w-full gap-2 flex flex-col">
           <p className="text-start break-words font-semibold">Commitment:</p>
-          <Textarea className="h-[100px]" />
+          <Textarea
+            className="h-[100px]"
+            name="commitment"
+            value={formik.values.commitment}
+            onChange={handleChange}
+          />
+          {errors.commitment && touched.commitment && (
+            <span className="text-[#ff2626] mt-2 text-[7px] font-bold self-start ml-4">
+              {errors.commitment}
+            </span>
+          )}
         </div>
       </div>
     </div>
