@@ -40,7 +40,7 @@ const DailyAttendance = () => {
                     withCredentials: true,
                 });
                 res.data.map((attendance) => {
-                    attendance.status = "Arrive on time";
+                    attendance.status = "Present";
                     attendance.checkInTime = format(
                         parseISO(attendance.checkInTime),
                         "kk:mm:ss"
@@ -69,11 +69,11 @@ const DailyAttendance = () => {
                         leaveTime.setHours(hours);
                         leaveTime.setMinutes(minutes);
                         leaveTime.setSeconds(seconds);
-                        if(attendance.status === "Arrive on time" && leaveTime.getHours() < 17) 
+                        if(attendance.status === "Present" && leaveTime.getHours() < 17) 
                             attendance.status = "Leave soon";
                         if(attendance.status === "Arrive late" && leaveTime.getHours() < 17) 
                             attendance.status = "Not complete";
-                        if(attendance.status === "Arrive on time" && leaveTime.getHours() >= 17)
+                        if(attendance.status === "Present" && leaveTime.getHours() >= 17)
                             attendance.status = "Complete";
                     }
                     

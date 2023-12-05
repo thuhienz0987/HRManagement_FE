@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { SideBarMode } from "./sideBar";
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 function Header({
     mode,
@@ -49,7 +50,7 @@ function Header({
             <div className="flex justify-center items-center gap-3">
                 <MenuButton mode={mode} pressMenu={pressMenu} />
                 <h3 className="text-white text-sm font-extrabold uppercase">
-                    <a href="/dashboard">Human resource management</a>
+                    <Link href="/dashboard">Human resource management</Link>
                 </h3>
             </div>
             <div className="flex items-center">

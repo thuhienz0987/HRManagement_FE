@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import CustomDropdown from "src/components/customDropdown";

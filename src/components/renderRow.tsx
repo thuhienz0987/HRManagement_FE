@@ -8,11 +8,17 @@ export function RenderRow({
     index,
     checkedAll,
     columns,
+    viewFunction,
+    editFunction,
+    deleteFunction,
 }: {
     row: any;
     index: number;
     checkedAll: boolean;
     columns: ColumnType[];
+    viewFunction?: (id: string) => void;
+    editFunction?: (id: string) => void;
+    deleteFunction?: (id: string) => void;
 }) {
     const [checkedItem, setCheckedItem] = useState(false);
     useEffect(() => {
@@ -57,21 +63,42 @@ export function RenderRow({
                     )}
                     {column.type == ColumnEnum.functionColumn && (
                         <div className="relative flex items-center gap-2">
-                            <Tooltip content="Details">
-                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                    <EyeIcon width="16" height="16" />
-                                </span>
-                            </Tooltip>
-                            <Tooltip content="Edit user">
-                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                    <EditIcon width="16" height="16" />
-                                </span>
-                            </Tooltip>
-                            <Tooltip color="danger" content="Delete user">
-                                <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                                    <DeleteIcon width="16" height="16" />
-                                </span>
-                            </Tooltip>
+                            {viewFunction && (
+                                <Tooltip content="Details">
+                                    <button
+                                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                        onClick={() => {
+                                            viewFunction(row._id);
+                                        }}
+                                    >
+                                        <EyeIcon width="16" height="16" />
+                                    </button>
+                                </Tooltip>
+                            )}
+                            {editFunction && (
+                                <Tooltip content="Edit user">
+                                    <button 
+                                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                        onClick={() => {
+                                            editFunction(row._id);
+                                        }}
+                                    >
+                                        <EditIcon width="16" height="16" />
+                                    </button>
+                                </Tooltip>
+                            )}
+                            {deleteFunction && (
+                                <Tooltip color="danger" content="Delete user">
+                                    <button 
+                                        className="text-lg text-danger cursor-pointer active:opacity-50"
+                                        onClick={() => {
+                                            deleteFunction(row._id);
+                                        }}
+                                    >
+                                        <DeleteIcon width="16" height="16" />
+                                    </button>
+                                </Tooltip>
+                            )}
                         </div>
                     )}
                 </th>

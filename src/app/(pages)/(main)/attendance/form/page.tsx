@@ -335,7 +335,7 @@ const AttendanceForm = () => {
             const attendance = res.data.attendance;
             console.log({ attendance });
             const checkedInUser = employees?.find(
-                (emp) => emp._id == attendance.userId
+                (emp) => emp._id == attendance.userId._id
             );
             toast({
                 title: `${checkedInUser?.name}: has checked in `,
@@ -343,9 +343,6 @@ const AttendanceForm = () => {
                     parseISO(attendance.checkInTime.toString()),
                     "EEEE, MMMM dd, yyyy 'at' h:mm a"
                 ),
-                // action: (
-                //     <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
-                // ),
             });
         } catch (e) {
             if (axios.isAxiosError(e)) {

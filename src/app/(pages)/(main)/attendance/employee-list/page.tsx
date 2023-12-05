@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import StackChart from "src/components/stackChart";
 import { User, Department } from "src/types/userType";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 
 type Employee = User & {
     createdAt: string;
@@ -129,6 +129,10 @@ const AttendanceList = () => {
     const moveToAddNew = () => {
         return router.replace("/attendance/add-employee");
     };
+
+    const handleView = (id: string) => {
+        router.replace("/account/profile?id=" + id);
+    };
     return (
         <div className="flex flex-1 flex-col px-[4%] pb-4 rounded gap-y-9">
             <div className="flex flex-1 flex-col bg-white w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
@@ -137,24 +141,6 @@ const AttendanceList = () => {
                         <h3 className="text-[26px] font-semibold text-[#2C3D3A]">
                             Employee list
                         </h3>
-                        <Input
-                            className="rounded w-auto flex-1"
-                            classNames={{
-                                inputWrapper: "bg-white border",
-                            }}
-                            radius="sm"
-                            variant="bordered"
-                            key={"a"}
-                            type="email"
-                            placeholder="Search"
-                            labelPlacement={"outside"}
-                            endContent={
-                                <div className="bg-black p-1 rounded opacity-80">
-                                    <SearchIcon />
-                                </div>
-                            }
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
                         <CustomDropdown
                             placeholder="Select department"
                             additionalStyle="flex-1 h-full"
@@ -171,7 +157,11 @@ const AttendanceList = () => {
                             />
                         </div>
                     </div>
-                    <TableFirstForm columns={columns} rows={rows()} />
+                    <TableFirstForm
+                        columns={columns}
+                        rows={rows()}
+                        viewFunction={handleView}
+                    />
                 </div>
             </div>
         </div>

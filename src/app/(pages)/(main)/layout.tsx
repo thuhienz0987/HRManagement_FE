@@ -1,9 +1,9 @@
 import "src/app/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Header from "src/components/header";
 import Main from "src/components/main";
-import { Toaster } from "../../../../@/components/ui/toaster";
+import NextNProgressClient from "src/components/nextProgess";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,10 +20,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <html lang="en">
             <head>
                 <title>Home</title>
-                <link rel="icon" type="image/png" href={dark_logo_url} />
+                <link rel="icon" type="image/png" href={light_logo_url} />
             </head>
             <body className={inter.className}>
-                <Main children={children} />
+                <NextNProgressClient>
+                    <Main children={children} />
+                </NextNProgressClient>
             </body>
         </html>
     );

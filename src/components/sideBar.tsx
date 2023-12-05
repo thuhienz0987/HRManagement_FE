@@ -2,10 +2,10 @@
 import {
     useSelectedLayoutSegment,
     useSelectedLayoutSegments,
-    useRouter,
 } from "next/navigation";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import OptionButton, { SideBarOptionType, SubSidebar } from "./optionButton";
+import { useRouter } from "next13-progressbar";
 import {
     HomeIcon,
     PresentationChartLineIcon,
@@ -61,7 +61,7 @@ const SideBar = ({
     };
 
     const pressOption = (option: SideBarOptionType) => {
-        if (option.subSidebar.length == 0) router.replace(option.href);
+        if (option.subSidebar.length == 0) router.push(option.href);
         if (mode == SideBarMode.Small) return;
         if (!isOpenSubList.includes(option.name))
             setIsOpenSubList([...isOpenSubList, option.name]);
@@ -81,10 +81,10 @@ const SideBar = ({
         subOption: SubSidebar
     ) => {
         if (subOption.searchParams)
-            return router.replace(
+            return router.push(
                 option.href + subOption.href + subOption.searchParams
             );
-        return router.replace(option.href + subOption.href);
+        return router.push(option.href + subOption.href);
     };
 
     const hasOpenedSubList = (option: SideBarOptionType) => {

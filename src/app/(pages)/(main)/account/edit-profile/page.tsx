@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import CustomDropdown from "src/components/customDropdown";
 import { DatePicker } from "src/components/datePicket";
 import RegularButton from "src/components/regularButton";
@@ -84,15 +84,18 @@ const EditUserProfile = () => {
                         <CustomDropdown
                             label="Department"
                             placeholder="Select department"
+                            onSelect={() => null}
                         />
                         <CustomDropdown
                             label="Position"
                             placeholder="Select position"
+                            onSelect={() => null}
                         />
                         <DatePicker label="D.O.B" />
                         <CustomDropdown
                             label="Gender"
                             placeholder="Select gender"
+                            onSelect={() => null}
                         />
                         <Input
                             className="rounded col-span-2"

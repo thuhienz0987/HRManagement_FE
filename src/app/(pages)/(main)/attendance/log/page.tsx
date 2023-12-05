@@ -17,8 +17,20 @@ import {
     SelectValue,
 } from "../../../../../../@/components/ui/select";
 import { format, startOfToday } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StackChart from "src/components/stackChart";
+import { Department, User } from "src/types/userType";
+import useAxiosPrivate from "src/app/api/useAxiosPrivate";
+
+type EmployeeAttendance = User & {
+    user: User;
+    totalOvertimeHours: number;
+    totalWorkingDays: number;
+};
+
+type dDepartment = Department & {
+    value: string;
+};
 
 const Log = () => {
     const columns: ColumnType[] = [
@@ -30,22 +42,22 @@ const Log = () => {
         {
             title: "Employee Code",
             type: ColumnEnum.textColumn,
-            key: "employeeCode",
+            key: "code",
         },
         {
             title: "Full Name",
             type: ColumnEnum.textColumn,
-            key: "fullName",
+            key: "name",
         },
         {
-            title: "Arrive time",
+            title: "Working day",
             type: ColumnEnum.textColumn,
-            key: "arriveTime",
+            key: "totalWorkingDays",
         },
         {
-            title: "Leave time",
+            title: "Overtime",
             type: ColumnEnum.textColumn,
-            key: "leaveTime",
+            key: "totalOvertimeHours",
         },
         {
             title: "Status",
@@ -59,8 +71,66 @@ const Log = () => {
         },
     ];
     const today = startOfToday();
-    const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-    console.log(currentMonth);
+    const [employeeAttendances, setEmployeeAttendances] =
+        useState<EmployeeAttendance[]>();
+    const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
+    const [departments, setDepartments] = useState<dDepartment[]>();
+    const [sortedDept, setSortedDept] = useState<string>();
+    const [searchQuery, setSearchQuery] = useState<string>();
+    const axiosPrivate = useAxiosPrivate();
+    useEffect(() => {
+        const getEmployees = async (month: number, year: number) => {
+            try {
+                const res = await axiosPrivate.get<EmployeeAttendance[]>(
+                    `/attendancesByMonth_total/${month}/${year}`,
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        withCredentials: true,
+                    }
+                );
+                res.data.map((employee) => {
+                    employee.code = employee.user.code;
+                    employee.name = employee.user.name;
+                    employee.departmentId = employee.user.departmentId;
+                });
+                console.log(res.data);
+                setEmployeeAttendances(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        const getDepartments = async () => {
+            try {
+                const res = await axiosPrivate.get<dDepartment[]>(
+                    "/departments"
+                );
+                res.data.map((dept) => (dept.value = dept.name));
+                setDepartments(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getDepartments();
+        getEmployees(currentMonth, today.getFullYear());
+    }, []);
+    const rows = () => {
+        let sortedEmp = employeeAttendances;
+        if (searchQuery) {
+            sortedEmp = sortedEmp?.filter(
+                (emp) =>
+                    emp.name
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    emp.code.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+        if (sortedDept) {
+            sortedEmp = sortedEmp?.filter(
+                (emp) => emp?.departmentId?.name == sortedDept
+            );
+        }
+        return sortedEmp;
+    };
     const handleSearch = () => {};
     return (
         <div className="flex flex-1 flex-col px-[4%] pb-4 rounded gap-y-9">
@@ -74,22 +144,23 @@ const Log = () => {
                     variant="bordered"
                     key={"a"}
                     type="email"
-                    label={<p className="text-[#5B5F7B]">Employee code</p>}
                     placeholder="Search"
                     labelPlacement={"outside"}
                     endContent={
-                        <button className="bg-black p-1 rounded">
+                        <div className="bg-black p-1 rounded opacity-80">
                             <SearchIcon />
-                        </button>
+                        </div>
                     }
+                    onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <CustomDropdown
-                    label="Department"
                     placeholder="Select department"
                     additionalStyle="flex-1 h-full"
                     buttonStyle="bg-white border h-[39px]"
+                    options={departments}
+                    onSelect={setSortedDept}
+                    value={sortedDept}
                 />
-                <RegularButton label="search" callback={handleSearch} />
             </div>
             <div className="flex flex-1 flex-col bg-white w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
                 <div className="w-[95%] self-center flex flex-col">
@@ -98,19 +169,14 @@ const Log = () => {
                             Attendance log
                         </h3>
                         <div className="flex gap-3">
-                            <CustomDropdown
+                            {/* <CustomDropdown
                                 placeholder="Month"
-                                additionalStyle="w-[100px]"
-                                buttonStyle="border"
-                            />
-                            <RegularButton
-                                label="edit"
-                                callback={handleSearch}
                                 additionalStyle="min-w-[100px]"
-                            />
+                                buttonStyle="bg-white border"
+                            /> */}
                         </div>
                     </div>
-                    <TableFirstForm columns={columns} />
+                    <TableFirstForm columns={columns} rows={rows()} />
                 </div>
             </div>
             <StackChart />

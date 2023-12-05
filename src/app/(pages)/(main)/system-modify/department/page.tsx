@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import { useState, useEffect } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import TableFirstForm, {
@@ -58,9 +58,24 @@ const Department = () => {
             key: "action",
         },
     ];
-    const editDepartment = () => {
-        return router.replace("/system-modify/department-details");
+    const editDepartment = (id: string) => {
+        router.replace("/system-modify/department-details?id=" + id);
     };
+    const deleteDepartment = async (id: string) => {
+        try {
+            const res = await axiosPrivate.post<dDepartment>(
+                "/department/" + id,
+                {
+                    headers: { "Content-Type": "application/json" },
+
+                    withCredentials: true,
+                }
+            );
+            console.log({ res });
+        } catch (e) {
+            console.log({ e });
+        }
+    }
     return (
         <div className="flex flex-1 flex-col px-[4%] items-center pb-4 rounded gap-y-9">
             <div className="flex flex-1 flex-col w-full items-center rounded ">
@@ -72,7 +87,7 @@ const Department = () => {
                     </div>
                     <div className="w-[95%] self-center flex">
                         <TableFirstForm columns={columns} rows={departments} 
-                            editFunction={editDepartment}/>
+                            editFunction={editDepartment} deleteFunction={deleteDepartment}/>
                     </div>
                 </div>
             </div>

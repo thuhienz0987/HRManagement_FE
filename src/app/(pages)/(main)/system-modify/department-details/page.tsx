@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@nextui-org/react";
 import { format, parseISO } from "date-fns";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import CustomDropdown from "src/components/customDropdown";
@@ -24,6 +25,8 @@ type dTeam = Team & {
 
 const DepartmentDetails = () => {
     const axiosPrivate = useAxiosPrivate();
+    const searchParams = useSearchParams();
+    const _id = searchParams.get("id");
     const [employees, setEmployees] = useState<Employee[]>();
     const [teams, setTeams] = useState<dTeam[]>();
     const [sortedDept, setSortedDept] = useState<string>();
@@ -65,9 +68,12 @@ const DepartmentDetails = () => {
                 console.log({ e });
             }
         };
-        let departmentId = "6527a58bdf91518066200afb";
-        getTeams(departmentId);
-        getEmployees(departmentId);
+        if(_id)
+        {
+            getTeams(_id);
+            getEmployees(_id);
+        }
+        
     }, []);
     const teamColumns: ColumnType[] = [
         {
@@ -114,12 +120,12 @@ const DepartmentDetails = () => {
         },
         {
             title: "Team",
-            type: ColumnEnum.filterColumn,
+            type: ColumnEnum.textColumn,
             key: "team",
         },
         {
             title: "Department",
-            type: ColumnEnum.filterColumn,
+            type: ColumnEnum.textColumn,
             key: "department",
         },
         {

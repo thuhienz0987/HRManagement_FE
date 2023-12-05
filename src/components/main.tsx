@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "./footer";
 import SideBar, { SideBarMode } from "./sideBar";
 import TraceBar from "./tracebar";
@@ -16,11 +16,11 @@ import {
 import { redirect, useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
 import { useSession } from "next-auth/react";
-import { Toaster } from "../../@/components/ui/toaster";
 
 const Main = ({ children }: { children: React.ReactNode }) => {
     const initMode: SideBarMode = SideBarMode.Large;
     const [mode, setMode] = useState<SideBarMode>(initMode);
+
     const { data: session } = useSession({
         required: true,
         onUnauthenticated() {
@@ -135,10 +135,6 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                 {
                     name: "Department",
                     href: "/department",
-                },
-                {
-                    name: "Team",
-                    href: "/department-details",
                 },
                 {
                     name: "Position",

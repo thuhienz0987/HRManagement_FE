@@ -1,12 +1,5 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { SideBarMode } from "./sideBar";
-import Image from "next/image";
-import {
-    HomeIcon,
-    SalaryIcon,
-    UserIcon,
-    PresentationChartLineIcon,
-} from "src/svgs";
 import { useState } from "react";
 
 export type SideBarOptionType = {
