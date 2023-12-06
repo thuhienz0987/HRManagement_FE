@@ -224,6 +224,11 @@ const TableFirstForm = ({
                                 />
                             </tr>
                         ))}
+                    {rows?.length == 0 && (
+                        <tr className=" font-sans text-gray-600 text-xs h-12 flex w-full">
+                            <p>There is no data yet for this table</p>
+                        </tr>
+                    )}
                 </tbody>
             </table>
             <div className="flex justify-between mt-3">
@@ -231,7 +236,7 @@ const TableFirstForm = ({
                     Displayed
                     <span className="font-semibold">
                         {" "}
-                        {(currentPage - 1) * 5 + 1}
+                        {rows?.length ? (currentPage - 1) * 5 + 1 : 0}
                     </span>{" "}
                     to{" "}
                     <span className="font-semibold">

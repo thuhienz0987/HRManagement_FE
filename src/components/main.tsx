@@ -104,13 +104,6 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             isHidden: false,
         },
         {
-            name: "Salary",
-            href: "/salary",
-            icon: SalaryIcon,
-            subSidebar: [],
-            isHidden: false,
-        },
-        {
             name: "Account",
             href: "/account",
             icon: AccountIcon,

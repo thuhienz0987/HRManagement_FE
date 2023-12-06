@@ -34,6 +34,19 @@ import BlurModal from "./modal";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import { Department } from "src/types/userType";
 import { User } from "next-auth";
+import InputText from "./inputText";
+import { Textarea } from "../../@/components/ui/textarea";
+import CustomDropdown from "./customDropdown";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import {
+    DatePickerProps,
+    LocalizationProvider,
+    TimeField,
+} from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "./datePicker";
+import RegularButton from "./regularButton";
+import { Event } from "src/types/eventType";
 
 const meetings = [
     {
@@ -97,6 +110,7 @@ function Calendar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [values, setValues] = useState<Selection>();
     const [selectedEmpId, setSelectedEmpId] = useState<string[]>([]);
+    const [events, setEvents] = useState<Event[]>();
 
     // const arrayValues = Array.from(values);
 
@@ -127,6 +141,17 @@ function Calendar() {
     const axiosPrivate = useAxiosPrivate();
 
     useEffect(() => {
+        const getEvents = async () => {
+            // setLoading(true);
+            try {
+                const res = await axiosPrivate.get<Event[]>(`/events`);
+                setEvents(res.data);
+            } catch (e) {
+                console.log({ e });
+            } finally {
+                // setLoading(false);
+            }
+        };
         const getEmployees = async () => {
             try {
                 const res = await axiosPrivate.get<Employee[]>("/all-user", {
@@ -149,6 +174,7 @@ function Calendar() {
             }
         };
         getDepartments();
+        getEvents();
         getEmployees();
     }, []);
 
@@ -169,23 +195,64 @@ function Calendar() {
         setCurrentMonth(format(firstDayNextMonth, "MMM-yyyy"));
     }
 
-    let selectedDayMeetings = meetings.filter((meeting) =>
-        isSameDay(parseISO(meeting.startDatetime), selectedDay)
+    const selectedDayEvent = events?.filter((e) =>
+        isSameDay(parseISO(e.dateTime), selectedDay)
     );
+
+    const dateFromString = (dateString: string) => {
+        const date = new Date(dateString);
+        return date;
+    };
+
+    const hasEventDate = (date: Date) => {
+        const hasEvent = events?.find((e) => {
+            const eventDate = new Date(e.dateTime);
+            return (
+                eventDate.getDate() == date.getDate() &&
+                eventDate.getMonth() == date.getMonth() &&
+                eventDate.getFullYear() == date.getFullYear()
+            );
+        });
+        if (!hasEvent) return false;
+        return true;
+    };
     return (
         <div className="flex flex-1 flex-col border bg-gray-50 border-blue-700 rounded-xl overflow-hidden ">
             <BlurModal
-                title="ADD EVENT"
+                hideCloseButton
+                title={
+                    <div className="w-full flex justify-between">
+                        <p>Add Event</p>
+                        <div className="flex gap-2">
+                            <RegularButton label="Save" callback={() => {}} />
+                            <RegularButton
+                                additionalStyle="bg-bar"
+                                label="Close"
+                                callback={onClose}
+                            />
+                        </div>
+                    </div>
+                }
+                size="4xl"
                 body={
-                    <div className="flex flex-row w-full">
+                    <div className="flex flex-row overflow-auto gap-3">
                         <div className="flex flex-1 flex-col">
+                            <div className="w-full flex flex-col mt-2">
+                                <h5 className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
+                                    Participants
+                                </h5>
+                            </div>
                             <Popover
                                 placement="bottom"
                                 classNames={{ content: "max-w-xs w-80" }}
                             >
                                 <PopoverTrigger>
-                                    <Button className=" max-w-xs bg-white border-2">
-                                        <TopContent />
+                                    <Button className=" max-w-xs bg-white border-2 rounded-md flex justify-start pl-3 text-gray-400">
+                                        {selectedEmpId.length ? (
+                                            <TopContent />
+                                        ) : (
+                                            "Choose participants"
+                                        )}
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className=" w-80">
@@ -246,6 +313,83 @@ function Calendar() {
                                     )}
                                 </PopoverContent>
                             </Popover>
+                            <InputText
+                                label="Room"
+                                placeHolder="Choose room"
+                                id="room"
+                                buttonStyle="w-80 border-2 rounded-md border-[#e8e8e8]"
+                            />
+                            <div className="w-full flex flex-col mt-2">
+                                <p className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
+                                    Description
+                                </p>
+                                <Textarea className="h-[100px] w-11/12" />
+                            </div>
+                        </div>
+                        <div className="flex flex-1 flex-col">
+                            <CustomDropdown
+                                label="Type"
+                                placeholder="Choose type"
+                                buttonStyle="w-80 bg-white"
+                                additionalStyle="mt-2 rounded-md"
+                                labelStyle="text-xs text-[#24243f] pb-2 font-semibold"
+                            />
+                            <InputText
+                                label="Event Name"
+                                placeHolder="Choose room"
+                                id="room"
+                                buttonStyle="w-80 border-2 rounded-md border-[#e8e8e8]"
+                            />
+                            <div className=" w-80 h-10 p-0 mt-2 gap-2 flex flex-col">
+                                <h5 className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
+                                    Date & Time
+                                </h5>
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDateFns}
+                                >
+                                    <div className="flex gap-2">
+                                        <TimeField
+                                            defaultValue={today}
+                                            label={"Start"}
+                                            sx={{
+                                                width: "100%",
+                                                borderWidth: "0px",
+                                                "& .MuiInputLabel-root.Mui-focused":
+                                                    { color: "#979797" }, //styles the label
+                                                "& .MuiOutlinedInput-root": {
+                                                    "&:hover > fieldset": {},
+                                                    height: "40px",
+                                                    borderRadius: "6px",
+                                                },
+                                                "& .MuiOutlinedInput-notchedOutline":
+                                                    {
+                                                        border: "2px solid #E8E8E8",
+                                                    },
+                                            }}
+                                        />
+                                        <TimeField
+                                            defaultValue={today}
+                                            label={"End"}
+                                            sx={{
+                                                width: "100%",
+                                                borderWidth: "0px",
+                                                "& .MuiInputLabel-root.Mui-focused":
+                                                    { color: "#979797" }, //styles the label
+                                                "& .MuiOutlinedInput-root": {
+                                                    "&:hover > fieldset": {},
+                                                    height: "40px",
+                                                    borderRadius: "6px",
+                                                },
+                                                "& .MuiOutlinedInput-notchedOutline":
+                                                    {
+                                                        border: "2px solid #E8E8E8",
+                                                    },
+                                            }}
+                                        />
+                                    </div>
+                                </LocalizationProvider>
+                                <DatePicker buttonStyle="h-10" />
+                            </div>
                         </div>
                     </div>
                 }
@@ -259,34 +403,47 @@ function Calendar() {
                     <p className=" self-start top-5 block absolute text-xl font-medium">
                         Events
                     </p>
-                    <div className=" px-0 lg:px-4 justify-self-center self-center ">
+                    <div className=" px-0 lg:px-4 justify-self-center self-center w-full">
                         <ScrollShadow
                             size={30}
-                            className="lg:h-[350px] h-[270px]"
+                            className="lg:h-[350px] h-[270px] w-full"
                             hideScrollBar
                         >
-                            {meetings.map((meeting) => (
-                                <div className="w-full" key={meeting.id}>
-                                    <div className="border p-4 border-gray-400 border-solid rounded-xl mb-4">
-                                        <p className="text-xs font-light leading-3 text-gray-500">
-                                            9:00 AM
-                                        </p>
-                                        <a
-                                            // tabindex="0"
-                                            className="focus:outline-none text-lg font-medium leading-5 text-gray-800 mt-2"
-                                        >
-                                            Zoom call with design team
-                                        </a>
-                                        <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
-                                            Discussion on UX sprint and
-                                            Wireframe review
-                                        </p>
-                                        <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
-                                            Room 3.2
-                                        </p>
+                            {hasEventDate(selectedDay) ? (
+                                selectedDayEvent?.map((event) => (
+                                    <div className="w-full " key={event._id}>
+                                        <div className="border p-4 border-gray-400 border-solid rounded-xl mb-4 w-full">
+                                            <div className="flex justify-between">
+                                                <a
+                                                    // tabindex="0"
+                                                    className="focus:outline-none text-lg font-medium leading-5 text-gray-800 mt-2"
+                                                >
+                                                    {event.name}
+                                                </a>
+                                                <p className="text-right text-xs font-light leading-3 text-gray-500">
+                                                    {format(
+                                                        parseISO(
+                                                            event.dateTime
+                                                        ),
+                                                        "h:mm aa"
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
+                                                {event.description}
+                                            </p>
+                                            <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
+                                                {event.room}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p className="text-xs font-light leading-3 text-gray-500">
+                                    {"There is no event occur on " +
+                                        format(selectedDay, "dd MMM")}
+                                </p>
+                            )}
                         </ScrollShadow>
                     </div>
                 </div>
@@ -426,6 +583,10 @@ function Calendar() {
                                                             firstDayCurrentMonth
                                                         ) &&
                                                         "text-gray-900"
+                                                    }
+                                                    ${
+                                                        hasEventDate(day) &&
+                                                        "bg-yellow-400"
                                                     }
                                                     ${
                                                         !isEqual(

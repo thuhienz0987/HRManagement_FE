@@ -2,6 +2,8 @@ import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { Tenor_Sans, Telex } from "next/font/google";
 import { ColorCalendarIcon } from "src/svgs";
+import useAxiosPrivate from "src/app/api/useAxiosPrivate";
+import { useSession } from "next-auth/react";
 
 const tenor_sans = Tenor_Sans({ subsets: ["latin"], weight: "400" });
 const telex = Telex({ subsets: ["latin"], weight: "400" });
@@ -20,9 +22,26 @@ function DayCounter({
     const imgPath = "../../public/assets/images/calendar.png";
     const ref = useRef<HTMLDivElement>(null);
     const [divWidth, setWidth] = useState(0);
+    const axiosPrivate = useAxiosPrivate();
+    const [availableDay, setAvailableDay] = useState<number>();
+    const { data: session } = useSession();
+    useEffect(() => {
+        const getAvailableDays = async () => {
+            try {
+                const res = await axiosPrivate.get<number>(
+                    "/remainingLeaveRequestDays/" + session?.user._id
+                );
+                setAvailableDay(res.data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        getAvailableDays();
+    }, []);
+
     useEffect(() => {
         setWidth(ref.current?.offsetWidth || 0);
-    }, []);
+    }, [ref.current?.offsetWidth]);
     return (
         <div
             className="flex flex-1 flex-col border bg-bar p-2 rounded-xl overflow-hidden self-center w-full items-center justify-center"
@@ -41,7 +60,7 @@ function DayCounter({
                 <p
                     className={`absolute self-center mt-6 text-8xl font-semibold text-black ${telex.className}`}
                 >
-                    10
+                    {availableDay}
                 </p>
             </div>
 

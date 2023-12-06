@@ -7,12 +7,13 @@ import { format, addDays } from "date-fns";
 import { cn } from "../../@/lib/utils";
 import { Button } from "../../@/components/ui/button";
 import { Calendar } from "../../@/components/ui/calendar";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "../../@/components/ui/popover";
+// import {
+//     Popover,
+//     PopoverContent,
+//     PopoverTrigger,
+// } from "../../@/components/ui/popover";
 import { DateRange } from "react-day-picker";
+import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
 
 export function DatePicker({
     label,
@@ -32,7 +33,7 @@ export function DatePicker({
                 {label}
             </p>
             <Popover>
-                <PopoverTrigger asChild>
+                <PopoverTrigger>
                     <Button
                         variant={"outline"}
                         className={cn(
@@ -40,6 +41,7 @@ export function DatePicker({
                             !date && "text-muted-foreground h-10",
                             buttonStyle && buttonStyle
                         )}
+                        disabled
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {date?.from ? (
@@ -56,7 +58,7 @@ export function DatePicker({
                         )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0 bg-white" align="start">
+                <PopoverContent className="w-full p-0 bg-white">
                     <Calendar
                         initialFocus
                         mode="range"

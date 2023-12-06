@@ -64,11 +64,6 @@ const Log = () => {
             type: ColumnEnum.textColumn,
             key: "status",
         },
-        {
-            title: "Action",
-            type: ColumnEnum.functionColumn,
-            key: "action",
-        },
     ];
     const today = startOfToday();
     const [employeeAttendances, setEmployeeAttendances] =

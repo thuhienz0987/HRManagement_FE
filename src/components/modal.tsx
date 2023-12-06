@@ -14,15 +14,37 @@ export default function BlurModal({
     isOpen,
     onClose,
     footerButton = true,
+    size = "md",
+    hideCloseButton = false,
 }: {
-    title: string;
+    hideCloseButton?: boolean;
+    title: React.ReactNode;
     body: React.ReactNode;
     isOpen: boolean;
     onClose?: () => void;
     footerButton?: boolean;
+    size?:
+        | "md"
+        | "xs"
+        | "sm"
+        | "lg"
+        | "xl"
+        | "2xl"
+        | "3xl"
+        | "4xl"
+        | "5xl"
+        | "full"
+        | undefined;
 }) {
     return (
-        <Modal backdrop="blur" isOpen={isOpen} onClose={onClose}>
+        <Modal
+            backdrop="blur"
+            isOpen={isOpen}
+            onClose={onClose}
+            size={size}
+            hideCloseButton={hideCloseButton}
+            scrollBehavior="outside"
+        >
             <ModalContent>
                 {(onClose) => (
                     <>

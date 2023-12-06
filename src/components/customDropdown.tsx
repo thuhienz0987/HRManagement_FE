@@ -22,6 +22,7 @@ const CustomDropdown = ({
     options = [],
     onSelect,
     value,
+    labelStyle,
 }: {
     label?: string;
     placeholder: string;
@@ -30,6 +31,7 @@ const CustomDropdown = ({
     options?: Array<Item>;
     onSelect: (value: string) => void;
     value?: string;
+    labelStyle?: string;
 }) => {
     const ref = useRef<HTMLDivElement>(null);
     const childRef = useRef<HTMLDivElement>(null);
@@ -42,7 +44,11 @@ const CustomDropdown = ({
     return (
         <div className={`flex flex-col ${additionalStyle}`}>
             {label && (
-                <p className="text-[#5B5F7B] block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none">
+                <p
+                    className={` block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none  ${
+                        labelStyle ? labelStyle : "text-[#5B5F7B]"
+                    } `}
+                >
                     {label}
                 </p>
             )}

@@ -5,5 +5,6 @@ export interface LeaveRequest {
     reason: string;
     status: "approved" | "pending" | "denied";
     userId: User;
+    startDate: string;
     endDate: string;
 }

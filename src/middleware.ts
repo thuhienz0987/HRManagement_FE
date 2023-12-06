@@ -5,8 +5,8 @@ export default withAuth(
     // `withAuth` augments your `Request` with the user's token.
     function middleware(request: NextRequestWithAuth) {
         if (
-            request.nextUrl.pathname.startsWith("/extra") &&
-            !request.nextauth.token?.roles.includes("admin")
+            request.nextUrl.pathname.startsWith("/attendance/absent") &&
+            !request.nextauth.token?.roles.includes(process.env.HRManager)
         ) {
             return NextResponse.rewrite(new URL("/denied", request.url));
         }
@@ -14,6 +14,9 @@ export default withAuth(
     {
         callbacks: {
             authorized: ({ token }) => !!token,
+        },
+        pages: {
+            signIn: "/signIn",
         },
     }
 );
