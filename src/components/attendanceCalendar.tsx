@@ -115,6 +115,20 @@ function AttendanceCalendar() {
         }
     }
 
+    function previousDay(date = new Date()) {
+        const previous = new Date(date.getTime());
+        previous.setDate(date.getDate() - 1);
+
+        return previous;
+    }
+
+    function nextDay(date = new Date()) {
+        const previous = new Date(date.getTime());
+        previous.setDate(date.getDate() + 1);
+
+        return previous;
+    }
+
     function nextMonth() {
         let firstDayNextMonth = add(firstDayCurrentMonth, { months: 1 });
         setCurrentMonth(format(firstDayNextMonth, "MMM-yyyy"));
@@ -303,25 +317,81 @@ function AttendanceCalendar() {
                                 {days.map((day, index) => (
                                     <div
                                         key={index}
-                                        className="px-2 py-1 lg:py-2 cursor-pointer flex w-full justify-center"
+                                        className={`px-2 py-1 lg:py-2 cursor-pointer flex w-full justify-center relative`}
                                     >
+                                        <div
+                                            className={`absolute w-full self-center h-8 ${
+                                                dateStatus(day) ===
+                                                    dateStatus(
+                                                        new Date(
+                                                            previousDay(day)
+                                                        )
+                                                    ) &&
+                                                dateStatus(day) == "late" &&
+                                                "bg-gradient-to-r from-yellow-500 from-50% to-50% to-transparent opacity-70"
+                                            } ${
+                                                dateStatus(day) ===
+                                                    dateStatus(
+                                                        new Date(nextDay(day))
+                                                    ) &&
+                                                dateStatus(day) == "late" &&
+                                                "bg-gradient-to-r to-yellow-500 from-50% to-50% from-transparent opacity-70"
+                                            } ${
+                                                dateStatus(day) ===
+                                                    dateStatus(
+                                                        new Date(nextDay(day))
+                                                    ) &&
+                                                dateStatus(day) ===
+                                                    dateStatus(
+                                                        new Date(
+                                                            previousDay(day)
+                                                        )
+                                                    ) &&
+                                                dateStatus(day) == "late" &&
+                                                "bg-yellow-500 opacity-70"
+                                            } ${
+                                                dateStatus(day) ===
+                                                    dateStatus(
+                                                        new Date(
+                                                            previousDay(day)
+                                                        )
+                                                    ) &&
+                                                dateStatus(day) == "ok" &&
+                                                "bg-gradient-to-r from-[#29AB91] from-50% to-50% to-transparent opacity-70"
+                                            }  ${
+                                                dateStatus(day) ===
+                                                    dateStatus(
+                                                        new Date(nextDay(day))
+                                                    ) &&
+                                                dateStatus(day) == "ok" &&
+                                                "bg-gradient-to-r to-[#29AB91] from-50% to-50% from-transparent opacity-70"
+                                            } ${
+                                                dateStatus(day) ===
+                                                    dateStatus(
+                                                        new Date(nextDay(day))
+                                                    ) &&
+                                                dateStatus(day) ===
+                                                    dateStatus(
+                                                        new Date(
+                                                            previousDay(day)
+                                                        )
+                                                    ) &&
+                                                dateStatus(day) == "ok" &&
+                                                "bg-[#29AB91] opacity-70"
+                                            }`}
+                                        />
                                         <HoverCard>
-                                            <HoverCardTrigger>
+                                            <HoverCardTrigger className="z-10">
                                                 <button
                                                     type="button"
                                                     // onClick={() => setSelectedDay(day)}
                                                     className={`
-                                                ${
-                                                    isEqual(day, selectedDay) &&
-                                                    "text-white"
-                                                }
                                                     ${
-                                                        !isEqual(
+                                                        isEqual(
                                                             day,
                                                             selectedDay
                                                         ) &&
-                                                        isToday(day) &&
-                                                        "text-pink-700"
+                                                        "text-[#2C3D3A] font-semibold"
                                                     }
                                                     ${
                                                         !isEqual(
@@ -333,7 +403,23 @@ function AttendanceCalendar() {
                                                             day,
                                                             firstDayCurrentMonth
                                                         ) &&
-                                                        "text-gray-900"
+                                                        dateStatus(day) !=
+                                                            "null" &&
+                                                        "text-[#F5F5DC]"
+                                                    }
+                                                    ${
+                                                        !isEqual(
+                                                            day,
+                                                            selectedDay
+                                                        ) &&
+                                                        !isToday(day) &&
+                                                        isSameMonth(
+                                                            day,
+                                                            firstDayCurrentMonth
+                                                        ) &&
+                                                        dateStatus(day) ==
+                                                            "null" &&
+                                                        "text-slate-800"
                                                     }
                                                     ${
                                                         !isEqual(
@@ -354,21 +440,18 @@ function AttendanceCalendar() {
                                                     }
                                                     ${
                                                         dateStatus(day) ==
+                                                            "absent" &&
+                                                        "bg-red-500"
+                                                    }
+                                                    ${
+                                                        dateStatus(day) ==
                                                             "late" &&
                                                         "bg-yellow-500"
                                                     }
                                                     ${
                                                         dateStatus(day) ==
                                                             "ok" &&
-                                                        "bg-blue-500"
-                                                    }
-                                                    ${
-                                                        isEqual(
-                                                            day,
-                                                            selectedDay
-                                                        ) &&
-                                                        !isToday(day) &&
-                                                        "bg-gray-900"
+                                                        "bg-[#29AB91]"
                                                     }
                                                     ${
                                                         !isEqual(

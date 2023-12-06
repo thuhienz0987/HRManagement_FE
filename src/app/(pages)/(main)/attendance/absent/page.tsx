@@ -1,8 +1,14 @@
 "use client";
+import { useEffect, useState } from "react";
+import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import TableFirstForm, {
     ColumnEnum,
     ColumnType,
 } from "src/components/tableFirstForm";
+import { LeaveRequest } from "src/types/leaveRequestType";
+import { User } from "src/types/userType";
+
+type dLeaveRequest = LeaveRequest & User;
 
 const Absent = () => {
     const columns: ColumnType[] = [
@@ -37,6 +43,26 @@ const Absent = () => {
             key: "status",
         },
     ];
+    const [leaveRequests, setLeaveRequests] = useState<dLeaveRequest[]>();
+    const axiosPrivate = useAxiosPrivate();
+    useEffect(() => {
+        const getLeaveRequest = async () => {
+            try {
+                const res = await axiosPrivate.get<dLeaveRequest[]>(
+                    "/leaveRequests"
+                );
+                res.data.map((lr) => {
+                    lr.name = lr.userId.name;
+                    lr.code = lr.userId.code;
+                    lr.departmentId == lr.userId.departmentId;
+                });
+                setLeaveRequests(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getLeaveRequest();
+    }, []);
     return (
         <div className="flex flex-col">
             <div className="flex flex-col w-11/12 self-center gap-9 pb-8">

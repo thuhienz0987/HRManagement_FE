@@ -127,11 +127,14 @@ const AttendanceList = () => {
         return sortedEmp;
     };
     const moveToAddNew = () => {
-        return router.replace("/attendance/add-employee");
+        return router.push("/attendance/add-employee");
     };
 
     const handleView = (id: string) => {
-        router.replace("/account/profile?id=" + id);
+        router.push("/account/profile?id=" + id);
+    };
+    const handleEdit = (id: string) => {
+        router.push("/account/edit-profile?id=" + id);
     };
     return (
         <div className="flex flex-1 flex-col px-[4%] pb-4 rounded gap-y-9">
@@ -161,6 +164,7 @@ const AttendanceList = () => {
                         columns={columns}
                         rows={rows()}
                         viewFunction={handleView}
+                        editFunction={handleEdit}
                     />
                 </div>
             </div>

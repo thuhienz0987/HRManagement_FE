@@ -4,7 +4,7 @@ import { useRouter } from "next13-progressbar";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import CustomDropdown from "src/components/customDropdown";
-import { DatePicker } from "src/components/datePicket";
+import { DatePicker } from "src/components/datePicker";
 import RegularButton from "src/components/regularButton";
 import { CameraIcon } from "src/svgs";
 import { Department, Position } from "src/types/userType";
