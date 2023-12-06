@@ -3,7 +3,7 @@ import Calendar from "src/components/calendar";
 import CircleProgress from "src/components/circleProgress";
 import StackChart from "src/components/stackChart";
 import { User } from "@nextui-org/react";
-import AttendanceCalendar from "src/components/attendaceCalendar";
+import AttendanceCalendar from "src/components/attendanceCalendar";
 import DayCounter from "src/components/dayCounter";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -102,7 +102,7 @@ const DashBoard = () => {
                     <StackChart />
                 </div>
                 <div className="flex flex-col gap-y-8 w-2/6 pl-5 items-center">
-                    <AttendanceCalendar />
+                    {/* <AttendanceCalendar /> */}
                     <DayCounter />
                 </div>
             </div>

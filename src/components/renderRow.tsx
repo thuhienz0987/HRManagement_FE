@@ -77,14 +77,24 @@ export function RenderRow({
                             )}
                             {editFunction && (
                                 <Tooltip content="Edit user">
-                                    <button className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                    <button 
+                                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                        onClick={() => {
+                                            editFunction(row._id);
+                                        }}
+                                    >
                                         <EditIcon width="16" height="16" />
                                     </button>
                                 </Tooltip>
                             )}
                             {deleteFunction && (
                                 <Tooltip color="danger" content="Delete user">
-                                    <button className="text-lg text-danger cursor-pointer active:opacity-50">
+                                    <button 
+                                        className="text-lg text-danger cursor-pointer active:opacity-50"
+                                        onClick={() => {
+                                            deleteFunction(row._id);
+                                        }}
+                                    >
                                         <DeleteIcon width="16" height="16" />
                                     </button>
                                 </Tooltip>

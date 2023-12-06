@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Input } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import CustomDropdown from "src/components/customDropdown";
 import { DatePicker } from "src/components/datePicker";
 import RegularButton from "src/components/regularButton";
@@ -170,10 +170,11 @@ const EditUserProfile = () => {
               <CustomDropdown
                 label="Department"
                 placeholder="Select department"
+                onSelect={() => null}
               />
             </div>
             <div>
-              <CustomDropdown label="Position" placeholder="Select position" />
+              <CustomDropdown label="Position" placeholder="Select position" onSelect={() => null}/>
             </div>
             <Input
               disabled={true}
@@ -191,7 +192,7 @@ const EditUserProfile = () => {
             </div>
 
             <div>
-              <CustomDropdown label="Gender" placeholder="Select gender" />
+              <CustomDropdown label="Gender" placeholder="Select gender" onSelect={() => null}/>
             </div>
             <div>
               <Input
@@ -295,6 +296,7 @@ const EditUserProfile = () => {
               <CustomDropdown
                 label="Academic level"
                 placeholder="Select academic"
+                onSelect={() => null}
               />
             </div>
             <div>

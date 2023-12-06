@@ -1,6 +1,6 @@
 import { DefaultSession, DefaultUser } from "next-auth";
 import { JWT, DefaultJWT } from "next-auth/jwt";
-import { Department, Position } from "src/types/userType";
+import { Department, Position, Team } from "src/types/userType";
 
 declare module "next-auth" {
     interface Session {
@@ -20,6 +20,7 @@ declare module "next-auth" {
         ethnicGroup: string;
         avatarImage: string;
         code: string;
+        teamId: Team;
         positionId: Position;
         departmentId: Department;
         name: string;
