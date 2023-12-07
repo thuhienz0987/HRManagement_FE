@@ -16,7 +16,7 @@ export interface ColumnType {
     type: ColumnEnum;
     key: string;
     filterOptions?: Array<any>;
-    setFilterVal?: (value: string) => void;
+    setFilterVal?: (value?: string) => void;
 }
 
 const TableFirstForm = ({
@@ -36,92 +36,6 @@ const TableFirstForm = ({
 }) => {
     const [checkedAll, setCheckedAll] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    // const rows = [
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         requestDay: "RequestDay",
-    //         department: "Account",
-    //         status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         requestDay: "RequestDay",
-    //         department: "Account",
-    //         status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    //     {
-    //         employeeCode: "NV001",
-    //         fullName: "Nguyen van A",
-    //         RequestDay: "RequestDay",
-    //         Department: "Account",
-    //         Status: "pending",
-    //     },
-    // ];
     const page = Math.ceil((rows && rows.length / 5) || 1);
     useEffect(() => {
         setCurrentPage(1);
@@ -179,7 +93,9 @@ const TableFirstForm = ({
                                                             options={
                                                                 column.filterOptions
                                                             }
-                                                            setSortedValue={() => {}}
+                                                            setSortedValue={
+                                                                column.setFilterVal
+                                                            }
                                                         />
                                                     )}
                                                 </div>

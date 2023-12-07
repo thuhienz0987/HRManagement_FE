@@ -17,6 +17,7 @@ import { useRouter } from "next13-progressbar";
 type Employee = User & {
     createdAt: string;
     department?: string;
+    status: string;
 };
 
 type dDepartment = Department & {
@@ -29,6 +30,7 @@ const AttendanceList = () => {
     const [employees, setEmployees] = useState<Employee[]>();
     const [departments, setDepartments] = useState<dDepartment[]>();
     const [sortedDept, setSortedDept] = useState<string>();
+    const [sortedStatus, setSortedStatus] = useState<string>();
     const [searchQuery, setSearchQuery] = useState<string>();
     useEffect(() => {
         const getEmployees = async () => {
@@ -43,6 +45,7 @@ const AttendanceList = () => {
                         "dd/MM/yyyy"
                     );
                     employee.department = employee?.departmentId?.name;
+                    employee.status = employee.dayOff ? "Lay Off" : "Working";
                 });
                 setEmployees(res.data);
             } catch (e) {
@@ -64,8 +67,8 @@ const AttendanceList = () => {
         getEmployees();
     }, []);
     const statusFilterOps = [
-        { name: "Working", value: "working" },
-        { name: "Absent", value: "absent" },
+        { name: "Working", value: "Working" },
+        { name: "Lay Off", value: "Lay Off" },
     ];
     const columns: ColumnType[] = [
         {
@@ -98,6 +101,7 @@ const AttendanceList = () => {
             type: ColumnEnum.filterColumn,
             key: "status",
             filterOptions: statusFilterOps,
+            setFilterVal: setSortedStatus,
         },
         {
             title: "Action",
@@ -123,6 +127,9 @@ const AttendanceList = () => {
             sortedEmp = sortedEmp?.filter(
                 (emp) => emp?.departmentId?.name == sortedDept
             );
+        }
+        if (sortedStatus) {
+            sortedEmp = sortedEmp?.filter((emp) => emp?.status == sortedStatus);
         }
         return sortedEmp;
     };

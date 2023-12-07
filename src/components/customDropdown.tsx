@@ -21,17 +21,21 @@ const CustomDropdown = ({
     buttonStyle,
     options = [],
     onSelect,
+    onChange,
     value,
     labelStyle,
+    name,
 }: {
     label?: string;
-    placeholder: string;
+    placeholder?: string;
     additionalStyle?: string;
     buttonStyle?: string;
     options?: Array<Item>;
     onSelect: (value: string) => void;
+    onChange?: (e: React.ChangeEvent<any>) => void;
     value?: string;
     labelStyle?: string;
+    name?: string;
 }) => {
     const ref = useRef<HTMLDivElement>(null);
     const childRef = useRef<HTMLDivElement>(null);
@@ -60,6 +64,8 @@ const CustomDropdown = ({
                 }}
                 placeholder={placeholder}
                 onChange={(e) => onSelect(e.target.value)}
+                selectedKeys={value ? [value] : undefined}
+                name={name}
             >
                 {options.map((item) => (
                     <SelectItem

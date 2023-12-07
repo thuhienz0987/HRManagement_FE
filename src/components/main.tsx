@@ -116,6 +116,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                 {
                     name: "Edit Profile",
                     href: "/edit-profile",
+                    searchParams: "?id=" + session?.user._id,
                 },
             ],
             isHidden: false,

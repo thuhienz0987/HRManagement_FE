@@ -1,5 +1,7 @@
+import { User } from "./userType";
+
 export interface Attendance {
-    userId: string;
+    userId: User;
     attendanceDate: string;
     checkInTime: string;
     checkOutTime?: string;

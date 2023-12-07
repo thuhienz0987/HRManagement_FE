@@ -14,6 +14,7 @@ import {
     add,
     isToday,
     isSameMonth,
+    addDays,
 } from "date-fns";
 import { Key, useEffect, useMemo, useState } from "react";
 import { CalendarIcon } from "src/svgs";
@@ -181,8 +182,12 @@ function Calendar() {
     let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
 
     let days = eachDayOfInterval({
-        start: startOfWeek(firstDayCurrentMonth),
-        end: endOfWeek(endOfMonth(firstDayCurrentMonth)),
+        start: addDays(startOfWeek(firstDayCurrentMonth), 1),
+        end:
+            addDays(endOfWeek(endOfMonth(firstDayCurrentMonth)), 1).getDate() ==
+            7
+                ? addDays(endOfWeek(endOfMonth(firstDayCurrentMonth)), -6)
+                : addDays(endOfWeek(endOfMonth(firstDayCurrentMonth)), 1),
     });
 
     function previousMonth() {

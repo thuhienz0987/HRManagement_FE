@@ -14,6 +14,7 @@ import {
     add,
     isToday,
     isSameMonth,
+    addDays,
 } from "date-fns";
 import { useEffect, useState } from "react";
 import { CalendarIcon } from "src/svgs";
@@ -95,8 +96,12 @@ function AttendanceCalendar() {
     let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
 
     let days = eachDayOfInterval({
-        start: startOfWeek(firstDayCurrentMonth),
-        end: endOfWeek(endOfMonth(firstDayCurrentMonth)),
+        start: addDays(startOfWeek(firstDayCurrentMonth), 1),
+        end:
+            addDays(endOfWeek(endOfMonth(firstDayCurrentMonth)), 1).getDate() ==
+            7
+                ? addDays(endOfWeek(endOfMonth(firstDayCurrentMonth)), -6)
+                : addDays(endOfWeek(endOfMonth(firstDayCurrentMonth)), 1),
     });
 
     function previousMonth() {
@@ -149,6 +154,11 @@ function AttendanceCalendar() {
 
     useEffect(() => {
         getMonthAttendance(today.getMonth() + 1, today.getFullYear());
+        if (today.getMonth() != firstDayCurrentMonth.getMonth())
+            getMonthAttendance(
+                firstDayCurrentMonth.getMonth() + 1,
+                firstDayCurrentMonth.getFullYear()
+            );
     }, []);
 
     const getMonthAttendance = async (month: number, year: number) => {

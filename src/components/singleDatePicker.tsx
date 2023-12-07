@@ -10,17 +10,14 @@ import { Calendar } from "../../@/components/ui/calendar";
 import { DateRange } from "react-day-picker";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
 
-export function DatePicker({
+export function SingleDatePicker({
     label,
     buttonStyle,
 }: {
     label?: string;
     buttonStyle?: string;
 }) {
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: new Date(),
-        to: addDays(new Date(), 1),
-    });
+    const [date, setDate] = React.useState<Date | undefined>(new Date());
 
     return (
         <div className="w-full bg-white">
@@ -38,15 +35,8 @@ export function DatePicker({
                         )}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date?.from ? (
-                            date.to ? (
-                                <>
-                                    {format(date.from, "LLL dd, y")} -{" "}
-                                    {format(date.to, "LLL dd, y")}
-                                </>
-                            ) : (
-                                format(date.from, "LLL dd, y")
-                            )
+                        {date ? (
+                            <>{format(date, "LLL dd, y")} </>
                         ) : (
                             <span>Pick a date</span>
                         )}
@@ -55,11 +45,11 @@ export function DatePicker({
                 <PopoverContent className="w-full p-0 bg-white">
                     <Calendar
                         initialFocus
-                        mode="range"
-                        defaultMonth={date?.from}
+                        mode="single"
+                        defaultMonth={date}
                         selected={date}
                         onSelect={setDate}
-                        numberOfMonths={2}
+                        numberOfMonths={1}
                     />
                 </PopoverContent>
             </Popover>

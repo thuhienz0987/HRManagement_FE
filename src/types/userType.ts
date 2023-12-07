@@ -11,18 +11,32 @@ export interface User {
     code: string;
     positionId: Position;
     departmentId: Department;
+    teamId: Team;
     level: string;
     name: string;
     email: string;
+    dayOff?: string;
+    salaryGrade: number;
+    createAt: string;
 }
 
 export interface Department {
+    _id: string;
     code: string;
     name: string;
-    managerId: string;
+    managerId: User;
+}
+
+export interface Team {
+    _id: string;
+    code: string;
+    departmentId: string;
+    name: string;
+    managerId: User;
 }
 
 export interface Position {
+    _id: string;
     code: string;
     name: string;
     basicSalary: string;

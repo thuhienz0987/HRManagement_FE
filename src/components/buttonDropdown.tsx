@@ -17,7 +17,7 @@ export default function ButtonDropdown({
     setSortedValue,
 }: {
     options: Array<any>;
-    setSortedValue: (value?: string) => void;
+    setSortedValue?: (value?: string) => void;
 }) {
     const [selected, setSelected] = useState<Selection>();
     // const onSelectionChange = (key: Selection) => {
@@ -37,12 +37,15 @@ export default function ButtonDropdown({
                     onSelectionChange={(key) => {
                         setSelected(key);
                         let selectedArray: Key[] = [];
-                        if (selected instanceof Set) {
-                            selectedArray = Array.from(selected);
+                        if (key instanceof Set) {
+                            selectedArray = Array.from(key);
                         }
-                        setSortedValue(
-                            selectedArray[0]?.toString() || undefined
-                        );
+                        if (selectedArray.length == 0)
+                            return setSortedValue && setSortedValue(undefined);
+                        setSortedValue &&
+                            setSortedValue(
+                                selectedArray[0]?.toString() || undefined
+                            );
                         console.log(selectedArray[0]?.toString() || undefined);
                     }}
                     selectedKeys={selected}

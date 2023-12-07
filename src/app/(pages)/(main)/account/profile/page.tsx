@@ -1,7 +1,8 @@
 "use client";
 import { format, parseISO } from "date-fns";
 import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import RegularButton from "src/components/regularButton";
@@ -9,8 +10,7 @@ import capitalizeFLetter from "src/helper/capitalizeLetter";
 import { CameraIcon } from "src/svgs";
 import { User } from "src/types/userType";
 
-type UserResponse = {
-    user: User;
+type UserResponse = User & {
     status: string;
 };
 
@@ -28,7 +28,7 @@ const UserProfile = () => {
                     "/user/" + _id
                 );
                 console.log(res.data);
-                setProfile(res.data.user);
+                setProfile(res.data);
             } catch (e) {
                 console.log({ e });
             }
