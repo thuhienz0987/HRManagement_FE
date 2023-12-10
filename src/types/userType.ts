@@ -30,7 +30,7 @@ export interface Department {
 export interface Team {
     _id: string;
     code: string;
-    departmentId: string;
+    departmentId: Department;
     name: string;
     managerId: User;
 }
