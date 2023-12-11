@@ -308,8 +308,31 @@ const Department = () => {
                 }
             );
             console.log({ res });
+            const updatedDepartments = departments?.filter(department => department._id !== id);
+            setDepartments(updatedDepartments);
+            const department = departments?.find((department) => department._id === id);
+            toast({
+                title: `Delete department successful `,
+                description: [
+                    `departmentName: ${department?.name}\n`,
+                    ` manager: ${department?.manager}`
+                ]
+            });
         } catch (e) {
             console.log({ e }, { id });
+            if (axios.isAxiosError(e)) {
+                console.log(e.status);
+                toast({
+                  title: `Error `,
+                  description: e.response?.data?.error,
+                });
+              } else {
+                console.log(e);
+                toast({
+                  title: `Error `,
+                  description: "Something has went wrong, please try again",
+                });
+              }
         }
     };
     return (
@@ -336,7 +359,7 @@ const Department = () => {
                             rows={departments}
                             editFunction={handleEdit}
                             viewFunction={viewDepartment}
-                            deleteFunction={deleteDepartment}
+                            // deleteFunction={deleteDepartment}
                         />
                     </div>
                 </div>

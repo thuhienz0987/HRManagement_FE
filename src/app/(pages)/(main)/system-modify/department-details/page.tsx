@@ -450,7 +450,8 @@ const DepartmentDetails = () => {
                     <div className="w-[95%] self-center flex">
                         <TableFirstForm columns={teamColumns} rows={teams}
                         editFunction={editTeam}
-                        deleteFunction={deleteTeam}/>
+                        // deleteFunction={deleteTeam}
+                        />
                     </div>
                 </div>
                 <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
@@ -492,7 +493,8 @@ const DepartmentDetails = () => {
                         <TableFirstForm columns={employeeColumns} rows={rows()} 
                         viewFunction={viewEmployee}
                         editFunction={editEmployee}
-                        deleteFunction={deleteEmployee}/>
+                        // deleteFunction={deleteEmployee}
+                        />
                     </div>
                 </div>
             </div>
