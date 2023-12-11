@@ -8,6 +8,7 @@ import TableFirstForm, {
 } from "src/components/tableFirstForm";
 import { format, parseISO, startOfToday } from "date-fns";
 import { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import { SearchIcon } from "src/svgs";
 import { Department } from "src/types/userType";
@@ -318,8 +319,43 @@ const DailyAttendance = () => {
         );
     };
     
-    const handleDelete = (id: string) => {
+    const handleDelete = async (id: string) => {
+        try {
+            const res = await axiosPrivate.delete<dDailyAttendances>(
+                "/attendance/" + id,
+                {
+                    headers: { "Content-Type": "application/json" },
 
+                    withCredentials: true,
+                }
+            );
+            console.log({ res });
+            const updatedDailyAttendances = dailyAttendances?.filter(dailyAttendance => dailyAttendance._id !== id);
+            setDailyAttendances(updatedDailyAttendances);
+            const dailyAttendance = dailyAttendances?.find((dailyAttendance) => dailyAttendance._id === id);
+            toast({
+                title: `Delete daily attendance successfully `,
+                description: [
+                    `Employee: ${dailyAttendance?.userId.name}\n`,
+                    `Attendance date: ${dailyAttendance?.attendanceDate}\n`
+                    ]  
+            });
+        } catch (e) {
+            console.log({ e }, { id });
+            if (axios.isAxiosError(e)) {
+                console.log(e.status);
+                toast({
+                  title: `Error `,
+                  description: e.response?.data?.error,
+                });
+              } else {
+                console.log(e);
+                toast({
+                  title: `Error `,
+                  description: "Something has went wrong, please try again",
+                });
+              }
+        }
     };
     return (
         <div className="flex flex-1 flex-col px-[4%] items-center pb-4 rounded">

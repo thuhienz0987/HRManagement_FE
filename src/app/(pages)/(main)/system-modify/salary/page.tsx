@@ -558,8 +558,30 @@ const Salary = () => {
                     console.log({ res });
                     const updatedAllowances = allowances.filter(allowance => allowance._id !== id);
                     setAllowances(updatedAllowances);
+                    const allowance = allowances?.find((allowance) => allowance._id === id);
+                    toast({
+                        title: `Delete department successful `,
+                        description: [
+                            `code: ${allowance?.code}\n`,
+                            `name: ${allowance?.name}\n`,
+                            `amount: ${allowance?.amount}`
+                        ]
+                    });
                 } catch (e) {
                     console.log({ e }, { id });
+                    if (axios.isAxiosError(e)) {
+                        console.log(e.status);
+                        toast({
+                          title: `Error `,
+                          description: e.response?.data?.error,
+                        });
+                      } else {
+                        console.log(e);
+                        toast({
+                          title: `Error `,
+                          description: "Something has went wrong, please try again",
+                        });
+                      }
                 }
                 break;
                 case "holidays":
@@ -575,8 +597,29 @@ const Salary = () => {
                         console.log({ res });
                         const updateHolidays = holidays.filter(holiday => holiday._id !== id);
                         setHolidays(updateHolidays);
+                        const holiday = holidays?.find((holiday) => holiday._id === id);
+                        toast({
+                            title: `Delete department successful `,
+                            description: [
+                                `name: ${holiday?.name}\n`,
+                                `day: ${holiday?.day}`
+                            ]
+                        });
                     } catch (e) {
                         console.log({ e }, { id });
+                        if (axios.isAxiosError(e)) {
+                            console.log(e.status);
+                            toast({
+                              title: `Error `,
+                              description: e.response?.data?.error,
+                            });
+                          } else {
+                            console.log(e);
+                            toast({
+                              title: `Error `,
+                              description: "Something has went wrong, please try again",
+                            });
+                          }
                     }
                     break;
                 default:
