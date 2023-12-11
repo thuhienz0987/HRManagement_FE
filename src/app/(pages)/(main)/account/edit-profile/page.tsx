@@ -10,10 +10,13 @@ import { CameraIcon } from "src/svgs";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
-import { Department, Position, User } from "src/types/userType";
+import { Department, Position, Team, User } from "src/types/userType";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { SingleDatePicker } from "src/components/singleDatePicker";
+import { format, parseISO } from "date-fns";
+import ImageUploading, { ImageListType } from "react-images-uploading";
+import { useToast } from "../../../../../../@/components/ui/use-toast";
 
 const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -24,6 +27,7 @@ const editProfileSchema = yup.object({
         .required("Full name cannot be blank")
         .max(50, "Full name length must be less than 50 characters"),
     department: yup.string().required("Must choose department"),
+    team: yup.string().required("Must choose team"),
     position: yup.string().required("Must choose position"),
     DOB: yup.date().required("D.O.B cannot be blank"),
     gender: yup.string().required("Must choose gender"),
@@ -41,8 +45,8 @@ const editProfileSchema = yup.object({
     homeTown: yup.string().required("Home town cannot be blank"),
     ethnic: yup.string().required("Ethnic cannot be blank"),
     academicLevel: yup.string().required("Must choose academic level"),
-    startDate: yup.date().required("Start date cannot be blank"),
     salaryGrade: yup.number().required("Salary grade cannot be blank"),
+    avatarUrl: yup.string(),
 });
 
 type UserResponse = User & {
@@ -54,6 +58,10 @@ type dDepartment = Department & {
 };
 
 type dPosition = Position & {
+    value: string;
+};
+
+type dTeam = Team & {
     value: string;
 };
 
@@ -72,6 +80,10 @@ const EditUserProfile = () => {
     const [profile, setProfile] = useState<User>();
     const [departments, setDepartments] = useState<dDepartment[]>();
     const [positions, setPositions] = useState<dPosition[]>();
+    const [teams, setTeams] = useState<dTeam[]>();
+    const [isLoading, setIsLoading] = useState(false);
+    const [images, setImages] = useState<ImageListType>([]);
+    const { toast } = useToast();
     const academicLevels = [
         { name: "College", value: "college" },
         { name: "University", value: "university" },
@@ -79,6 +91,108 @@ const EditUserProfile = () => {
         { name: "Doctorate", value: "doctorate" },
     ];
     const axiosPrivate = useAxiosPrivate();
+    const formik = useFormik({
+        initialValues: {
+            fullName: "",
+            department: "",
+            position: "",
+            DOB: new Date(),
+            gender: "",
+            address: "",
+            phoneNumber: "",
+            email: "",
+            homeTown: "",
+            ethnic: "",
+            academicLevel: "",
+            salaryGrade: "",
+            team: "",
+            avatarUrl: "",
+        },
+
+        // Pass the Yup schema to validate the form
+        validationSchema: editProfileSchema,
+
+        // Handle form submission
+        onSubmit: async ({
+            fullName,
+            department,
+            position,
+            DOB,
+            gender,
+            address,
+            phoneNumber,
+            email,
+            homeTown,
+            ethnic,
+            academicLevel,
+            salaryGrade,
+            team,
+            avatarUrl,
+        }) => {
+            setIsLoading(true);
+            if (!profile) {
+                setIsLoading(false);
+                return;
+            }
+            const formData = new FormData();
+            // const img = new File()
+            if (images && images[0].file)
+                formData.append(
+                    "avatarImage",
+                    images[0].file,
+                    new Date() + "_avatarImage"
+                );
+            formData.append("name", fullName);
+            formData.append("phoneNumber", phoneNumber);
+            formData.append("address", address);
+            formData.append("birthday", format(DOB, "dd/MM/yyyy"));
+            formData.append("gender", gender);
+            formData.append("level", academicLevel);
+            formData.append("positionId", position);
+            if (team !== "a") formData.append("teamId", team);
+            if (department !== "a") formData.append("departmentId", department);
+            // formData.append('password', pass);
+
+            console.log(formData);
+            // console.log({userInfo});
+            try {
+                const response = await axiosPrivate.put(
+                    `/user/${_id}`,
+                    formData,
+                    {
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "multipart/form-data",
+                        },
+                        withCredentials: true,
+                    }
+                );
+                console.log("success", JSON.stringify(response.data));
+                toast({
+                    title: `${profile?.name}'s profile has been updated `,
+                    description: format(
+                        new Date(),
+                        "EEEE, MMMM dd, yyyy 'at' h:mm a"
+                    ),
+                });
+            } catch (err) {
+                console.log("err", err);
+                toast({
+                    title: `${profile?.name}'s profile has not been update yet due to error `,
+                    description: format(
+                        new Date(),
+                        "EEEE, MMMM dd, yyyy 'at' h:mm a"
+                    ),
+                });
+                //   setTitle('Error');
+                //   setMessage(err.response.data.error);
+                //   setLoading(false);
+            } finally {
+                setIsLoading(false);
+                //   setVisible(true);
+            }
+        },
+    });
     useEffect(() => {
         const getUserProfile = async (_id: string) => {
             try {
@@ -118,12 +232,26 @@ const EditUserProfile = () => {
             _id && getUserProfile(_id);
         }
     }, []);
+    useEffect(() => {
+        const getTeamsByDepartmentId = async () => {
+            try {
+                const res = await axiosPrivate.get<dTeam[]>(
+                    "/teams/" + formik.values.department
+                );
+                res.data.map((team) => (team.value = team._id));
+                setTeams(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        formik.values?.department?.length && getTeamsByDepartmentId();
+    }, [formik?.values.department]);
 
     useEffect(() => {
         if (profile) {
             formik.initialValues.fullName = profile.name;
-            formik.initialValues.department = profile.departmentId._id;
-            formik.initialValues.position = profile?.positionId._id;
+            formik.initialValues.department = profile?.departmentId?._id || "a";
+            formik.initialValues.position = profile?.positionId?._id;
             formik.initialValues.DOB = new Date(profile.birthday);
             formik.initialValues.gender = profile?.gender;
             formik.initialValues.address = profile?.address;
@@ -132,54 +260,46 @@ const EditUserProfile = () => {
             formik.initialValues.homeTown = profile?.homeTown;
             formik.initialValues.ethnic = profile?.ethnicGroup;
             formik.initialValues.academicLevel = profile?.level;
-            formik.initialValues.startDate = new Date(profile.createAt);
             formik.initialValues.salaryGrade = profile.salaryGrade.toString();
+            formik.initialValues.team = profile?.teamId?._id || "a";
+            formik.initialValues.avatarUrl = profile?.avatarImage;
         }
     }, [profile]);
 
-    const formik = useFormik({
-        initialValues: {
-            fullName: "",
-            department: "",
-            position: "",
-            DOB: new Date(),
-            gender: "",
-            address: "",
-            phoneNumber: "",
-            email: "",
-            homeTown: "",
-            ethnic: "",
-            academicLevel: "",
-            startDate: new Date(),
-            salaryGrade: "",
-        },
-
-        // Pass the Yup schema to validate the form
-        validationSchema: editProfileSchema,
-
-        // Handle form submission
-        onSubmit: async ({
-            fullName,
-            department,
-            position,
-            DOB,
-            gender,
-            address,
-            phoneNumber,
-            email,
-            homeTown,
-            ethnic,
-            academicLevel,
-            startDate,
-            salaryGrade,
-        }) => {},
-    });
-
+    useEffect(() => {
+        console.log({ errors });
+    }, []);
     // Destructure the formik object
     const { errors, touched, handleChange, handleSubmit }: any = formik;
 
     const moveToEditScreen = () => {
         router.replace("/account/edit-profile");
+    };
+    const hasTeam = () => {
+        const dm = process.env.DepartmentManager + "";
+        const hrm = process.env.HRManager + "";
+        const ceo = process.env.CEO + "";
+        if (
+            profile?.roles.includes(hrm) ||
+            profile?.roles.includes(dm) ||
+            profile?.roles.includes(ceo)
+        )
+            return false;
+        return true;
+    };
+    const hasDept = () => {
+        const ceo = process.env.CEO + "";
+        if (profile?.roles.includes(ceo)) return false;
+        return true;
+    };
+    const onChangeImage = (
+        imageList: ImageListType,
+        addUpdateIndex: number[] | undefined
+    ) => {
+        // data for submit
+        console.log(imageList, addUpdateIndex);
+        setImages(imageList);
+        formik.setFieldValue("avatarUrl", imageList[0].dataURL);
     };
     return (
         <div className="flex flex-1 flex-col px-[4%] items-center pb-4">
@@ -188,6 +308,7 @@ const EditUserProfile = () => {
                     label="save"
                     additionalStyle=""
                     callback={handleSubmit}
+                    isLoading={isLoading}
                 />
                 <RegularButton
                     label="cancel"
@@ -195,22 +316,39 @@ const EditUserProfile = () => {
                     callback={moveToEditScreen}
                 />
             </div>
-
             {/* Basic information */}
-
             <div className=" w-11/12 rounded-lg flex bg-white flex-col md:flex-row">
                 <div className="flex flex-col w-1/4 self-center md:self-start">
-                    <div className="flex mt-[20%] mx-7 w-3/4 items-end flex-col justify-end">
-                        <img
-                            src="https://static.vecteezy.com/system/resources/thumbnails/009/734/564/small/default-avatar-profile-icon-of-social-media-user-vector.jpg"
-                            alt="Employee avatar"
-                            className="h-full rounded-full "
-                        />
+                    <ImageUploading
+                        value={images}
+                        onChange={onChangeImage}
+                        multiple={false}
+                    >
+                        {({
+                            imageList,
+                            onImageUpload,
+                            onImageRemoveAll,
+                            onImageUpdate,
+                            onImageRemove,
+                            isDragging,
+                            dragProps,
+                        }) => (
+                            <div className="flex mt-[20%] mx-7 w-3/4 items-end flex-col justify-end">
+                                <img
+                                    src={formik.values.avatarUrl}
+                                    alt="Employee avatar"
+                                    className="h-[200px] w-[200px] rounded-full object-cover"
+                                />
 
-                        <button className=" w-12 h-12 bg-bar rounded-[14px] border-4 border-white items-center justify-center flex absolute">
-                            <CameraIcon width="22" height="18" />
-                        </button>
-                    </div>
+                                <button
+                                    className=" w-12 h-12 bg-bar rounded-[14px] border-4 border-white items-center justify-center flex absolute"
+                                    onClick={onImageUpload}
+                                >
+                                    <CameraIcon width="22" height="18" />
+                                </button>
+                            </div>
+                        )}
+                    </ImageUploading>
                 </div>
 
                 <div className="flex flex-1">
@@ -243,23 +381,28 @@ const EditUserProfile = () => {
                                 </span>
                             )}
                         </div>
-                        <div>
-                            <CustomDropdown
-                                label="Department"
-                                placeholder="Select department"
-                                buttonStyle="bg-white"
-                                options={departments}
-                                value={formik.values.department}
-                                onSelect={(value) =>
-                                    formik.setFieldValue("department", value)
-                                }
-                            />
-                            {errors.department && touched.department && (
-                                <span className={errorClassName}>
-                                    {errors.department}
-                                </span>
-                            )}
-                        </div>
+                        {hasDept() && (
+                            <div>
+                                <CustomDropdown
+                                    label="Department"
+                                    placeholder="Select department"
+                                    buttonStyle="bg-white"
+                                    options={departments}
+                                    value={formik.values.department}
+                                    onSelect={(value) =>
+                                        formik.setFieldValue(
+                                            "department",
+                                            value
+                                        )
+                                    }
+                                />
+                                {errors.department && touched.department && (
+                                    <span className={errorClassName}>
+                                        {errors.department}
+                                    </span>
+                                )}
+                            </div>
+                        )}
                         <div>
                             <CustomDropdown
                                 label="Position"
@@ -270,30 +413,33 @@ const EditUserProfile = () => {
                                 buttonStyle="bg-white"
                                 options={positions}
                                 value={formik.values.position}
+                                disable
                             />
                             {errors.position && touched.position && (
                                 <span className={errorClassName}>
-                                    {errors.team}
+                                    {errors.position}
                                 </span>
                             )}
                         </div>
-                        <div>
-                            <CustomDropdown
-                                label="Team"
-                                placeholder="Select team"
-                                buttonStyle="bg-white"
-                                options={departments}
-                                value={formik.values.department}
-                                onSelect={(value) =>
-                                    formik.setFieldValue("department", value)
-                                }
-                            />
-                            {errors.team && touched.team && (
-                                <span className={errorClassName}>
-                                    {errors.team}
-                                </span>
-                            )}
-                        </div>
+                        {hasTeam() && (
+                            <div>
+                                <CustomDropdown
+                                    label="Team"
+                                    placeholder="Select team"
+                                    buttonStyle="bg-white"
+                                    options={teams}
+                                    value={formik.values.team}
+                                    onSelect={(value) =>
+                                        formik.setFieldValue("team", value)
+                                    }
+                                />
+                                {errors.team && touched.team && (
+                                    <span className={errorClassName}>
+                                        {errors.team}
+                                    </span>
+                                )}
+                            </div>
+                        )}
                         <Input
                             isDisabled
                             className="rounded"
@@ -311,7 +457,18 @@ const EditUserProfile = () => {
                         />
 
                         <div>
-                            <SingleDatePicker label="D.O.B" />
+                            <SingleDatePicker
+                                label="D.O.B"
+                                date={formik.values.DOB}
+                                setDate={(date) => {
+                                    formik.setFieldValue("DOB", date);
+                                }}
+                            />
+                            {errors.DOB && touched.DOB && (
+                                <span className={errorClassName}>
+                                    {errors.DOB}
+                                </span>
+                            )}
                         </div>
 
                         <div>
@@ -326,6 +483,11 @@ const EditUserProfile = () => {
                                 value={formik.values.gender}
                                 name="gender"
                             />
+                            {errors.gender && touched.gender && (
+                                <span className={errorClassName}>
+                                    {errors.gender}
+                                </span>
+                            )}
                         </div>
                         <div className="col-span-2">
                             <Input
@@ -458,10 +620,13 @@ const EditUserProfile = () => {
                                 onSelect={() => null}
                                 options={academicLevels}
                                 value={formik.values.academicLevel}
+                                buttonStyle="bg-white"
                             />
-                        </div>
-                        <div>
-                            <SingleDatePicker label="Start date" />
+                            {errors.academicLevel && touched.academicLevel && (
+                                <span className={errorClassName}>
+                                    {errors.academicLevel}
+                                </span>
+                            )}
                         </div>
                         <h3 className="rounded col-span-2 text-[26px] font-semibold text-[#2C3D3A]">
                             Salary Information
@@ -470,7 +635,7 @@ const EditUserProfile = () => {
                         <Input
                             isDisabled
                             onChange={handleChange}
-                            value={profile?.positionId.basicSalary}
+                            value={profile?.positionId?.basicSalary}
                             className="rounded"
                             radius="sm"
                             variant="bordered"

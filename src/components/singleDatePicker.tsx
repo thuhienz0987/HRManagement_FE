@@ -13,11 +13,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
 export function SingleDatePicker({
     label,
     buttonStyle,
+    date,
+    setDate,
 }: {
     label?: string;
     buttonStyle?: string;
+    date: Date | undefined;
+    setDate: (date: Date | undefined) => void;
 }) {
-    const [date, setDate] = React.useState<Date | undefined>(new Date());
+    // const [date, setDate] = React.useState<Date | undefined>(new Date());
 
     return (
         <div className="w-full bg-white">

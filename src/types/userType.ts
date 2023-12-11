@@ -17,7 +17,8 @@ export interface User {
     email: string;
     dayOff?: string;
     salaryGrade: number;
-    createAt: string;
+    createdAt: string;
+    isEmployee: boolean;
 }
 
 export interface Department {

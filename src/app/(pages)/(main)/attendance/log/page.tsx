@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import StackChart from "src/components/stackChart";
 import { Department, User } from "src/types/userType";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
+import { useRouter } from "next13-progressbar";
 
 type EmployeeAttendance = User & {
     user: User;
@@ -33,6 +34,7 @@ type dDepartment = Department & {
 };
 
 const Log = () => {
+    const router = useRouter();
     const columns: ColumnType[] = [
         {
             title: "No",
@@ -60,9 +62,9 @@ const Log = () => {
             key: "totalOvertimeHours",
         },
         {
-            title: "Status",
-            type: ColumnEnum.textColumn,
-            key: "status",
+            title: "Action",
+            type: ColumnEnum.functionColumn,
+            key: "action",
         },
     ];
     const today = startOfToday();
@@ -84,6 +86,7 @@ const Log = () => {
                     }
                 );
                 res.data.map((employee) => {
+                    employee._id = employee.user._id;
                     employee.code = employee.user.code;
                     employee.name = employee.user.name;
                     employee.departmentId = employee.user.departmentId;
@@ -171,7 +174,13 @@ const Log = () => {
                             /> */}
                         </div>
                     </div>
-                    <TableFirstForm columns={columns} rows={rows()} />
+                    <TableFirstForm
+                        columns={columns}
+                        rows={rows()}
+                        viewFunction={(id) => {
+                            router.push("/attendance/log/" + id);
+                        }}
+                    />
                 </div>
             </div>
             <StackChart />

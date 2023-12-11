@@ -28,7 +28,8 @@ declare module "next-auth" {
         email: string;
         dayOff?: string;
         salaryGrade: number;
-        createAt: string;
+        isEmployee: boolean;
+        createdAt: string;
     }
 }
 
