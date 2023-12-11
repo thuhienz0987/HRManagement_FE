@@ -1,3 +1,4 @@
 {
-    "cSpell.words": ["formik", "nextui", "svgs"]
+    "cSpell.words": ["formik", "nextui", "svgs"],
+    "editor.formatOnSave": true,
 }

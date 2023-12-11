@@ -7,7 +7,6 @@ type Props = {};
 export default async function Home(props: Props) {
   const session = await getServerSession(options);
   console.log({ session });
-
   if (!session) {
     redirect("/signIn");
   } else {
