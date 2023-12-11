@@ -7,6 +7,8 @@ import {
     Selection,
     useDisclosure,
 } from "@nextui-org/react";
+import axios, { AxiosError } from "axios";
+import { useToast } from "../../../../../../@/components/ui/use-toast";
 import { useRouter } from "next13-progressbar";
 import { Key, useState, useEffect } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
@@ -18,8 +20,10 @@ import TableFirstForm, {
 import { SearchIcon } from "src/svgs";
 import { Department, User } from "src/types/userType";
 
+
 type dDepartment = Department & {
     manager: string;
+    manager_id: string;
 };
 type Employee = User & {
     createdAt: string;
@@ -33,10 +37,9 @@ type EditModalProps = {
 
 const Department = () => {
     const router = useRouter();
+    const { toast } = useToast();
     const axiosPrivate = useAxiosPrivate();
     const [departments, setDepartments] = useState<dDepartment[]>();
-
-    const [searchQuery, setSearchQuery] = useState<string>();
 
     const [editableRow, setEditableRow] = useState<dDepartment | null>(null);
 
@@ -85,12 +88,18 @@ const Department = () => {
     const viewDepartment = (id: string) => {
         router.replace("/system-modify/department-details?id=" + id);
     };
+    const generateDepartmentCode = (DepartmentName: string) => {
+        const cleanedDepartmentName = DepartmentName.toUpperCase().replace(/\s/g, "");
+        const DepartmentCode = cleanedDepartmentName.substring(0, 3);
+      
+        return DepartmentCode;
+    };
     const onSave = async (updatedRow: dDepartment) => {
         try {
             const res = await axiosPrivate.put<dDepartment>(
                 "/department/" + updatedRow._id,
                 {
-                    managerId: updatedRow.managerId._id,
+                    managerId: updatedRow.manager_id,
                     name: updatedRow.name,
                 },
                 {
@@ -100,14 +109,33 @@ const Department = () => {
                 }
             );
             console.log({ res });
-
+            updatedRow.code = generateDepartmentCode(updatedRow.name);
             const updatedDepartments = departments?.map((department) =>
                 department._id === updatedRow._id ? updatedRow : department
             );
             setDepartments(updatedDepartments);
             setEditableRow(null);
+            toast({
+                title: `Update department successful `,
+                description: [
+                    `departmentName: ${updatedRow.name}\n`,
+                    ` manager: ${updatedRow.manager}`
+                ]
+            });
         } catch (e) {
-            console.log({ e });
+            if (axios.isAxiosError(e)) {
+                console.log(e.status);
+                toast({
+                  title: `Error `,
+                  description: e.response?.data?.error,
+                });
+              } else {
+                console.log(e);
+                toast({
+                  title: `Error `,
+                  description: "Something has went wrong, please try again",
+                });
+              }
         }
     };
     const handleEdit = (id: string) => {
@@ -119,7 +147,19 @@ const Department = () => {
         const [employees, setEmployees] = useState<Employee[]>();
         const [selectedEmpId, setSelectedEmpId] = useState<string>();
         const [values, setValues] = useState<Selection>();
+        const [searchQuery, setSearchQuery] = useState<string>();
         const [formState, setFormState] = useState(row);
+        const search = () => {
+            let sortedEmp = employees;
+            if (searchQuery) {
+              sortedEmp = sortedEmp?.filter(
+                (emp) =>
+                  emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  emp.code.toLowerCase().includes(searchQuery.toLowerCase())
+              );
+            }
+            return sortedEmp;
+        };
         useEffect(() => {
             const getEmployees = async () => {
                 try {
@@ -169,7 +209,7 @@ const Department = () => {
                             labelPlacement={"outside"}
                             label={
                                 <p className="text-[#5B5F7B] font-medium">
-                                    Manager code
+                                    Manager
                                 </p>
                             }
                             endContent={
@@ -177,18 +217,11 @@ const Department = () => {
                                     <SearchIcon />
                                 </div>
                             }
-                            // onChange={(e) => {
-                            //     setSearchQuery(e.target.value);
-                            //     // const selectedEmployee = employees?.find(
-                            //     //     (employee) => employee._id === selectedEmpId
-                            //     // );
-                            //     // setFormState({
-                            //     //     ...formState,
-                            //     //     manager: selectedEmployee?.name ?? "",
-                            //     // });
-                            // }}
+                            onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                            }}
                         />
-                        {employees && (
+                        {search() && (
                             <Listbox
                                 // topContent={topContent}
                                 classNames={{
@@ -196,7 +229,7 @@ const Department = () => {
                                     list: "max-h-[300px] w-full overflow-y-scroll",
                                 }}
                                 // defaultSelectedKeys={["1"]}
-                                items={employees}
+                                items={search()}
                                 label="Assigned to"
                                 selectionMode="single"
                                 onSelectionChange={(key) => {
@@ -209,6 +242,15 @@ const Department = () => {
                                         selectedArray[0]?.toString() ||
                                             undefined
                                     );
+                                    const selectedEmployee = employees?.find((employee) => 
+                                        employee._id === selectedArray[0]?.toString()
+                                    );
+                                    console.log({selectedEmployee})
+                                    setFormState({
+                                        ...formState,
+                                        manager_id: selectedArray[0]?.toString() || "",
+                                        manager: selectedEmployee?.name || ""
+                                    });
                                 }}
                                 variant="flat"
                             >
@@ -266,8 +308,31 @@ const Department = () => {
                 }
             );
             console.log({ res });
+            const updatedDepartments = departments?.filter(department => department._id !== id);
+            setDepartments(updatedDepartments);
+            const department = departments?.find((department) => department._id === id);
+            toast({
+                title: `Delete department successful `,
+                description: [
+                    `departmentName: ${department?.name}\n`,
+                    ` manager: ${department?.manager}`
+                ]
+            });
         } catch (e) {
             console.log({ e }, { id });
+            if (axios.isAxiosError(e)) {
+                console.log(e.status);
+                toast({
+                  title: `Error `,
+                  description: e.response?.data?.error,
+                });
+              } else {
+                console.log(e);
+                toast({
+                  title: `Error `,
+                  description: "Something has went wrong, please try again",
+                });
+              }
         }
     };
     return (
@@ -294,7 +359,7 @@ const Department = () => {
                             rows={departments}
                             editFunction={handleEdit}
                             viewFunction={viewDepartment}
-                            deleteFunction={deleteDepartment}
+                            // deleteFunction={deleteDepartment}
                         />
                     </div>
                 </div>
