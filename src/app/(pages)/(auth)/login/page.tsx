@@ -8,6 +8,7 @@
 
 "use client";
 
+import "../../../globals.css";
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
