@@ -75,9 +75,9 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                 {
                     name: "Comment Form",
                     href: "/comment-form",
-                    isHidden: session?.user.roles.includes(process.env.Employee)
-                        ? true
-                        : false,
+                    isHidden: session?.user.roles.includes(process.env.CEO) || session?.user.roles.includes(process.env.DepartmentManager) ||session?.user.roles.includes(process.env.TeamManager) 
+                        ? false
+                        : true,
                 },
                 {
                     name: "Comment List",
