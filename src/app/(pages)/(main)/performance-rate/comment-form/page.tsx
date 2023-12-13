@@ -284,7 +284,7 @@ const CommentForm = () => {
 
     const getHeader = () => {
         if (session?.user.roles.includes(process.env.TeamManager))
-            return "Team " + session.user.teamId.name;
+            return session.user.teamId.name;
         if (session?.user.roles.includes(process.env.DepartmentManager))
             return "Team leader of " + session.user.departmentId.name;
         if (session?.user.roles.includes(process.env.CEO))
@@ -300,7 +300,7 @@ const CommentForm = () => {
                 <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start pt-8 pb-20 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
                     <div className="flex w-full justify-between items-center">
                         <h1 className="text-bar block text-3xl font-semibold">
-                            Comments for {getHeader()}
+                            {getHeader()}
                         </h1>
                         <div className="flex gap-3 self-end mb-2">
                             <CustomDropdown
@@ -315,7 +315,7 @@ const CommentForm = () => {
                         </div>
                     </div>
 
-                    <div className="flex w-full items-start py-10 gap-36">
+                    <div className="flex w-full items-start py-5 gap-12">
                         <div>
                             <Input
                                 className="rounded w-auto flex-1"
@@ -403,7 +403,7 @@ const CommentForm = () => {
 
                         <div className="flex flex-1 flex-col gap-1">
                             <p className="text-[#5B5F7B] font-medium">
-                                Employee code
+                                  Score
                             </p>
                             <div className="flex gap-2">
                                 {Array.from(
@@ -432,7 +432,7 @@ const CommentForm = () => {
                             )}
                         </div>
                     </div>
-                    <div className="w-full gap-2 flex flex-col py-10">
+                    <div className="w-full gap-2 flex flex-col py-4">
                         <p className="text-start break-words font-semibold ">
                             Description:
                         </p>
