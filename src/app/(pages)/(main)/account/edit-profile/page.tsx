@@ -34,7 +34,7 @@ const editProfileSchema = yup.object({
     phoneNumber: yup
         .string()
         .required("Phone number cannot be blank")
-        .min(10, "Invalid phone number")
+        .min(9, "Invalid phone number")
         .max(11, "Invalid phone number")
         .matches(phoneRegExp, "Invalid phone number"),
     email: yup.string().required().email("Invalid email"),
