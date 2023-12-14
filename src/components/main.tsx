@@ -68,6 +68,25 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             isHidden: false,
         },
         {
+            name: "Performance Rate",
+            href: "/performance-rate",
+            icon: PresentationChartLineIcon,
+            subSidebar: [
+                {
+                    name: "Comment Form",
+                    href: "/comment-form",
+                    isHidden: session?.user.roles.includes(process.env.CEO) || session?.user.roles.includes(process.env.DepartmentManager) ||session?.user.roles.includes(process.env.TeamManager) 
+                        ? false
+                        : true,
+                },
+                {
+                    name: "Comment List",
+                    href: "/comment-list",
+                },
+            ],
+            isHidden: false,
+        },
+        {
             name: "Reports",
             href: "/reports",
             icon: PresentationChartLineIcon,

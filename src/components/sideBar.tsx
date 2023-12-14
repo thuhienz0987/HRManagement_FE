@@ -134,47 +134,8 @@ const SideBar = ({
                                                         }
                                                     >
                                                         {option.subSidebar.map(
-                                                            (subOption) => (
-                                                                <SubOptionButton
-                                                                    key={
-                                                                        subOption.name
-                                                                    }
-                                                                    option={
-                                                                        option
-                                                                    }
-                                                                    subOption={
-                                                                        subOption
-                                                                    }
-                                                                    pressSubOption={
-                                                                        pressSubOption
-                                                                    }
-                                                                    isSubCurrent={
-                                                                        isSubCurrent
-                                                                    }
-                                                                    sidebarMode={
-                                                                        mode
-                                                                    }
-                                                                />
-                                                            )
-                                                        )}
-                                                    </ul>
-                                                ) : null}
-                                                {option.subSidebar.length &&
-                                                mode == SideBarMode.Small ? (
-                                                    <HoverCardContent className=" w-60 ml-[5px] bg-white">
-                                                        <ul
-                                                            role="list"
-                                                            className={
-                                                                "  p-2 bg-[#2C3D3A] rounded-b-md transition ease-in-out duration-1000"
-                                                                // (hasOpenedSubList(
-                                                                //     option
-                                                                // )
-                                                                //     ? " translate-y-0 opacity-1 visible z-20 relative "
-                                                                //     : " -translate-y-15 opacity-0 invisible -z-10 absolute ")
-                                                            }
-                                                        >
-                                                            {option.subSidebar.map(
-                                                                (subOption) => (
+                                                            (subOption) =>
+                                                                !subOption.isHidden && (
                                                                     <SubOptionButton
                                                                         key={
                                                                             subOption.name
@@ -196,6 +157,47 @@ const SideBar = ({
                                                                         }
                                                                     />
                                                                 )
+                                                        )}
+                                                    </ul>
+                                                ) : null}
+                                                {option.subSidebar.length &&
+                                                mode == SideBarMode.Small ? (
+                                                    <HoverCardContent className=" w-60 ml-[5px] bg-white">
+                                                        <ul
+                                                            role="list"
+                                                            className={
+                                                                "  p-2 bg-[#2C3D3A] rounded-b-md transition ease-in-out duration-1000"
+                                                                // (hasOpenedSubList(
+                                                                //     option
+                                                                // )
+                                                                //     ? " translate-y-0 opacity-1 visible z-20 relative "
+                                                                //     : " -translate-y-15 opacity-0 invisible -z-10 absolute ")
+                                                            }
+                                                        >
+                                                            {option.subSidebar.map(
+                                                                (subOption) =>
+                                                                    !subOption.isHidden && (
+                                                                        <SubOptionButton
+                                                                            key={
+                                                                                subOption.name
+                                                                            }
+                                                                            option={
+                                                                                option
+                                                                            }
+                                                                            subOption={
+                                                                                subOption
+                                                                            }
+                                                                            pressSubOption={
+                                                                                pressSubOption
+                                                                            }
+                                                                            isSubCurrent={
+                                                                                isSubCurrent
+                                                                            }
+                                                                            sidebarMode={
+                                                                                mode
+                                                                            }
+                                                                        />
+                                                                    )
                                                             )}
                                                         </ul>
                                                     </HoverCardContent>

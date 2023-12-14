@@ -1,4 +1,3 @@
-
 export interface Allowances {
     _id: string;
     code: string;
