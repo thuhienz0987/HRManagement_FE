@@ -17,6 +17,7 @@ import { SingleDatePicker } from "src/components/singleDatePicker";
 import { format, parseISO } from "date-fns";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { useToast } from "../../../../../../@/components/ui/use-toast";
+import { errorClassName } from "src/componentsClassName/errorClassName";
 
 const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -38,7 +39,7 @@ const editProfileSchema = yup.object({
     phoneNumber: yup
         .string()
         .required("Phone number cannot be blank")
-        .min(10, "Invalid phone number")
+        .min(9, "Invalid phone number")
         .max(11, "Invalid phone number")
         .matches(phoneRegExp, "Invalid phone number"),
     email: yup.string().required().email("Invalid email"),
@@ -66,8 +67,6 @@ type dTeam = Team & {
 };
 
 const EditUserProfile = () => {
-    const errorClassName =
-        "h-2 text-[#ff2626] text-[10px] font-light self-start ml-4 italic";
 
     const genderOption = [
         { name: "Male", value: "male" },

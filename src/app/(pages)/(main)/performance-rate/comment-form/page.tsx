@@ -24,6 +24,7 @@ import { useFormik } from "formik";
 import { CommentGet, CommentSend } from "src/types/commentType";
 import { useToast } from "../../../../../../@/components/ui/use-toast";
 import axios, { AxiosError } from "axios";
+import { errorClassName } from "src/componentsClassName/errorClassName";
 
 type CommentResponse = {
     message: string;
@@ -58,8 +59,6 @@ const CommentForm = () => {
     type dDepartment = Department & {
         value: string;
     };
-    const errorClassName =
-        "h-2 text-[#ff2626] text-[10px] font-light self-start ml-4 italic";
     const { data: session } = useSession();
     const [employees, setEmployees] = useState<Employee[]>();
     const [selectedEmpId, setSelectedEmpId] = useState<string>();

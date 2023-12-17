@@ -81,7 +81,7 @@ export function RenderRow({
                                 </Tooltip>
                             )}
                             {editFunction && (
-                                <Tooltip content="Edit user">
+                                <Tooltip content="Edit">
                                     <button
                                         className="text-lg text-default-400 cursor-pointer active:opacity-50"
                                         onClick={() => {
@@ -93,7 +93,7 @@ export function RenderRow({
                                 </Tooltip>
                             )}
                             {deleteFunction && (
-                                <Tooltip color="danger" content="Delete user">
+                                <Tooltip color="danger" content="Delete">
                                     <button
                                         className="text-lg text-danger cursor-pointer active:opacity-50"
                                         onClick={() => {

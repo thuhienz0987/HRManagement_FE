@@ -2,6 +2,7 @@
 
 import "../../../globals.css";
 import React, { useState, useEffect, useCallback } from "react";
+import "../../../globals.css";
 import { useRouter } from "next13-progressbar";
 import InputText from "src/components/inputText";
 import axios from "src/apis/axios";
@@ -9,6 +10,9 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { errorClassName } from "src/componentsClassName/errorClassName";
+import RegularButton from "src/components/regularButton";
+import ErrorModel from "src/components/errorModel";
 
 type Props = {};
 
@@ -38,7 +42,9 @@ const signInPayLoadSchema = yup.object({
 
 const SignInForm = (props: Props) => {
     const router = useRouter();
-
+    const [errorMessage, setErrorMessage] = useState<string>();
+    const [visible, setVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     // Formik hook to handle the form state
     const formik = useFormik({
         initialValues: {
@@ -51,6 +57,7 @@ const SignInForm = (props: Props) => {
 
         // Handle form submission
         onSubmit: async ({ email, password }) => {
+            setIsLoading(true);
             try {
                 console.log({ email }, { password });
                 const response = await axios.post(
@@ -73,6 +80,10 @@ const SignInForm = (props: Props) => {
                 router.push("/dashboard");
             } catch (err: any) {
                 console.log("err", err.response.data);
+                setVisible(true);
+                setErrorMessage(err.response.data.error);
+            }finally {
+                setIsLoading(false);
             }
         },
     });
@@ -87,6 +98,11 @@ const SignInForm = (props: Props) => {
 
     return (
         <main className="flex bg-center h-screen w-screen flex-col items-center justify-center p-5 bg-no-repeat bg-fixed bg-cover bg-[url('../../public/assets/images/background.png')] min-h-[75%]">
+            <ErrorModel
+                visible={visible}
+                description={errorMessage}
+                onClose={() => setVisible(false)}
+            />
             <div className="flex flex-col w-5/6 md:w-5/6 lg:w-1/3 lg:self-end sm:w-5/6 h-3/4 self-center lg:self_end sm:self-center justify-center items-center bg-primaryAuth rounded-2xl">
                 <div className="w-2/3 flex flex-col items-center justify-center">
                     <div className="text-[#FAF9F6] font-bold text-3xl">
@@ -101,7 +117,7 @@ const SignInForm = (props: Props) => {
                         label="Email"
                     />
                     {errors.email && touched.email && (
-                        <span className="text-[#ff2626] mt-2 text-[7px] font-bold self-start ml-4">
+                        <span className={errorClassName}>
                             {errors.email}
                         </span>
                     )}
@@ -115,7 +131,7 @@ const SignInForm = (props: Props) => {
                         type="password"
                     />
                     {errors.password && touched.password && (
-                        <span className="text-[#ff2626] mt-2 text-[7px] font-bold self-start ml-4">
+                        <span className={errorClassName}>
                             {errors.password}
                         </span>
                     )}
@@ -128,7 +144,7 @@ const SignInForm = (props: Props) => {
                         </p>
                     </div>
 
-                    <div className="flex items-center flex-row self-start">
+                    <div className="flex items-center flex-row self-start mt-3">
                         <input
                             id="default-checkbox"
                             type="checkbox"
@@ -144,13 +160,12 @@ const SignInForm = (props: Props) => {
                     </div>
 
                     <div className="w-full mt-3 h-10 flex">
-                        <button
-                            type="button"
-                            onClick={handleSubmit}
-                            className="w-full bg-white hover:bg-[#24243f] text-[#24243f] hover:text-[#FAF9F6] hover:border-[#FAF9F6] rounded-md font-bold"
-                        >
-                            SIGN IN
-                        </button>
+                        <RegularButton
+                            callback={handleSubmit}
+                            isLoading={isLoading}
+                            label="SIGN IN"
+                            additionalStyle="w-full bg-white hover:bg-[#24243f] text-[#24243f] hover:text-[#FAF9F6] hover:border-[#FAF9F6] rounded-md font-bold"
+                        />
                     </div>
                 </div>
             </div>
