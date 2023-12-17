@@ -92,7 +92,6 @@ function AttendanceCalendar() {
     const [loading, setLoading] = useState<boolean>(false);
     const [attendances, setAttendances] = useState<MonthAttendance[]>([]);
     const axiosPrivate = useAxiosPrivate();
-    console.log(attendances);
     let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
 
     let days = eachDayOfInterval({
@@ -202,26 +201,26 @@ function AttendanceCalendar() {
         console.log(checkInTime.getHours());
         if (
             checkInTime.getHours() > 7 ||
-            (checkInTime.getHours() == 7 && checkInTime.getMinutes() >= 30)
+            (checkInTime.getHours() == 7 && checkInTime.getMinutes() >= 1)
         )
-            return "late";
+            return "Come late/Leave early";
         if (dateAttendance.checkOutTime) {
             const checkOutTime = new Date(dateAttendance.checkOutTime);
-            if (checkOutTime.getHours() <= 17) return "late";
+            if (checkOutTime.getHours() <= 17) return "Come late/Leave early";
         }
         return "ok";
     };
     return (
-        <div className="flex flex-col border bg-bar p-2 rounded-xl overflow-hidden self-center">
+        <div className="flex flex-col flex-1 border bg-bar p-2 rounded-xl lg:self-center">
             <h3
-                className={`self-center my-2 text-xl font-medium text-[#C89E31] ${tenor_sans.className}`}
+                className={`self-center my-4 text-xl font-medium text-[#C89E31] ${tenor_sans.className}`}
             >
                 Your Attendance
             </h3>
             <div className="flex flex-1 justify-center">
                 <div className=" flex w-full shadow-lg flex-col">
                     <div
-                        className={`rounded-md bg-white pt-2 ${
+                        className={`rounded-md max-md:mt-6 bg-white pt-2 ${
                             loading && " blur-sm"
                         }`}
                     >
@@ -337,14 +336,16 @@ function AttendanceCalendar() {
                                                             previousDay(day)
                                                         )
                                                     ) &&
-                                                dateStatus(day) == "late" &&
+                                                dateStatus(day) ==
+                                                    "Come late/Leave early" &&
                                                 "bg-gradient-to-r from-yellow-500 from-50% to-50% to-transparent opacity-70"
                                             } ${
                                                 dateStatus(day) ===
                                                     dateStatus(
                                                         new Date(nextDay(day))
                                                     ) &&
-                                                dateStatus(day) == "late" &&
+                                                dateStatus(day) ==
+                                                    "Come late/Leave early" &&
                                                 "bg-gradient-to-r to-yellow-500 from-50% to-50% from-transparent opacity-70"
                                             } ${
                                                 dateStatus(day) ===
@@ -357,7 +358,8 @@ function AttendanceCalendar() {
                                                             previousDay(day)
                                                         )
                                                     ) &&
-                                                dateStatus(day) == "late" &&
+                                                dateStatus(day) ==
+                                                    "Come late/Leave early" &&
                                                 "bg-yellow-500 opacity-70"
                                             } ${
                                                 dateStatus(day) ===
@@ -455,7 +457,7 @@ function AttendanceCalendar() {
                                                     }
                                                     ${
                                                         dateStatus(day) ==
-                                                            "late" &&
+                                                            "Come late/Leave early" &&
                                                         "bg-yellow-500"
                                                     }
                                                     ${

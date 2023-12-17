@@ -9,6 +9,7 @@ import {
 import React from "react";
 
 export default function BlurModal({
+    modalStyle,
     title,
     body,
     tittleStyle,
@@ -18,6 +19,7 @@ export default function BlurModal({
     size = "md",
     hideCloseButton = false,
 }: {
+    modalStyle?: string;
     hideCloseButton?: boolean;
     title: React.ReactNode;
     body: React.ReactNode;
@@ -46,6 +48,7 @@ export default function BlurModal({
             size={size}
             hideCloseButton={hideCloseButton}
             scrollBehavior="outside"
+            className={modalStyle}
         >
             <ModalContent>
                 {(onClose) => (

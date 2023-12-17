@@ -44,17 +44,17 @@ function DayCounter({
     }, [ref.current?.offsetWidth]);
     return (
         <div
-            className="flex flex-1 flex-col border bg-bar p-2 rounded-xl overflow-hidden self-center w-full items-center justify-center"
+            className="flex flex-1 flex-col border bg-bar p-2 rounded-xl overflow-hidden w-full items-center justify-center"
             ref={ref}
         >
             <h3
-                className={`self-center my-4 text-xl font-medium text-[#C89E31] ${tenor_sans.className}`}
+                className={`self-center     my-4 text-xl font-medium text-[#C89E31] ${tenor_sans.className}`}
             >
                 Available Paid Leave
             </h3>
             <div className="flex relative justify-center">
                 <ColorCalendarIcon
-                    width={divWidth.toString()}
+                    width={ref.current?.offsetWidth.toString() || "200"}
                     height={divWidth.toString()}
                 />
                 <p

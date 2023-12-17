@@ -45,6 +45,9 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                 {
                     name: "Attendance Form",
                     href: "/form",
+                    isHidden: !session?.user.roles.includes(
+                        process.env.HRManager
+                    ),
                 },
                 {
                     name: "Daily Attendance",
@@ -89,9 +92,14 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                 {
                     name: "Comment Form",
                     href: "/comment-form",
-                    isHidden: session?.user.roles.includes(process.env.CEO) || session?.user.roles.includes(process.env.DepartmentManager) ||session?.user.roles.includes(process.env.TeamManager) 
-                        ? false
-                        : true,
+                    isHidden:
+                        session?.user.roles.includes(process.env.CEO) ||
+                        session?.user.roles.includes(
+                            process.env.DepartmentManager
+                        ) ||
+                        session?.user.roles.includes(process.env.TeamManager)
+                            ? false
+                            : true,
                 },
                 {
                     name: "Comment List",
