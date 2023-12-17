@@ -50,7 +50,6 @@ const AttendanceForm = () => {
 
   console.log(selectedEmpId);
 
-
   const rows = () => {
     let sortedEmp = employees;
     if (searchQuery) {
