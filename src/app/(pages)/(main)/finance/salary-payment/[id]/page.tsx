@@ -36,6 +36,8 @@ const SalaryDetails = ({
     const [isLoading, setIsLoading] = useState(false);
     const allowanceName: string[] = [];
     const [allowanceMoney, setAllowanceMoney] = useState<number>(0);
+    const [totalIncome, setTotalIncome] = useState<number>(0);
+    const [totalSalary, setTotalSalary] = useState<number>(0);
     const { toast } = useToast();
     const axiosPrivate = useAxiosPrivate();
     
@@ -49,7 +51,7 @@ const SalaryDetails = ({
                 res.data.rate = res.data.idComment ? res.data.idComment.rate : 0;
                 res.data.comment = res.data.idComment ? res.data.idComment.comment : "There are no comments yet";
                 res.data.allowanceName = res.data.idAllowance.map((allowance) => allowance.name);
-                res.data.allowanceMoney = res.data.idAllowance.map((allowance) => allowance.amount) ;
+                res.data.allowanceMoney = res.data.idAllowance.map((allowance) => allowance.amount);
                 setIdAllowance(Array.from(new Set(res.data.idAllowance.map((allowance) => allowance._id))));
                 setSalary(res.data);
             } catch (e) {
@@ -77,7 +79,9 @@ const SalaryDetails = ({
             allowances?.map(allowance => allowance._id === id && allowanceName.push(allowance.name))
         });
         let totalAllowanceMoney = 0;
-        if (idAllowance && allowances) {
+        let totalIncomeMoney = 0;
+        let totalSalaryMoney = 0;
+        if (idAllowance && allowances && salary) {
             idAllowance.forEach((id) => {
                 const allowance = allowances.find((allow) => allow._id === id);
                 if (allowance) {
@@ -85,6 +89,12 @@ const SalaryDetails = ({
                 }
             });
             setAllowanceMoney(totalAllowanceMoney);
+            totalIncomeMoney = parseFloat(salary.dayMoney) + totalAllowanceMoney 
+            + parseFloat(salary.bonusMoney) + parseFloat(salary.overTimeMoney) 
+            + parseFloat(salary.overTimeDayMoney) + parseFloat(salary.paidLeaveDaysMoney);
+            totalSalaryMoney = totalIncomeMoney - parseFloat(salary.incomeTaxAmount);
+            setTotalIncome(totalIncomeMoney);
+            setTotalSalary(totalSalaryMoney);
         }
         console.log({allowanceName});
     }, [idAllowance, allowances]);
@@ -119,12 +129,12 @@ const SalaryDetails = ({
             no: 2,
             calculation: "summation",
             details: "Allowance",
-            // amount: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
-            // .format(allowanceMoney)}`,
             amount: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
-            .format(parseFloat(salary?.allowanceAmount ?? '0'))}`,
-            // note: `${allowanceName.join(", ")}`
-            note: ""
+            .format(allowanceMoney)}`,
+            // amount: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
+            // .format(parseFloat(salary?.allowanceAmount ?? '0'))}`,
+            note: `${allowanceName.join(", ")}`
+            // note: ""
         },
         {
             no: 3,
@@ -137,20 +147,13 @@ const SalaryDetails = ({
         {
             no: 4,
             calculation: "summation",
-            details: "Performance rate",
-            amount: salary?.rate,
-            note: salary?.comment
-        },
-        {
-            no: 5,
-            calculation: "summation",
             details: "Salary for over time hours",
             amount: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
             .format(parseFloat(salary?.overTimeMoney ?? '0'))}`,
             note: `${salary?.overTime} hours`
         },
         {
-            no: 6,
+            no: 5,
             calculation: "summation",
             details: "Salary for over time days",
             amount: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
@@ -158,7 +161,7 @@ const SalaryDetails = ({
             note: `${salary?.overTimeDay} days`
         },
         {
-            no: 7,
+            no: 6,
             calculation: "summation",
             details: "Salary for days off is included in the salary",
             amount: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
@@ -166,15 +169,15 @@ const SalaryDetails = ({
             note: `${salary?.paidLeaveDays} days`
         },
         {
-            no: 8,
+            no: 7,
             calculation: "summation",
             details: "Total income",
             amount: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
-            .format(parseFloat(salary?.totalIncome ?? '0'))}`,
+            .format(totalIncome)}`,
             note: ""
         },
         {
-            no: 9,
+            no: 8,
             calculation: "subtraction",
             details: "Tax",
             amount: `-${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
@@ -208,6 +211,7 @@ const SalaryDetails = ({
                 }
             );
             console.log("success", JSON.stringify(response.data));
+            router.push("/finance/salary-payment");
             toast({
                 title: `${salary?.userId.name}'s salary has been updated `,
                 description: format(
@@ -299,6 +303,18 @@ const SalaryDetails = ({
                             </p>
                         </div>
                         <div className="flex text-[#5B5F7B] gap-10">
+                            <p className="inline text-start break-words font-semibold">Performance rate:</p>
+                            <p className=" text-start font-normal inline">
+                            {salary?.rate}
+                            </p>
+                        </div>
+                        <div className="flex text-[#5B5F7B] gap-10">
+                            <p className="inline text-start break-words font-semibold">Comment:</p>
+                            <p className=" text-start font-normal inline">
+                            {salary?.comment}
+                            </p>
+                        </div>
+                        <div className="flex text-[#5B5F7B] gap-10">
                             <p className="inline text-start break-words font-semibold">Absent without permission:</p>
                             <p className=" text-start font-normal inline">
                             {`${(salary?.totalLeaveRequest ?? 0) - (salary?.paidLeaveDays ?? 0)} days`}
@@ -348,7 +364,7 @@ const SalaryDetails = ({
                                 p-2 border-slate-300 text-button font-bold">Total</td>
                                 <td className="border-[1px] flex flex-row flex-1 items-center gap-1 
                                 p-2 border-slate-300 text-button font-bold">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
-                                .format(parseFloat(salary?.totalSalary ?? '0'))}</td>
+                                .format(totalSalary)}</td>
                                 <td className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300"></td>
                             </tr>
                         </tbody>
