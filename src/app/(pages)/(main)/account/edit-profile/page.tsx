@@ -279,9 +279,9 @@ const EditUserProfile = () => {
         router.replace("/account/edit-profile");
     };
     const hasTeam = () => {
-        const dm = process.env.DepartmentManager + "";
-        const hrm = process.env.HRManager + "";
-        const ceo = process.env.CEO + "";
+        const dm = process.env.DepartmentManager 
+        const hrm = process.env.HRManager ;
+        const ceo = process.env.CEO ;
         if (
             profile?.roles.includes(hrm) ||
             profile?.roles.includes(dm) ||
@@ -290,6 +290,7 @@ const EditUserProfile = () => {
             return false;
         return true;
     };
+    const hasTeamResult = hasTeam();
     const hasDept = () => {
         const ceo = process.env.CEO + "";
         if (profile?.roles.includes(ceo)) return false;
@@ -425,7 +426,7 @@ const EditUserProfile = () => {
                                 </span>
                             )}
                         </div>
-                        {hasTeam() && user && (
+                        {user && hasTeamResult &&  (
                             <div>
                                 <CustomDropdown
                                     label="Team"
