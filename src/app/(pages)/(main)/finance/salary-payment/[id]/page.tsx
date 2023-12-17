@@ -29,9 +29,6 @@ const SalaryDetails = ({
         id: string;
     };
 }) => {
-
-    const searchParams = useSearchParams();
-    const _id = searchParams.get("id");
     const router = useRouter();
     const [salary, setSalary] = useState<dSalary>();
     const [allowances, setAllowances] = useState<dAllowances[]>();
@@ -70,6 +67,7 @@ const SalaryDetails = ({
                 console.log({ e });
             }
         };
+        console.log(params.id);
         getSalary(params.id);
         getAllowances();
     }, []);
@@ -202,7 +200,7 @@ const SalaryDetails = ({
         setIsLoading(true);
         try {
             const response = await axiosPrivate.put(
-                `/salary/${_id}`,
+                `/salary/${params.id}`,
                 JSON.stringify({idAllowance}),
                 {
                     headers: { "Content-Type": "application/json" },

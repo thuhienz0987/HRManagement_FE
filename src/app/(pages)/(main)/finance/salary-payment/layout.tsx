@@ -5,4 +5,6 @@ export const metadata: Metadata = {
   title: "Salary payment",
   description: "Salary payment",
 };
-export default Page;
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}

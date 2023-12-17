@@ -94,7 +94,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
     {
       name: "Performance Rate",
       href: "/performance-rate",
-      icon: PresentationChartLineIcon,
+      icon: StarIcon,
       subSidebar: [
         {
           name: "Comment Form",
