@@ -51,10 +51,10 @@ const TableFirstForm = ({
                 </h3>
             )}
             <hr className="w-full h-[2px] bg-[#12306080] border-[1px] mt-4" />
-            <table className="border-[rgba(194, 201, 250, 1)] border-[2px] mt-5 flex flex-col">
+            <table className="border-[rgba(194, 201, 250, 1)] border-[2px] mt-5 flex flex-col max-lg:overflow-x-scroll">
                 {/* title row */}
                 <tbody>
-                    <tr className=" font-sans text-[#2C3D3A] text-xs h-12 bg-[#dde1e6] flex w-full">
+                    <tr className=" font-sans text-[#2C3D3A] text-xs h-12  flex w-full">
                         {columns.map((column, index) => (
                             <th
                                 className={`${
@@ -64,7 +64,7 @@ const TableFirstForm = ({
                                 } ${
                                     column.type == ColumnEnum.indexColumn &&
                                     "flex-[0.5_1_0%]"
-                                } border-x-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300`}
+                                } border-x-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 min-w-[110px] bg-[#dde1e6]`}
                             >
                                 {(() => {
                                     switch (column.type) {
@@ -202,7 +202,7 @@ const EmptyRow = ({
                 column.type == ColumnEnum.indexColumn && "flex-[0.5_1_0%]"
             } ${
                 column.type == ColumnEnum.indexWithCheckBox && "flex-[0.5_1_0%]"
-            } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300 items-center text-[#2C3D3A] font-normal text-xs`}
+            } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300 items-center text-[#2C3D3A] font-normal text-xs min-w-[110px]`}
         >
             {/* {column.type == ColumnEnum.indexColumn && (
                 <>

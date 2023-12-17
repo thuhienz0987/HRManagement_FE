@@ -37,7 +37,7 @@ export function RenderRow({
                     } ${
                         column.type == ColumnEnum.indexWithCheckBox &&
                         "flex-[0.5_1_0%]"
-                    } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300 items-center text-[#2C3D3A] font-normal text-xs`}
+                    } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300 items-center text-[#2C3D3A] font-normal text-xs min-w-[110px]`}
                 >
                     {column.type == ColumnEnum.indexColumn && (
                         <p className="text-xs text-gray-600">{index + 1}</p>

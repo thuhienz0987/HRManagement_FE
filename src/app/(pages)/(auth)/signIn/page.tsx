@@ -2,6 +2,7 @@
 
 import "../../../globals.css";
 import React, { useState, useEffect, useCallback } from "react";
+import "../../../globals.css";
 import { useRouter } from "next13-progressbar";
 import InputText from "src/components/inputText";
 import axios from "src/apis/axios";

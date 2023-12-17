@@ -16,6 +16,8 @@ import {
 import { redirect, useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
 import { useSession } from "next-auth/react";
+import AttendanceIcon from "src/svgs/attendance";
+import StarIcon from "src/svgs/star";
 
 const Main = ({ children }: { children: React.ReactNode }) => {
     const initMode: SideBarMode = SideBarMode.Large;
@@ -38,31 +40,46 @@ const Main = ({ children }: { children: React.ReactNode }) => {
         {
             name: "Attendance ",
             href: "/attendance",
-            icon: UserIcon,
+            icon: AttendanceIcon,
             subSidebar: [
                 {
                     name: "Attendance Form",
                     href: "/form",
+                    isHidden: !session?.user.roles.includes(
+                        process.env.HRManager
+                    ),
                 },
                 {
                     name: "Daily Attendance",
                     href: "/daily",
                 },
                 {
-                    name: "Absent",
+                    name: "Absent List",
                     href: "/absent",
                 },
                 {
-                    name: "Absent form",
+                    name: "Absent Form",
                     href: "/absent-form",
                 },
                 {
-                    name: "Employee list",
+                    name: "Attendance Log",
+                    href: "/log",
+                },
+            ],
+            isHidden: false,
+        },
+        {
+            name: "Employee",
+            href: "/employee",
+            icon: UserIcon,
+            subSidebar: [
+                {
+                    name: "Employee List",
                     href: "/employee-list",
                 },
                 {
-                    name: "Attendance log",
-                    href: "/log",
+                    name: "Add New Employee",
+                    href: "/add-employee",
                 },
             ],
             isHidden: false,
@@ -70,14 +87,19 @@ const Main = ({ children }: { children: React.ReactNode }) => {
         {
             name: "Performance Rate",
             href: "/performance-rate",
-            icon: PresentationChartLineIcon,
+            icon: StarIcon,
             subSidebar: [
                 {
                     name: "Comment Form",
                     href: "/comment-form",
-                    isHidden: session?.user.roles.includes(process.env.CEO) || session?.user.roles.includes(process.env.DepartmentManager) ||session?.user.roles.includes(process.env.TeamManager) 
-                        ? false
-                        : true,
+                    isHidden:
+                        session?.user.roles.includes(process.env.CEO) ||
+                        session?.user.roles.includes(
+                            process.env.DepartmentManager
+                        ) ||
+                        session?.user.roles.includes(process.env.TeamManager)
+                            ? false
+                            : true,
                 },
                 {
                     name: "Comment List",
@@ -92,19 +114,19 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             icon: PresentationChartLineIcon,
             subSidebar: [
                 {
-                    name: "Attendance report",
+                    name: "Attendance Report",
                     href: "/attendance",
                 },
                 {
-                    name: "Leave report",
+                    name: "Leave Report",
                     href: "/leave",
                 },
                 {
-                    name: "New attendance report",
+                    name: "New Attendance Report",
                     href: "/new-attendance",
                 },
                 {
-                    name: "Outcome report",
+                    name: "Outcome Report",
                     href: "/outcome",
                 },
             ],
