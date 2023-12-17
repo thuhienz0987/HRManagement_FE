@@ -74,6 +74,8 @@ const EditUserProfile = () => {
         { name: "Female", value: "female" },
     ];
     const { data: session } = useSession();
+    const user = session?.user;
+    const isHRManager = user?.roles.includes(process.env.HRManager);
     const searchParams = useSearchParams();
     const _id = searchParams.get("id");
     const router = useRouter();
@@ -136,7 +138,7 @@ const EditUserProfile = () => {
             }
             const formData = new FormData();
             // const img = new File()
-            if (images && images[0].file)
+            if (images.length && images[0].file?.size)
                 formData.append(
                     "avatarImage",
                     images[0].file,
@@ -244,7 +246,9 @@ const EditUserProfile = () => {
                 console.log({ e });
             }
         };
-        formik.values?.department?.length && getTeamsByDepartmentId();
+        formik.values?.department?.length &&
+            isHRManager &&
+            getTeamsByDepartmentId();
     }, [formik?.values.department]);
 
     useEffect(() => {
@@ -395,6 +399,7 @@ const EditUserProfile = () => {
                                             value
                                         )
                                     }
+                                    disable={!isHRManager}
                                 />
                                 {errors.department && touched.department && (
                                     <span className={errorClassName}>
@@ -421,17 +426,25 @@ const EditUserProfile = () => {
                                 </span>
                             )}
                         </div>
-                        {hasTeam() && (
+                        {hasTeam() && user && (
                             <div>
                                 <CustomDropdown
                                     label="Team"
                                     placeholder="Select team"
                                     buttonStyle="bg-white"
-                                    options={teams}
+                                    options={
+                                        teams ?? [
+                                            {
+                                                name: user?.teamId.name,
+                                                value: user?.teamId._id,
+                                            },
+                                        ]
+                                    }
                                     value={formik.values.team}
                                     onSelect={(value) =>
                                         formik.setFieldValue("team", value)
                                     }
+                                    disable={!isHRManager}
                                 />
                                 {errors.team && touched.team && (
                                     <span className={errorClassName}>
@@ -631,7 +644,7 @@ const EditUserProfile = () => {
                         <h3 className="rounded col-span-2 text-[26px] font-semibold text-[#2C3D3A]">
                             Salary Information
                         </h3>
-
+                        {/* varies by position */}
                         <Input
                             isDisabled
                             onChange={handleChange}
@@ -651,6 +664,7 @@ const EditUserProfile = () => {
                             name="basicSalary"
                         />
                         <div>
+                            {/* Only HR can change this field */}
                             <Input
                                 className="rounded"
                                 radius="sm"
@@ -667,6 +681,7 @@ const EditUserProfile = () => {
                                 name="salaryGrade"
                                 onChange={handleChange}
                                 value={formik.values.salaryGrade}
+                                isDisabled={!isHRManager}
                             />
                             {errors.salaryGrade && touched.salaryGrade && (
                                 <span className={errorClassName}>

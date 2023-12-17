@@ -49,6 +49,16 @@ function CircleProgress({
                         </span>
                     </div>
                 )}
+                {!incOrDec && (
+                    <div className="flex ">
+                        <div className=" -scale-y-100">
+                            <TrendUpIcon fill="#FFF" />
+                        </div>
+                        <span className="font-medium text-xs text-white">
+                            % Dec
+                        </span>
+                    </div>
+                )}
             </div>
             <CircularProgress
                 classNames={{

@@ -5,7 +5,7 @@ export default withAuth(
     // `withAuth` augments your `Request` with the user's token.
     function middleware(request: NextRequestWithAuth) {
         if (
-            request.nextUrl.pathname.startsWith("/attendance/absent") &&
+            request.nextUrl.pathname.startsWith("/attendance/form") &&
             !request.nextauth.token?.roles.includes(process.env.HRManager)
         ) {
             return NextResponse.rewrite(new URL("/denied", request.url));

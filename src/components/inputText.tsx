@@ -29,7 +29,7 @@ screenProps) => {
             <input
                 type={type}
                 id={id}
-                className={`text-sm rounded-lg border-gray-950 border h-10 p-3 leading-4 ${buttonStyle}`}
+                className={`text-sm rounded-lg border h-10 p-3 leading-4 ${buttonStyle}`}
                 placeholder={placeHolder}
                 value={value}
                 onChange={onChange}

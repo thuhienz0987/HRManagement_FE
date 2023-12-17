@@ -48,6 +48,13 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "./datePicker";
 import RegularButton from "./regularButton";
 import { Event } from "src/types/eventType";
+import { useSession } from "next-auth/react";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import { Holidays } from "src/types/holidaysType";
+import axios from "axios";
+import { useToast } from "../../@/components/ui/use-toast";
+import { SingleDatePicker } from "./singleDatePicker";
 
 const meetings = [
     {
@@ -102,21 +109,79 @@ type dDepartment = Department & {
 
 type Employee = User;
 
+const holidaySchema = yup.object({
+    day: yup.date().required("Holiday date can not be blank"),
+    name: yup
+        .string()
+        .required()
+        .min(1, "Name of holiday must have minimum of 1 character")
+        .max(100, "A name of holiday must have maximum of 100 character"),
+});
+const errorClassName =
+    "h-2 text-[#ff2626] text-[10px] font-light self-start ml-4 italic";
+
+const eventSchema = yup.object({
+    dateTime: yup.string().required("A Event must have a date time"),
+    name: yup
+        .string()
+        .required()
+        .min(1, "Name of event must have minimum of 1 character")
+        .max(50, "Name of event must have maximum of 50 characters"),
+    room: yup
+        .string()
+        .required()
+        .min(1, "Room must have minimum of 1 character")
+        .max(50, "Room must have maximum of 50 characters"),
+    description: yup
+        .string()
+        .required()
+        .min(1, "Description must have minimum of 1 character")
+        .max(500, "Description must have maximum of 500 characters"),
+    users: yup
+        .array()
+        .of(yup.string())
+        .min(1, "Event must have at least 1 user"),
+    optionalUsers: yup.array().of(yup.string()),
+    time: yup.date().required("Provide time please"),
+});
+
 function Calendar() {
+    // declare
     const today = startOfToday();
+    const eventOps = [
+        { name: "Holiday", value: "holiday" },
+        { name: "Meeting", value: "meeting" },
+    ];
+    const axiosPrivate = useAxiosPrivate();
+    const { toast } = useToast();
+
+    // useState
     const [selectedDay, setSelectedDay] = useState(today);
     const [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
     const [employees, setEmployees] = useState<Employee[]>();
     const [departments, setDepartments] = useState<dDepartment[]>();
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const [values, setValues] = useState<Selection>();
+    const [optValues, setOptValues] = useState<Selection>();
     const [selectedEmpId, setSelectedEmpId] = useState<string[]>([]);
-    const [events, setEvents] = useState<Event[]>();
+    const [selectedOptEmpId, setSelectedOptEmpId] = useState<string[]>([]);
+    const [events, setEvents] = useState<Event[]>([]);
+    const [selectedOption, setSelectedOption] = useState<string>("meeting");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [holidays, setHolidays] = useState<Holidays[]>([]);
 
-    // const arrayValues = Array.from(values);
+    //var
+    let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
 
-    const TopContent = () => {
-        if (!selectedEmpId.length) {
+    // modal props and method
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    // session
+    const { data: session } = useSession();
+    const user = session?.user;
+
+    // Header to render
+    const TopContent = ({ selected }: { selected: string[] }) => {
+        if (!selected.length) {
             return null;
         }
 
@@ -127,7 +192,7 @@ function Calendar() {
                 orientation="horizontal"
             >
                 {employees &&
-                    selectedEmpId.map((value) => (
+                    selected.map((value) => (
                         <Chip key={value}>
                             {
                                 employees.find(
@@ -139,18 +204,24 @@ function Calendar() {
             </ScrollShadow>
         );
     };
-    const axiosPrivate = useAxiosPrivate();
 
+    // useEffect
     useEffect(() => {
         const getEvents = async () => {
-            // setLoading(true);
             try {
                 const res = await axiosPrivate.get<Event[]>(`/events`);
                 setEvents(res.data);
             } catch (e) {
                 console.log({ e });
-            } finally {
-                // setLoading(false);
+            }
+        };
+        const getHolidays = async () => {
+            try {
+                const res = await axiosPrivate.get<Holidays[]>("/holidays");
+                console.log(res.data);
+                setHolidays(res.data);
+            } catch (e) {
+                console.log({ e });
             }
         };
         const getEmployees = async () => {
@@ -174,12 +245,11 @@ function Calendar() {
                 console.log({ e });
             }
         };
+        getHolidays();
         getDepartments();
         getEvents();
         getEmployees();
     }, []);
-
-    let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
 
     let days = eachDayOfInterval({
         start: addDays(startOfWeek(firstDayCurrentMonth), 1),
@@ -190,6 +260,7 @@ function Calendar() {
                 : addDays(endOfWeek(endOfMonth(firstDayCurrentMonth)), 1),
     });
 
+    // functions
     function previousMonth() {
         let firstDayNextMonth = add(firstDayCurrentMonth, { months: -1 });
         setCurrentMonth(format(firstDayNextMonth, "MMM-yyyy"));
@@ -202,6 +273,10 @@ function Calendar() {
 
     const selectedDayEvent = events?.filter((e) =>
         isSameDay(parseISO(e.dateTime), selectedDay)
+    );
+
+    const selectedDayHoliday = holidays?.filter((e) =>
+        isSameDay(parseISO(e.day), selectedDay)
     );
 
     const dateFromString = (dateString: string) => {
@@ -221,6 +296,127 @@ function Calendar() {
         if (!hasEvent) return false;
         return true;
     };
+
+    const hasHolidayDate = (date: Date) => {
+        const hasHoliday = holidays?.find((h) => {
+            const holidayDate = new Date(h.day);
+            return (
+                holidayDate.getDate() == date.getDate() &&
+                holidayDate.getMonth() == date.getMonth() &&
+                holidayDate.getFullYear() == date.getFullYear()
+            );
+        });
+        if (!hasHoliday) return false;
+        return true;
+    };
+
+    //form
+    const holidayForm = useFormik({
+        initialValues: {
+            name: "",
+            day: new Date(),
+        },
+
+        // Pass the Yup schema to validate the form
+        validationSchema: holidaySchema,
+
+        // Handle form submission
+        onSubmit: async ({ day, name }) => {
+            setIsLoading(true);
+
+            try {
+                let dayString = format(new Date(day), "dd/MM/yyyy");
+                const res = await axiosPrivate.post<{
+                    holiday: Holidays;
+                    message: string;
+                }>("/holiday", {
+                    name: name,
+                    day: dayString,
+                });
+                console.log({ res });
+                setHolidays([...holidays, res.data.holiday]);
+                toast({
+                    title: `New holiday created`,
+                    description: `Holiday ${res.data.holiday.name} on ${format(
+                        new Date(res.data.holiday.day),
+                        "dd/MM/yyyy"
+                    )}`,
+                });
+            } catch (err) {
+                console.log("err", err);
+                if (axios.isAxiosError(err))
+                    toast({
+                        title: `Error`,
+                        description: err.response?.data.message,
+                    });
+            } finally {
+                setIsLoading(false);
+            }
+        },
+    });
+    const eventForm = useFormik({
+        initialValues: {
+            name: "",
+            time: startOfToday(),
+            dateTime: new Date(),
+            room: "",
+            description: "",
+            users: [],
+            optionalUsers: [],
+        },
+
+        // Pass the Yup schema to validate the form
+        validationSchema: eventSchema,
+
+        // Handle form submission
+        onSubmit: async ({
+            dateTime,
+            name,
+            room,
+            description,
+            users,
+            optionalUsers,
+            time,
+        }) => {
+            setIsLoading(true);
+            dateTime.setHours(time.getHours());
+            dateTime.setMinutes(time.getMinutes());
+            let userArray: { user: string; mandatory: boolean }[] = [];
+            users.map((id) =>
+                userArray.push({
+                    user: id,
+                    mandatory: true,
+                })
+            );
+            optionalUsers.map((id) =>
+                userArray.push({
+                    user: id,
+                    mandatory: false,
+                })
+            );
+            try {
+                const res = await axiosPrivate.post<Event>("/event", {
+                    name,
+                    dateTime,
+                    room,
+                    description,
+                    users: userArray,
+                });
+                console.log({ res });
+                setEvents([...events, res.data]);
+            } catch (err) {
+                console.log("err", err);
+                if (axios.isAxiosError(err))
+                    toast({
+                        title: `Error`,
+                        description: err.response?.data.message,
+                    });
+            } finally {
+                setIsLoading(false);
+            }
+        },
+    });
+
     return (
         <div className="flex flex-1 flex-col border bg-gray-50 border-blue-700 rounded-xl overflow-hidden ">
             <BlurModal
@@ -229,7 +425,15 @@ function Calendar() {
                     <div className="w-full flex justify-between">
                         <p>Add Event</p>
                         <div className="flex gap-2">
-                            <RegularButton label="Save" callback={() => {}} />
+                            <RegularButton
+                                isLoading={isLoading}
+                                label="Save"
+                                callback={() => {
+                                    selectedOption == "meeting"
+                                        ? eventForm.handleSubmit()
+                                        : holidayForm.handleSubmit();
+                                }}
+                            />
                             <RegularButton
                                 additionalStyle="bg-bar"
                                 label="Close"
@@ -240,95 +444,142 @@ function Calendar() {
                 }
                 size="4xl"
                 body={
-                    <div className="flex flex-row overflow-auto gap-3">
+                    <div className="flex flex-row min-h-[300px] gap-3">
                         <div className="flex flex-1 flex-col">
-                            <div className="w-full flex flex-col mt-2">
-                                <h5 className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
-                                    Participants
-                                </h5>
-                            </div>
-                            <Popover
-                                placement="bottom"
-                                classNames={{ content: "max-w-xs w-80" }}
-                            >
-                                <PopoverTrigger>
-                                    <Button className=" max-w-xs bg-white border-2 rounded-md flex justify-start pl-3 text-gray-400">
-                                        {selectedEmpId.length ? (
-                                            <TopContent />
-                                        ) : (
-                                            "Choose participants"
-                                        )}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className=" w-80">
-                                    {employees ? (
-                                        <Listbox
-                                            // topContent={topContent}
-                                            classNames={{
-                                                base: "max-w-xs",
-                                                list: "max-h-[200px] overflow-y-scroll",
-                                            }}
-                                            items={employees}
-                                            label="Assigned to"
-                                            selectionMode="multiple"
-                                            selectedKeys={values}
-                                            onSelectionChange={(key) => {
-                                                setValues(key);
-                                                let selectedArray: Key[] = [];
-                                                if (key instanceof Set) {
-                                                    selectedArray =
-                                                        Array.from(key);
-                                                }
-                                                setSelectedEmpId(
-                                                    selectedArray.map((key) =>
-                                                        key.toString()
-                                                    )
-                                                );
-                                            }}
-                                            variant="flat"
-                                        >
-                                            {(item) => (
-                                                <ListboxItem
-                                                    key={item._id}
-                                                    textValue={item.name}
-                                                >
-                                                    <div className="flex gap-2 items-center">
-                                                        <Avatar
-                                                            alt={item.name}
-                                                            className="flex-shrink-0"
-                                                            size="sm"
-                                                            src={
-                                                                item.avatarImage
-                                                            }
-                                                        />
-                                                        <div className="flex flex-col">
-                                                            <span className="text-small">
-                                                                {item.name}
-                                                            </span>
-                                                            <span className="text-tiny text-default-400">
-                                                                {item.code}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </ListboxItem>
-                                            )}
-                                        </Listbox>
-                                    ) : (
-                                        "Loading..."
-                                    )}
-                                </PopoverContent>
-                            </Popover>
                             <InputText
-                                label="Room"
-                                placeHolder="Choose room"
+                                value={
+                                    selectedOption == "meeting"
+                                        ? eventForm.values.name
+                                        : holidayForm.values.name
+                                }
+                                label={
+                                    selectedOption == "meeting"
+                                        ? "Event Name"
+                                        : "Holiday name"
+                                }
+                                placeHolder={
+                                    selectedOption == "meeting"
+                                        ? "Eg. Annual meeting"
+                                        : "Eg. Tet holiday"
+                                }
                                 id="room"
                                 buttonStyle="w-80 border-2 rounded-md border-[#e8e8e8]"
+                                onChange={(e) => {
+                                    selectedOption == "meeting"
+                                        ? eventForm.setFieldValue(
+                                              "name",
+                                              e.target.value
+                                          )
+                                        : holidayForm.setFieldValue(
+                                              "name",
+                                              e.target.value
+                                          );
+                                }}
                             />
-                            <div className="w-full flex flex-col mt-2">
-                                <p className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
-                                    Description
-                                </p>
-                                <Textarea className="h-[100px] w-11/12" />
+                            {selectedOption == "meeting" &&
+                                eventForm.errors.name &&
+                                eventForm.touched.name && (
+                                    <span className={errorClassName}>
+                                        {eventForm.errors.name}
+                                    </span>
+                                )}
+                            {selectedOption == "holiday" &&
+                                holidayForm.errors.name &&
+                                holidayForm.touched.name && (
+                                    <span className={errorClassName}>
+                                        {holidayForm.errors.name}
+                                    </span>
+                                )}
+                            <div className=" w-80 h-10 p-0 mt-2 gap-2 flex flex-col">
+                                <h5 className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
+                                    Date & Time
+                                </h5>
+                                {selectedOption == "meeting" && (
+                                    <LocalizationProvider
+                                        dateAdapter={AdapterDateFns}
+                                    >
+                                        <div className="flex flex-col">
+                                            <TimeField
+                                                defaultValue={
+                                                    eventForm.values.time
+                                                }
+                                                label={"Start"}
+                                                onChange={(val) =>
+                                                    eventForm.setFieldValue(
+                                                        "time",
+                                                        val
+                                                    )
+                                                }
+                                                sx={{
+                                                    width: "100%",
+                                                    borderWidth: "0px",
+                                                    "& .MuiInputLabel-root.Mui-focused":
+                                                        { color: "#979797" }, //styles the label
+                                                    "& .MuiOutlinedInput-root":
+                                                        {
+                                                            "&:hover > fieldset":
+                                                                {},
+                                                            height: "40px",
+                                                            borderRadius: "6px",
+                                                        },
+                                                    "& .MuiOutlinedInput-notchedOutline":
+                                                        {
+                                                            border: "2px solid #E8E8E8",
+                                                        },
+                                                }}
+                                            />
+                                            {selectedOption == "meeting" &&
+                                                eventForm.errors.time &&
+                                                eventForm.touched.time && (
+                                                    <span
+                                                        className={
+                                                            errorClassName
+                                                        }
+                                                    >
+                                                        <>
+                                                            {
+                                                                eventForm.errors
+                                                                    .dateTime
+                                                            }
+                                                        </>
+                                                    </span>
+                                                )}
+                                        </div>
+                                    </LocalizationProvider>
+                                )}
+                                <SingleDatePicker
+                                    buttonStyle="h-10"
+                                    date={
+                                        selectedOption == "meeting"
+                                            ? eventForm.values.dateTime
+                                            : holidayForm.values.day
+                                    }
+                                    setDate={(date) => {
+                                        selectedOption == "meeting"
+                                            ? eventForm.setFieldValue(
+                                                  "dateTime",
+                                                  date
+                                              )
+                                            : holidayForm.setFieldValue(
+                                                  "day",
+                                                  date
+                                              );
+                                    }}
+                                />
+                                {selectedOption == "meeting" &&
+                                    eventForm.errors.dateTime &&
+                                    eventForm.touched.dateTime && (
+                                        <span className={errorClassName}>
+                                            <>{eventForm.errors.dateTime}</>
+                                        </span>
+                                    )}
+                                {selectedOption == "holiday" &&
+                                    holidayForm.errors.day &&
+                                    holidayForm.touched.day && (
+                                        <span className={errorClassName}>
+                                            <>{holidayForm.errors.day}</>
+                                        </span>
+                                    )}
                             </div>
                         </div>
                         <div className="flex flex-1 flex-col">
@@ -338,63 +589,314 @@ function Calendar() {
                                 buttonStyle="w-80 bg-white"
                                 additionalStyle="mt-2 rounded-md"
                                 labelStyle="text-xs text-[#24243f] pb-2 font-semibold"
+                                options={eventOps}
+                                onSelect={(val) => setSelectedOption(val)}
+                                value={selectedOption}
                             />
-                            <InputText
-                                label="Event Name"
-                                placeHolder="Choose room"
-                                id="room"
-                                buttonStyle="w-80 border-2 rounded-md border-[#e8e8e8]"
-                            />
-                            <div className=" w-80 h-10 p-0 mt-2 gap-2 flex flex-col">
-                                <h5 className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
-                                    Date & Time
-                                </h5>
-                                <LocalizationProvider
-                                    dateAdapter={AdapterDateFns}
-                                >
-                                    <div className="flex gap-2">
-                                        <TimeField
-                                            defaultValue={today}
-                                            label={"Start"}
-                                            sx={{
-                                                width: "100%",
-                                                borderWidth: "0px",
-                                                "& .MuiInputLabel-root.Mui-focused":
-                                                    { color: "#979797" }, //styles the label
-                                                "& .MuiOutlinedInput-root": {
-                                                    "&:hover > fieldset": {},
-                                                    height: "40px",
-                                                    borderRadius: "6px",
-                                                },
-                                                "& .MuiOutlinedInput-notchedOutline":
-                                                    {
-                                                        border: "2px solid #E8E8E8",
-                                                    },
-                                            }}
-                                        />
-                                        <TimeField
-                                            defaultValue={today}
-                                            label={"End"}
-                                            sx={{
-                                                width: "100%",
-                                                borderWidth: "0px",
-                                                "& .MuiInputLabel-root.Mui-focused":
-                                                    { color: "#979797" }, //styles the label
-                                                "& .MuiOutlinedInput-root": {
-                                                    "&:hover > fieldset": {},
-                                                    height: "40px",
-                                                    borderRadius: "6px",
-                                                },
-                                                "& .MuiOutlinedInput-notchedOutline":
-                                                    {
-                                                        border: "2px solid #E8E8E8",
-                                                    },
-                                            }}
-                                        />
+                            {selectedOption == "meeting" &&
+                                eventForm.errors.name &&
+                                eventForm.touched.name && (
+                                    <span
+                                        className={
+                                            "text-white " + errorClassName
+                                        }
+                                    >
+                                        {eventForm.errors.name}
+                                    </span>
+                                )}
+                            {selectedOption == "holiday" &&
+                                holidayForm.errors.name &&
+                                holidayForm.touched.name && (
+                                    <span
+                                        className={
+                                            "text-white " + errorClassName
+                                        }
+                                    >
+                                        {holidayForm.errors.name}
+                                    </span>
+                                )}
+                            {/* Mandatory */}
+                            {selectedOption == "meeting" && (
+                                <>
+                                    <div className="w-full flex flex-col mt-2">
+                                        <h5 className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
+                                            Mandatory Participants
+                                        </h5>
                                     </div>
-                                </LocalizationProvider>
-                                <DatePicker buttonStyle="h-10" />
-                            </div>
+                                    <Popover
+                                        placement="bottom"
+                                        classNames={{
+                                            content: "max-w-xs w-80",
+                                        }}
+                                    >
+                                        <PopoverTrigger>
+                                            <Button className=" max-w-xs bg-white border-2 rounded-md flex justify-start pl-3 text-gray-400">
+                                                {selectedEmpId.length ? (
+                                                    <TopContent
+                                                        selected={selectedEmpId}
+                                                    />
+                                                ) : (
+                                                    "Choose mandatory participants"
+                                                )}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className=" w-80">
+                                            {employees ? (
+                                                <Listbox
+                                                    disabledKeys={
+                                                        eventForm.values
+                                                            .optionalUsers
+                                                    }
+                                                    classNames={{
+                                                        base: "max-w-xs",
+                                                        list: "max-h-[200px] overflow-y-scroll",
+                                                    }}
+                                                    items={employees}
+                                                    label="Assigned to"
+                                                    selectionMode="multiple"
+                                                    selectedKeys={values}
+                                                    onSelectionChange={(
+                                                        key
+                                                    ) => {
+                                                        setValues(key);
+                                                        let selectedArray: Key[] =
+                                                            [];
+                                                        if (
+                                                            key instanceof Set
+                                                        ) {
+                                                            selectedArray =
+                                                                Array.from(key);
+                                                        }
+                                                        setSelectedEmpId(
+                                                            selectedArray.map(
+                                                                (key) =>
+                                                                    key.toString()
+                                                            )
+                                                        );
+                                                        eventForm.setFieldValue(
+                                                            "users",
+                                                            selectedArray.map(
+                                                                (key) =>
+                                                                    key.toString()
+                                                            )
+                                                        );
+                                                    }}
+                                                    variant="flat"
+                                                >
+                                                    {(item) => (
+                                                        <ListboxItem
+                                                            key={item._id}
+                                                            textValue={
+                                                                item.name
+                                                            }
+                                                        >
+                                                            <div className="flex gap-2 items-center">
+                                                                <Avatar
+                                                                    alt={
+                                                                        item.name
+                                                                    }
+                                                                    className="flex-shrink-0"
+                                                                    size="sm"
+                                                                    src={
+                                                                        item.avatarImage
+                                                                    }
+                                                                />
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-small">
+                                                                        {
+                                                                            item.name
+                                                                        }
+                                                                    </span>
+                                                                    <span className="text-tiny text-default-400">
+                                                                        {
+                                                                            item.code
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </ListboxItem>
+                                                    )}
+                                                </Listbox>
+                                            ) : (
+                                                "Loading..."
+                                            )}
+                                        </PopoverContent>
+                                    </Popover>
+                                    {selectedOption == "meeting" &&
+                                        eventForm.errors.users &&
+                                        eventForm.touched.users && (
+                                            <span className={errorClassName}>
+                                                {eventForm.errors.users}
+                                            </span>
+                                        )}
+                                </>
+                            )}
+                            {selectedOption == "meeting" && (
+                                <>
+                                    <div className="w-full flex flex-col mt-2">
+                                        <h5 className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
+                                            Optional Participants
+                                        </h5>
+                                    </div>
+                                    <Popover
+                                        placement="bottom"
+                                        classNames={{
+                                            content: "max-w-xs w-80",
+                                        }}
+                                    >
+                                        <PopoverTrigger>
+                                            <Button className=" max-w-xs bg-white border-2 rounded-md flex justify-start pl-3 text-gray-400">
+                                                {selectedOptEmpId.length ? (
+                                                    <TopContent
+                                                        selected={
+                                                            selectedOptEmpId
+                                                        }
+                                                    />
+                                                ) : (
+                                                    "Choose optional participants"
+                                                )}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className=" w-80">
+                                            {employees ? (
+                                                <Listbox
+                                                    disabledKeys={
+                                                        eventForm.values.users
+                                                    }
+                                                    classNames={{
+                                                        base: "max-w-xs",
+                                                        list: "max-h-[200px] overflow-y-scroll",
+                                                    }}
+                                                    items={employees}
+                                                    label="Assigned to"
+                                                    selectionMode="multiple"
+                                                    selectedKeys={optValues}
+                                                    onSelectionChange={(
+                                                        key
+                                                    ) => {
+                                                        setOptValues(key);
+                                                        let selectedArray: Key[] =
+                                                            [];
+                                                        if (
+                                                            key instanceof Set
+                                                        ) {
+                                                            selectedArray =
+                                                                Array.from(key);
+                                                        }
+                                                        setSelectedOptEmpId(
+                                                            selectedArray.map(
+                                                                (key) =>
+                                                                    key.toString()
+                                                            )
+                                                        );
+                                                        eventForm.setFieldValue(
+                                                            "optionalUsers",
+                                                            selectedArray.map(
+                                                                (key) =>
+                                                                    key.toString()
+                                                            )
+                                                        );
+                                                    }}
+                                                    variant="flat"
+                                                >
+                                                    {(item) => (
+                                                        <ListboxItem
+                                                            key={item._id}
+                                                            textValue={
+                                                                item.name
+                                                            }
+                                                        >
+                                                            <div className="flex gap-2 items-center">
+                                                                <Avatar
+                                                                    alt={
+                                                                        item.name
+                                                                    }
+                                                                    className="flex-shrink-0"
+                                                                    size="sm"
+                                                                    src={
+                                                                        item.avatarImage
+                                                                    }
+                                                                />
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-small">
+                                                                        {
+                                                                            item.name
+                                                                        }
+                                                                    </span>
+                                                                    <span className="text-tiny text-default-400">
+                                                                        {
+                                                                            item.code
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </ListboxItem>
+                                                    )}
+                                                </Listbox>
+                                            ) : (
+                                                "Loading..."
+                                            )}
+                                        </PopoverContent>
+                                    </Popover>
+                                    {selectedOption == "meeting" &&
+                                        eventForm.errors.optionalUsers &&
+                                        eventForm.touched.optionalUsers && (
+                                            <span className={errorClassName}>
+                                                {eventForm.errors.optionalUsers}
+                                            </span>
+                                        )}
+                                    {selectedOption == "meeting" && (
+                                        <>
+                                            <InputText
+                                                label="Room"
+                                                placeHolder="Choose room"
+                                                id="room"
+                                                buttonStyle="w-80 border-2 rounded-md border-[#e8e8e8]"
+                                                onChange={(e) => {
+                                                    eventForm.setFieldValue(
+                                                        "room",
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                value={eventForm.values.room}
+                                            />
+                                            {eventForm.errors.room &&
+                                                eventForm.touched.room && (
+                                                    <span
+                                                        className={
+                                                            errorClassName
+                                                        }
+                                                    >
+                                                        {eventForm.errors.room}
+                                                    </span>
+                                                )}
+                                        </>
+                                    )}
+                                </>
+                            )}
+                            {selectedOption == "meeting" && (
+                                <div className="w-full flex flex-col mt-2">
+                                    <p className="text-xs mb-2 text-[#24243f] dark:text-[#FAF9F6] font-semibold">
+                                        Description
+                                    </p>
+                                    <Textarea
+                                        className="h-[100px] w-11/12"
+                                        onChange={(e) =>
+                                            eventForm.setFieldValue(
+                                                "description",
+                                                e.target.value
+                                            )
+                                        }
+                                        value={eventForm.values.description}
+                                    />
+                                    {eventForm.errors.description &&
+                                        eventForm.touched.description && (
+                                            <span className={errorClassName}>
+                                                {eventForm.errors.description}
+                                            </span>
+                                        )}
+                                </div>
+                            )}
                         </div>
                     </div>
                 }
@@ -414,37 +916,67 @@ function Calendar() {
                             className="lg:h-[350px] h-[270px] w-full"
                             hideScrollBar
                         >
-                            {hasEventDate(selectedDay) ? (
-                                selectedDayEvent?.map((event) => (
-                                    <div className="w-full " key={event._id}>
-                                        <div className="border p-4 border-gray-400 border-solid rounded-xl mb-4 w-full">
-                                            <div className="flex justify-between">
-                                                <a
-                                                    // tabindex="0"
-                                                    className="focus:outline-none text-lg font-medium leading-5 text-gray-800 mt-2"
-                                                >
-                                                    {event.name}
-                                                </a>
-                                                <p className="text-right text-xs font-light leading-3 text-gray-500">
-                                                    {format(
-                                                        parseISO(
-                                                            event.dateTime
-                                                        ),
-                                                        "h:mm aa"
-                                                    )}
-                                                </p>
+                            {hasEventDate(selectedDay) ||
+                            hasHolidayDate(selectedDay) ? (
+                                <>
+                                    <>
+                                        {selectedDayEvent?.map((event) => (
+                                            <div
+                                                className="w-full "
+                                                key={event._id}
+                                            >
+                                                <div className="border p-4 border-gray-400 border-solid rounded-xl mb-4 w-full">
+                                                    <div className="flex justify-between">
+                                                        <a
+                                                            // tabindex="0"
+                                                            className="focus:outline-none text-lg font-medium leading-5 text-gray-800 mt-2"
+                                                        >
+                                                            {event.name}
+                                                        </a>
+                                                        <p className="text-right text-xs font-light leading-3 text-gray-500">
+                                                            {format(
+                                                                parseISO(
+                                                                    event.dateTime
+                                                                ),
+                                                                "h:mm aa"
+                                                            )}
+                                                        </p>
+                                                    </div>
+                                                    <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
+                                                        {event.description}
+                                                    </p>
+                                                    <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
+                                                        {event.room}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
-                                                {event.description}
-                                            </p>
-                                            <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
-                                                {event.room}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))
+                                        ))}
+                                    </>
+                                    <>
+                                        {selectedDayHoliday?.map((holiday) => (
+                                            <div
+                                                className="w-full "
+                                                key={holiday._id}
+                                            >
+                                                <div className="border p-4 border-gray-400 border-solid rounded-xl mb-4 w-full">
+                                                    <div className="flex justify-between">
+                                                        <a
+                                                            // tabindex="0"
+                                                            className="focus:outline-none text-lg font-medium leading-5 text-gray-800 mt-2"
+                                                        >
+                                                            Holiday
+                                                        </a>
+                                                    </div>
+                                                    <p className="text-sm pt-2 pl-2 leading-4 text-gray-600">
+                                                        {holiday.name}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </>
+                                </>
                             ) : (
-                                <p className="text-xs font-light leading-3 text-gray-500">
+                                <p className="text-xs font-light leading-3 text-gray-500 mt-5">
                                     {"There is no event occur on " +
                                         format(selectedDay, "dd MMM")}
                                 </p>
@@ -453,12 +985,22 @@ function Calendar() {
                     </div>
                 </div>
                 <div className="lg:max-w-md flex w-full shadow-lg bg-white flex-col">
-                    <button
-                        onClick={onOpen}
-                        className="self-end mt-5 mr-6 transform transition-all ring-0 ring-gray-300 hover:ring-4 ring-opacity-30 duration-200 rounded-full"
-                    >
-                        <CalendarIcon />
-                    </button>
+                    {(user?.roles.includes(process.env.HRManager) && (
+                        <button
+                            onClick={onOpen}
+                            className="self-end mt-5 mr-6 transform transition-all ring-0 ring-gray-300 hover:ring-4 ring-opacity-30 duration-200 rounded-full"
+                        >
+                            <CalendarIcon />
+                        </button>
+                    )) ||
+                        (user?.roles.includes(process.env.CEO) && (
+                            <button
+                                onClick={onOpen}
+                                className="self-end mt-5 mr-6 transform transition-all ring-0 ring-gray-300 hover:ring-4 ring-opacity-30 duration-200 rounded-full"
+                            >
+                                <CalendarIcon />
+                            </button>
+                        ))}
                     <div className=" p-5 bg-white rounded-r">
                         <div className="px-4 flex items-center justify-between">
                             <span
@@ -592,6 +1134,10 @@ function Calendar() {
                                                     ${
                                                         hasEventDate(day) &&
                                                         "bg-yellow-400"
+                                                    }
+                                                    ${
+                                                        hasHolidayDate(day) &&
+                                                        "bg-[#593FA9] text-white"
                                                     }
                                                     ${
                                                         !isEqual(
