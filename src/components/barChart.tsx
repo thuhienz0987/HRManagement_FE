@@ -27,20 +27,16 @@ ChartJS.register(
 const tenor_sans = Tenor_Sans({ subsets: ["latin"], weight: "400" });
 
 type dataItem = {
-    totalEmployees: number;
-    onTimeEmployees: number;
-    lateEmployees: number;
+    totalWorkTime: string;
     date: string;
 };
 
-function StackChart() {
+function BarChart({ userId }: { userId: string }) {
     const axiosPrivate = useAxiosPrivate();
     const today = new Date();
     const [labels, setLabels] = useState<string[]>([]);
-    const [onTime, setOnTime] = useState<number[]>([]);
-    const [late, setLate] = useState<number[]>([]);
-    const [absent, setAbsent] = useState<number[]>([]);
-    const barThickness = 10;
+    const [hours, setHours] = useState<number[]>([]);
+    const [bg, setBg] = useState<string[]>([]);
     const options = {
         plugins: {
             title: {
@@ -48,6 +44,7 @@ function StackChart() {
                 text: "Chart.js Bar Chart - Stacked",
             },
             legend: {
+                display: false,
                 align: "end",
                 labels: {
                     useBorderRadius: true,
@@ -65,13 +62,8 @@ function StackChart() {
                 },
             },
             y: {
-                stacked: true,
+                stacked: false,
                 beginAtZero: true,
-                ticks: {
-                    callback: (value: number, index: number, values: any[]) => {
-                        if (value <= 100) return `${value}%`;
-                    },
-                },
                 grace: 0,
             },
         },
@@ -80,25 +72,11 @@ function StackChart() {
         labels,
         datasets: [
             {
-                label: "Late",
-                data: late,
-                backgroundColor: "#FFA600CC",
+                label: "Hours",
+                data: hours,
+                backgroundColor: bg,
                 borderWidth: 1,
                 borderRadius: [10],
-            },
-            {
-                label: "On Time",
-                data: onTime,
-                backgroundColor: "#29AB91",
-                borderWidth: 1,
-                borderRadius: 10,
-            },
-            {
-                label: "Absent",
-                data: absent,
-                backgroundColor: "#FF5630CC",
-                borderWidth: 1,
-                borderRadius: 10,
             },
         ],
     };
@@ -107,35 +85,24 @@ function StackChart() {
         const getData = async () => {
             try {
                 const res = await axiosPrivate.get<dataItem[]>(
-                    `/attendanceEmployee/${
+                    `/attendanceWorkTimeADayInMonth/${
                         today.getMonth() + 1
-                    }/${today.getFullYear()}`
+                    }/${today.getFullYear()}/${userId}`
                 );
-                const reverse = res.data.reverse();
                 let tempLabels: string[] = [];
-                let tempOnTime: number[] = [];
-                let tempLate: number[] = [];
-                let tempAbsent: number[] = [];
-                reverse.map((day) => {
+                let tempHours: number[] = [];
+                let tempBgs: string[] = [];
+                res.data.map((day) => {
                     tempLabels.push(format(new Date(day.date), "dd"));
-                    tempOnTime.push(
-                        (day.onTimeEmployees * 100) / day.totalEmployees
-                    );
-                    tempLate.push(
-                        (day.lateEmployees * 100) / day.totalEmployees
-                    );
-                    tempAbsent.push(
-                        ((day.totalEmployees -
-                            day.lateEmployees -
-                            day.onTimeEmployees) *
-                            100) /
-                            day.totalEmployees
-                    );
+                    tempHours.push(parseFloat(day.totalWorkTime));
+                    if (parseFloat(day.totalWorkTime) >= 8)
+                        tempBgs.push("#29AB91");
+                    if (parseFloat(day.totalWorkTime) < 8)
+                        tempBgs.push("#FFA600CC");
                 });
                 setLabels(tempLabels);
-                setOnTime(tempOnTime);
-                setLate(tempLate);
-                setAbsent(tempAbsent);
+                setHours(tempHours);
+                setBg(tempBgs);
             } catch (err) {
                 console.log(err);
             }
@@ -148,7 +115,7 @@ function StackChart() {
             <h1
                 className={`self-left ml-3 my-4 text-xl font-medium text-black ${tenor_sans.className}`}
             >
-                Attendance statistic
+                Working hours per day statistic
             </h1>
             <div
                 className={`flex flex-1 pb-3 items-center justify-start ${
@@ -167,4 +134,4 @@ function StackChart() {
     );
 }
 
-export default StackChart;
+export default BarChart;

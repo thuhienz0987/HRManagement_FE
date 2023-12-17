@@ -52,7 +52,7 @@ const OptionButton = ({
                 (checkIsCurrent(option)
                     ? "bg-white text-black z-30 "
                     : "text-gray-200 hover:text-black hover:bg-gray-100 z-10 transition duration-150 ") +
-                "group flex p-2 text-sm leading-6 font-semibold items-center justify-between w-full " +
+                "group flex p-2 text-[13.5px] leading-6 font-semibold items-center justify-between w-full " +
                 (option.subSidebar.length &&
                 checkIsCurrent(option) &&
                 sidebarMode == SideBarMode.Large

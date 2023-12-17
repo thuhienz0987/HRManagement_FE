@@ -22,10 +22,10 @@ function Header({
         });
     };
     const options = [
-        { name: "Personal Information" },
-        { name: "Attendance log" },
-        { name: "Absent request" },
-        { name: "Salary" },
+        // { name: "Personal Information" },
+        // { name: "Attendance log" },
+        // { name: "Absent request" },
+        { name: "Change password" },
         { name: "Log out", callback: logOut },
     ];
     const [visible, setVisible] = useState(false);
@@ -54,14 +54,14 @@ function Header({
                 </h3>
             </div>
             <div className="flex items-center">
-                <Image
+                {/* <Image
                     className="relative dark:drop-shadow-[1_1_1.3rem_#ffffff70] dark:invert mr-8 "
                     src="/assets/icons/notice.svg"
                     alt="NoticeLogo"
                     width={24}
                     height={24}
                     priority
-                />
+                /> */}
                 <span className=" font-medium text-sm text-white line-clamp-1">
                     {session?.user.name}
                 </span>

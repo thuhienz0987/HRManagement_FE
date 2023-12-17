@@ -16,6 +16,8 @@ import {
 import { redirect, useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
 import { useSession } from "next-auth/react";
+import AttendanceIcon from "src/svgs/attendance";
+import StarIcon from "src/svgs/star";
 
 const Main = ({ children }: { children: React.ReactNode }) => {
   const initMode: SideBarMode = SideBarMode.Large;

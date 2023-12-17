@@ -134,7 +134,7 @@ const AttendanceList = () => {
         return sortedEmp;
     };
     const moveToAddNew = () => {
-        return router.push("/attendance/add-employee");
+        return router.push("/employee/add-employee");
     };
 
     const handleView = (id: string) => {
