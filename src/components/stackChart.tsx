@@ -1,3 +1,4 @@
+"use client"
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -7,6 +8,7 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
+import { Tenor_Sans } from "next/font/google";
 import { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 
@@ -18,6 +20,8 @@ ChartJS.register(
     Tooltip,
     Legend
 );
+
+const tenor_sans = Tenor_Sans({ subsets: ["latin"], weight: "400" });
 
 function StackChart() {
     const barThickness = 10;
@@ -94,21 +98,24 @@ function StackChart() {
         ],
     };
 
-    useEffect(() => {
-        function handleResize() {
-            console.log(
-                "resized to: ",
-                window.innerWidth,
-                "x",
-                window.innerHeight
-            );
-        }
+    // useEffect(() => {
+    //     function handleResize() {
+    //         console.log(
+    //             "resized to: ",
+    //             window.innerWidth,
+    //             "x",
+    //             window.innerHeight
+    //         );
+    //     }
 
-        window.addEventListener("resize", handleResize);
-    });
+    //     window.addEventListener("resize", handleResize);
+    // });
     return (
-        <div className="flex flex-grow border border-blue-700 rounded-xl lg:h-96 md:h-64 h-48 bg-white">
-            <Bar options={options} data={data} />
+        <div className="flex flex-col flex-grow border border-blue-700 rounded-xl h-0 bg-white">
+            <h1 className={`self-left ml-3 my-4 text-xl font-medium text-[#C89E31] ${tenor_sans.className}`}>Attendance statistic</h1>
+            <div className="flex flex-1">
+                <Bar options={options} data={data}/>
+            </div>
         </div>
     );
 }

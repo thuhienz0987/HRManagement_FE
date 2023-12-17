@@ -11,6 +11,7 @@ import React from "react";
 export default function BlurModal({
     title,
     body,
+    tittleStyle,
     isOpen,
     onClose,
     footerButton = true,
@@ -20,6 +21,7 @@ export default function BlurModal({
     hideCloseButton?: boolean;
     title: React.ReactNode;
     body: React.ReactNode;
+    tittleStyle?: string;
     isOpen: boolean;
     onClose?: () => void;
     footerButton?: boolean;
@@ -48,7 +50,7 @@ export default function BlurModal({
             <ModalContent>
                 {(onClose) => (
                     <>
-                        <ModalHeader className="flex flex-col gap-1">
+                        <ModalHeader className={`flex flex-col gap-1 ${tittleStyle}`}>
                             {title}
                         </ModalHeader>
                         <ModalBody>{body}</ModalBody>

@@ -44,7 +44,7 @@ const DashBoard = () => {
     return (
         <div className="flex flex-1 py-6 flex-col gap-y-10 md:px-8 px-3">
             <div className="flex flex-1">
-                <div className="flex flex-col gap-y-10 w-4/6">
+                <div className="flex flex-col gap-y-8 w-4/6">
                     <User
                         className="self-start"
                         name={

@@ -14,6 +14,7 @@ export interface SubSidebar {
     name: string;
     href: string;
     searchParams?: string;
+    isHidden?: boolean;
 }
 const OptionButton = ({
     option,

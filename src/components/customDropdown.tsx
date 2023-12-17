@@ -25,6 +25,7 @@ const CustomDropdown = ({
     value,
     labelStyle,
     name,
+    disable = false,
 }: {
     label?: string;
     placeholder?: string;
@@ -36,6 +37,7 @@ const CustomDropdown = ({
     value?: string;
     labelStyle?: string;
     name?: string;
+    disable?: boolean;
 }) => {
     const ref = useRef<HTMLDivElement>(null);
     const childRef = useRef<HTMLDivElement>(null);
@@ -66,6 +68,7 @@ const CustomDropdown = ({
                 onChange={(e) => onSelect(e.target.value)}
                 selectedKeys={value ? [value] : undefined}
                 name={name}
+                isDisabled={disable}
             >
                 {options.map((item) => (
                     <SelectItem

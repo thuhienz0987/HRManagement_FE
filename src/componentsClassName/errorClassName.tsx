@@ -1,0 +1,1 @@
+export const errorClassName = "text-[#ff2626] text-[5px] font-semibold self-start ml-4 mb-20 italic";
