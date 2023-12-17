@@ -1,16 +1,23 @@
 "use client";
-import { Input } from "@nextui-org/react";
+import { Checkbox, Input, useDisclosure } from "@nextui-org/react";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import CustomDropdown from "src/components/customDropdown";
+import BlurModal from "src/components/modal";
+import RegularButton from "src/components/regularButton";
 import TableFirstForm, {
     ColumnEnum,
     ColumnType,
 } from "src/components/tableFirstForm";
+import axios from "axios";
 import { SearchIcon } from "src/svgs";
+import { Allowances } from "src/types/allowancesType";
 import { CommentGet } from "src/types/commentType";
+import { User } from "src/types/userType";
+import { useToast } from "../../../../../../@/components/ui/use-toast";
+import { useRouter } from "next13-progressbar";
 
 type dCommentGet = CommentGet & {
     revieweeName?: string;
@@ -21,17 +28,27 @@ type dCommentGet = CommentGet & {
     reviewDay: string;
     month: string;
 };
+type dAllowances = Allowances & {
+    value: string;
+};
 
 const CommentForm = () => {
     const axiosPrivate = useAxiosPrivate();
+    const router = useRouter();
     const { data: session } = useSession();
+    const { toast } = useToast();
     const [selfComments, setSelfComments] = useState<dCommentGet[]>([]);
     const [empComments, setEmpComments] = useState<dCommentGet[]>([]);
+    const [allowances, setAllowances] = useState<dAllowances[]>();
+    const [idAllowance, setIdAllowance] = useState<string[]>();
+    const [selectedEmp, setSelectedEmp] = useState<User>();
+    const [isLoading, setIsLoading] = useState(false);
 
     const today = new Date();
     const lastMonth = "/" + today.getMonth() + "/" + today.getFullYear();
     const [selectedMonth, setSelectedMonth] = useState<string>(lastMonth);
     const startDay = new Date(2023, 10, 1, 0, 0, 0, 0);
+    const { isOpen, onOpen, onClose } = useDisclosure();
     function getMonthsBetweenDates() {
         let months = [];
         let date: Date = startDay;
@@ -115,6 +132,11 @@ const CommentForm = () => {
             type: ColumnEnum.textColumn,
             key: "month",
         },
+        {
+            title: "Action",
+            type: ColumnEnum.functionColumn,
+            key: "action",
+        },
     ];
 
     useEffect(() => {
@@ -136,6 +158,20 @@ const CommentForm = () => {
             }
         };
         getSelfComments();
+    }, []);
+    useEffect(() => {
+        const getAllowances = async () => {
+            try {
+                const res = await axiosPrivate.get<dAllowances[]>(
+                    "/allowances"
+                );
+                res.data.map((a) => (a.value = a._id));
+                setAllowances(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getAllowances();
     }, []);
 
     useEffect(() => {
@@ -165,8 +201,114 @@ const CommentForm = () => {
         );
         return filteredRow;
     };
+    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, allowanceId: string) => {
+        if (event.target.checked) {
+          // Add the selected allowance to the idAllowance array
+          setIdAllowance((prevIdAllowance: string[] | undefined) => [
+            ...(prevIdAllowance || []),
+            allowanceId,
+          ]);
+        } else {
+          // Remove the allowance from the idAllowance array if unchecked
+          setIdAllowance((prevIdAllowance: string[] | undefined) =>
+            prevIdAllowance ? prevIdAllowance.filter((id) => id !== allowanceId) : []
+          );
+        }
+    };
+    const salaryFunction = (id: string) => {
+        const employee = empComments.find(comment => comment._id === id)?.revieweeId;
+        setSelectedEmp(employee);
+        console.log({selectedEmp})
+        onOpen()
+    }
+    const calculateSalary = async() => {
+        setIsLoading(true);
+        try {
+            const response = await axiosPrivate.post(
+                `/salary`,
+                {
+                    idAllowance: idAllowance,
+                    userId: selectedEmp?._id
+                },
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                }
+            );
+            console.log("success", JSON.stringify(response.data));
+            onClose();
+            router.push("/finance/salary-payment");
+            toast({
+                title: `${selectedEmp?.name}'s salary has been calculated `,
+                description: format(
+                    new Date(),
+                    "EEEE, MMMM dd, yyyy 'at' h:mm a"
+                ),
+            });
+        } catch (err) {
+            console.log("err", err);
+            onClose();
+            if (axios.isAxiosError(err))
+            toast({
+                title: `${selectedEmp?.name}'s salary has not been calculated yet due to error `,
+                description: format(
+                    new Date(),
+                    "EEEE, MMMM dd, yyyy 'at' h:mm a"
+                ),
+            });
+            //   setTitle('Error');
+            //   setMessage(err.response.data.error);
+            //   setLoading(false);
+        } finally {
+            setIsLoading(false);
+            
+        }
+    }
     return (
         <div className=" w-full flex flex-col gap-y-3">
+            <BlurModal
+                hideCloseButton
+                title={
+                    <div className="w-full flex justify-between">
+                        <p>Calculate Salary</p>
+                        <div className="flex gap-2">
+                            <RegularButton label="Calculate Salary" 
+                            callback={calculateSalary} 
+                            isLoading={isLoading}/>
+                            <RegularButton
+                                additionalStyle="bg-bar"
+                                label="Close"
+                                callback={onClose}
+                            />
+                        </div>
+                    </div>
+                }
+                size="4xl"
+                body={
+                    <div className="flex gap-10 flex-col mt-7 ml-7 mb-7">
+                        <p className="inline text-start break-words font-semibold">List of allowances:</p>
+                        <div className="flex flex-row">
+                            {allowances?.map((allowance) => (
+                            <div className="w-full gap-2 flex flex-row items-center" key={allowance._id}>
+                                <Checkbox
+                                color="warning" 
+                                onChange={(event) => handleCheckboxChange(event, allowance._id)}
+                                />
+                                <p className="text-start break-words font-semibold">
+                                {`${allowance.name}: ${new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND',
+                                }).format(parseFloat(allowance.amount))}`}
+                                </p>
+                            </div>
+                            ))}
+                        </div>
+                    </div>
+                }
+                isOpen={isOpen}
+                onClose={onClose}
+                footerButton={false}
+            />
             <div className="flex flex-1 flex-col bg-white min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg w-[90%] self-center">
                 <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
                     <div className="text-[#2C3D3A] block text-3xl font-semibold">
@@ -193,7 +335,7 @@ const CommentForm = () => {
                     </div>
                 </div>
                 <div className="w-[95%] self-center flex">
-                    <TableFirstForm columns={empColumns} rows={row()} />
+                    <TableFirstForm columns={empColumns} rows={row()} salaryFunction={salaryFunction}/>
                 </div>
             </div>
         </div>

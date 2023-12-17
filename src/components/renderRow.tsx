@@ -11,6 +11,7 @@ export function RenderRow({
     viewFunction,
     editFunction,
     deleteFunction,
+    salaryFunction,
 }: {
     row: any;
     index: number;
@@ -19,6 +20,7 @@ export function RenderRow({
     viewFunction?: (id: string) => void;
     editFunction?: (id: string) => void;
     deleteFunction?: (id: string) => void;
+    salaryFunction?: (id: string) => void;
 }) {
     const [checkedItem, setCheckedItem] = useState(false);
     useEffect(() => {
@@ -101,6 +103,18 @@ export function RenderRow({
                                         }}
                                     >
                                         <DeleteIcon width="16" height="16" />
+                                    </button>
+                                </Tooltip>
+                            )}
+                            {salaryFunction && (
+                                <Tooltip content="Salary">
+                                    <button
+                                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                        onClick={() => {
+                                            salaryFunction(row._id);
+                                        }}
+                                    >
+                                        <p className="text-black-600 font-bold">$</p>
                                     </button>
                                 </Tooltip>
                             )}

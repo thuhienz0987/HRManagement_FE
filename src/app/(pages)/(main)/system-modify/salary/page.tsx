@@ -105,6 +105,9 @@ const Salary = () => {
         const getAllowances = async () => {
             try {
                 const res = await axiosPrivate.get<Allowances[]>("/allowances");
+                // res.data.map((allowance) => {
+                //     allowance.amount = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(parseFloat(allowance.amount));
+                // });
                 setAllowances(res.data);
                 setColumns(allowancesColumns);
                 setRows(res.data);

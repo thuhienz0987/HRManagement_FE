@@ -26,6 +26,7 @@ const TableFirstForm = ({
     viewFunction,
     editFunction,
     deleteFunction,
+    salaryFunction,
 }: {
     columns: ColumnType[];
     tableName?: string;
@@ -33,6 +34,7 @@ const TableFirstForm = ({
     viewFunction?: (id: string) => void;
     editFunction?: (id: string) => void;
     deleteFunction?: (id: string) => void;
+    salaryFunction?: (id: string) => void;
 }) => {
     const [checkedAll, setCheckedAll] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -122,6 +124,7 @@ const TableFirstForm = ({
                                         viewFunction={viewFunction}
                                         editFunction={editFunction}
                                         deleteFunction={deleteFunction}
+                                        salaryFunction={salaryFunction}
                                     />
                                 </tr>
                             )
