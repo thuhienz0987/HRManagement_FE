@@ -4,9 +4,9 @@ import { Toaster } from "../../@/components/ui/toaster";
 
 function Footer() {
     return (
-        <footer className="w-full bg-[#f6f6f6] flex justify-between h-12 items-center px-4  bottom-0 ">
+        <footer className="w-full bg-[#f6f6f6] flex justify-between h-8 items-center px-4  bottom-0 ">
             <Toaster />
-            <span className="text-[#525960]">Footer</span>
+            <span className="text-[#B2B2B2] text-sm">© 2023 MultipleSolutions</span>
         </footer>
     );
 }
