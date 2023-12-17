@@ -8,10 +8,11 @@ import CustomDropdown from "src/components/customDropdown";
 import BlurModal from "src/components/modal";
 import RegularButton from "src/components/regularButton";
 import TableFirstForm, {
-    ColumnEnum,
-    ColumnType,
+  ColumnEnum,
+  ColumnType,
 } from "src/components/tableFirstForm";
 import axios from "axios";
+import allowRows from "src/helper/allowRoles";
 import { SearchIcon } from "src/svgs";
 import { Allowances } from "src/types/allowancesType";
 import { CommentGet } from "src/types/commentType";
@@ -20,13 +21,13 @@ import { useToast } from "../../../../../../@/components/ui/use-toast";
 import { useRouter } from "next13-progressbar";
 
 type dCommentGet = CommentGet & {
-    revieweeName?: string;
-    revieweeCode?: string;
-    reviewerName?: string;
-    commentDate: string;
-    createdAt: string;
-    reviewDay: string;
-    month: string;
+  revieweeName?: string;
+  revieweeCode?: string;
+  reviewerName?: string;
+  commentDate: string;
+  createdAt: string;
+  reviewDay: string;
+  month: string;
 };
 type dAllowances = Allowances & {
     value: string;
@@ -50,57 +51,56 @@ const CommentForm = () => {
     const startDay = new Date(2023, 10, 1, 0, 0, 0, 0);
     const { isOpen, onOpen, onClose } = useDisclosure();
     function getMonthsBetweenDates() {
-        let months = [];
-        let date: Date = startDay;
-        while (startDay <= today) {
-            if (date.getMonth() < today.getMonth()) {
-                const month = date.getMonth() + 1;
-                const year = date.getFullYear();
-                months.push({
-                    name: format(date, "MMM yyyy"),
-                    value: "/" + month + "/" + year,
-                });
-            }
-
-            date.setMonth(date.getMonth() + 1);
+      let months = [];
+      let date: Date = startDay;
+      while (startDay <= today) {
+        if (date.getMonth() < today.getMonth()) {
+          const month = date.getMonth() + 1;
+          const year = date.getFullYear();
+          months.push({
+            name: format(date, "MMM yyyy"),
+            value: "/" + month + "/" + year,
+          });
         }
 
-        return months;
-    }
+        date.setMonth(date.getMonth() + 1);
+      }
+
+      return months;
+    };
     const months = getMonthsBetweenDates();
     const columns: ColumnType[] = [
-        {
-            title: "No",
-            type: ColumnEnum.indexColumn,
-            key: "no",
-        },
-        {
-            title: "Score",
-            type: ColumnEnum.textColumn,
-            key: "rate",
-        },
-        {
-            title: "Comment",
-            type: ColumnEnum.textColumn,
-            key: "comment",
-        },
-        {
-            title: "Month",
-            type: ColumnEnum.textColumn,
-            key: "month",
-        },
-        {
-            title: "Comment Date",
-            type: ColumnEnum.textColumn,
-            key: "reviewDay",
-        },
-        {
-            title: "Action",
-            type: ColumnEnum.functionColumn,
-            key: "action",
-        },
+      {
+        title: "No",
+        type: ColumnEnum.indexColumn,
+        key: "no",
+      },
+      {
+        title: "Score",
+        type: ColumnEnum.textColumn,
+        key: "rate",
+      },
+      {
+        title: "Comment",
+        type: ColumnEnum.textColumn,
+        key: "comment",
+      },
+      {
+        title: "Month",
+        type: ColumnEnum.textColumn,
+        key: "month",
+      },
+      {
+        title: "Comment Date",
+        type: ColumnEnum.textColumn,
+        key: "reviewDay",
+      },
+      {
+        title: "Action",
+        type: ColumnEnum.functionColumn,
+        key: "action",
+      },
     ];
-
     const empColumns: ColumnType[] = [
         {
             title: "No",
@@ -175,32 +175,25 @@ const CommentForm = () => {
     }, []);
 
     useEffect(() => {
-        const getEmployeeComments = async () => {
-            try {
-                const res = await axiosPrivate.get<dCommentGet[]>("/comments");
-                console.log(res.data);
-                res.data.map((emp) => {
-                    emp.revieweeName = emp.revieweeId.name;
-                    emp.reviewerName = emp.reviewerId.name;
-                    const reviewDay = new Date(emp.createdAt);
-                    const reviewOfMonth = new Date(emp.commentMonth);
-                    emp.reviewDay = format(reviewDay, "dd/MM/yyyy");
-                    emp.month = format(reviewOfMonth, "MMM, yyyy");
-                });
-                setEmpComments(res.data);
-            } catch (e) {
-                console.log(e);
-            }
-        };
-        getEmployeeComments();
+      const getEmployeeComments = async () => {
+        try {
+          const res = await axiosPrivate.get<dCommentGet[]>("/comments");
+          console.log(res.data);
+          res.data.map((emp) => {
+            emp.revieweeName = emp.revieweeId.name;
+            emp.reviewerName = emp.reviewerId.name;
+            const reviewDay = new Date(emp.createdAt);
+            const reviewOfMonth = new Date(emp.commentMonth);
+            emp.reviewDay = format(reviewDay, "dd/MM/yyyy");
+            emp.month = format(reviewOfMonth, "MMM, yyyy");
+          });
+          setEmpComments(res.data);
+        } catch (e) {
+          console.log(e);
+        }
+      };
+      getEmployeeComments();
     }, []);
-    const row = () => {
-        let filteredRow = empComments.filter(
-            (emp) =>
-                format(new Date(emp.commentMonth), "/MM/yyyy") == selectedMonth
-        );
-        return filteredRow;
-    };
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, allowanceId: string) => {
         if (event.target.checked) {
           // Add the selected allowance to the idAllowance array
@@ -264,82 +257,96 @@ const CommentForm = () => {
             
         }
     }
-    return (
-        <div className=" w-full flex flex-col gap-y-3">
-            <BlurModal
-                hideCloseButton
-                title={
-                    <div className="w-full flex justify-between">
-                        <p>Calculate Salary</p>
-                        <div className="flex gap-2">
-                            <RegularButton label="Calculate Salary" 
-                            callback={calculateSalary} 
-                            isLoading={isLoading}/>
-                            <RegularButton
-                                additionalStyle="bg-bar"
-                                label="Close"
-                                callback={onClose}
-                            />
-                        </div>
-                    </div>
-                }
-                size="4xl"
-                body={
-                    <div className="flex gap-10 flex-col mt-7 ml-7 mb-7">
-                        <p className="inline text-start break-words font-semibold">List of allowances:</p>
-                        <div className="flex flex-row">
-                            {allowances?.map((allowance) => (
-                            <div className="w-full gap-2 flex flex-row items-center" key={allowance._id}>
-                                <Checkbox
-                                color="warning" 
-                                onChange={(event) => handleCheckboxChange(event, allowance._id)}
-                                />
-                                <p className="text-start break-words font-semibold">
-                                {`${allowance.name}: ${new Intl.NumberFormat('vi-VN', {
-                                    style: 'currency',
-                                    currency: 'VND',
-                                }).format(parseFloat(allowance.amount))}`}
-                                </p>
-                            </div>
-                            ))}
-                        </div>
-                    </div>
-                }
-                isOpen={isOpen}
-                onClose={onClose}
-                footerButton={false}
-            />
-            <div className="flex flex-1 flex-col bg-white min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg w-[90%] self-center">
-                <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
-                    <div className="text-[#2C3D3A] block text-3xl font-semibold">
-                        Personal's comments
-                    </div>
-                </div>
-                <div className="w-[95%] self-center flex">
-                    <TableFirstForm columns={columns} rows={selfComments} />
-                </div>
-            </div>
-            <div className="flex flex-1 flex-col bg-white min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg w-[90%] self-center">
-                <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
-                    <div className="text-[#2C3D3A] block text-3xl font-semibold">
-                        Employee's comments
-                    </div>
-                    <div className=" flex gap-x-3 items-end">
-                        <CustomDropdown
-                            placeholder="Month"
-                            options={months}
-                            buttonStyle="w-[120px] bg-white"
-                            value={selectedMonth}
-                            onSelect={(val) => setSelectedMonth(val)}
+    const row = () => {
+      let filteredRow = empComments.filter(
+        (emp) => format(new Date(emp.commentMonth), "/MM/yyyy") == selectedMonth
+      );
+      return filteredRow;
+    };
+  return (
+    <div className=" w-full flex flex-col gap-y-3">
+      <BlurModal
+            hideCloseButton
+            title={
+                <div className="w-full flex justify-between">
+                    <p>Calculate Salary</p>
+                    <div className="flex gap-2">
+                        <RegularButton label="Calculate Salary" 
+                        callback={calculateSalary} 
+                        isLoading={isLoading}/>
+                        <RegularButton
+                            additionalStyle="bg-bar"
+                            label="Close"
+                            callback={onClose}
                         />
                     </div>
                 </div>
-                <div className="w-[95%] self-center flex">
-                    <TableFirstForm columns={empColumns} rows={row()} salaryFunction={salaryFunction}/>
+            }
+            size="4xl"
+            body={
+                <div className="flex gap-10 flex-col mt-7 ml-7 mb-7">
+                    <p className="inline text-start break-words font-semibold">List of allowances:</p>
+                    <div className="flex flex-row">
+                        {allowances?.map((allowance) => (
+                        <div className="w-full gap-2 flex flex-row items-center" key={allowance._id}>
+                            <Checkbox
+                            color="warning" 
+                            onChange={(event) => handleCheckboxChange(event, allowance._id)}
+                            />
+                            <p className="text-start break-words font-semibold">
+                            {`${allowance.name}: ${new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }).format(parseFloat(allowance.amount))}`}
+                            </p>
+                        </div>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            }
+            isOpen={isOpen}
+            onClose={onClose}
+            footerButton={false}
+        />
+      <div className="flex flex-1 flex-col bg-white min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg w-[90%] self-center">
+        <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
+          <div className="text-[#2C3D3A] block text-3xl font-semibold">
+            Personal's comments
+          </div>
         </div>
-    );
+        <div className="w-[95%] self-center flex">
+          <TableFirstForm columns={columns} rows={selfComments} />
+        </div>
+      </div>
+      {allowRows(
+        [process.env.CEO, process.env.HRManager],
+        session?.user.roles || []
+      ) && (
+        <div className="flex flex-1 flex-col bg-white min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg w-[90%] self-center">
+          <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
+            <div className="text-[#2C3D3A] block text-3xl font-semibold">
+              Employee's comments
+            </div>
+            <div className=" flex gap-x-3 items-end">
+              <CustomDropdown
+                placeholder="Month"
+                options={months}
+                buttonStyle="w-[120px] bg-white"
+                value={selectedMonth}
+                onSelect={(val) => setSelectedMonth(val)}
+              />
+            </div>
+          </div>
+          <div className="w-[95%] self-center flex">
+            <TableFirstForm columns={empColumns} rows={row()} salaryFunction={allowRows(
+                          [process.env.HRManager, process.env.CEO],
+                          session?.user.roles || []
+                        ) ? (salaryFunction) : undefined}/>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default CommentForm;

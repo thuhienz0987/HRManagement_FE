@@ -3,8 +3,8 @@ import { Input } from "@nextui-org/react";
 import CustomDropdown from "src/components/customDropdown";
 import RegularButton from "src/components/regularButton";
 import TableFirstForm, {
-    ColumnEnum,
-    ColumnType,
+  ColumnEnum,
+  ColumnType,
 } from "src/components/tableFirstForm";
 import StackChart from "src/components/stackChart";
 import { SearchIcon } from "src/svgs";
@@ -17,6 +17,8 @@ import { Salary } from "src/types/salaryTypes";
 import { format } from "date-fns";
 import { Department } from "src/types/userType";
 import { useRouter } from "next13-progressbar";
+import { useSession } from "next-auth/react";
+import allowRows from "src/helper/allowRoles";
 
 type dSalary = Salary & {
     departmentName: string;
@@ -28,6 +30,7 @@ type dDepartment = Department & {
 };
 const AdminSalary = () => {
     const { toast } = useToast();
+    const { data: session } = useSession();
     const router = useRouter();
     const today = new Date();
     const startDay = new Date(2023, 10, 1, 0, 0, 0, 0);
@@ -145,44 +148,6 @@ const AdminSalary = () => {
     }
     const months = getMonthsBetweenDates();
     const editSalary = async (id: string) => {
-        // try {
-        //     const res = await axiosPrivate.put<dSalary>(
-        //         "/salary/" + id,
-        //         {
-        //             headers: { "Content-Type": "application/json" },
-
-        //             withCredentials: true,
-        //         }
-        //     );
-        //     console.log({ res });
-        //     const updatedSalaries = salaries?.filter(salary => salary._id !== id);
-        //     setSalaries(updatedSalaries);
-        //     const salary = salaries?.find((salary) => salary._id === id);
-        //     toast({
-        //         title: `Delete salary successful `,
-        //         description: [
-        //             `Employee Code: ${salary?.employeeCode}\t`,
-        //             `Employee Name: ${salary?.employeeName}\t`,
-        //             `Total salary: ${salary?.totalSalary}\t`,
-        //             `Department: ${salary?.departmentName}`
-        //         ]
-        //     });
-        // } catch (e) {
-        //     console.log({ e }, { id });
-        //     if (axios.isAxiosError(e)) {
-        //         console.log(e.status);
-        //         toast({
-        //           title: `Error `,
-        //           description: e.response?.data?.error,
-        //         });
-        //       } else {
-        //         console.log(e);
-        //         toast({
-        //           title: `Error `,
-        //           description: "Something has went wrong, please try again",
-        //         });
-        //       }
-        // }
         router.replace("/finance/salary-payment/" + id);
     };
     return (
@@ -232,7 +197,11 @@ const AdminSalary = () => {
                     </div>
                     <div className="w-[95%] self-center flex">
                         <TableFirstForm columns={columns} rows={rows()}
-                        editFunction={editSalary}/>
+                        editFunction={allowRows(
+                          [process.env.HRManager, process.env.CEO],
+                          session?.user.roles || []
+                        ) ? (editSalary) : undefined}
+                      />
                     </div>
                 </div>
             </div>
@@ -240,7 +209,7 @@ const AdminSalary = () => {
                 <StackChart />
             </div>
         </div>
-    );
-};
+      )}
+      
 
 export default AdminSalary;
