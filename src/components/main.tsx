@@ -99,6 +99,11 @@ const Main = ({ children }: { children: React.ReactNode }) => {
           {
               name: "Add New Employee",
               href: "/add-employee",
+              isHidden:
+              session?.user.roles.includes(process.env.HRManager) ||
+              session?.user.roles.includes(process.env.CEO)
+              ? false
+              : true,
           },
       ],
       isHidden: false,

@@ -107,7 +107,7 @@ const ForgotPasswordForm = (props: Props) => {
                         </span>
                     )}
 
-                    <div className="w-full mt-3 h-10 flex mt-5">
+                    <div className="w-full h-10 flex mt-5">
                         <RegularButton
                             callback={handleSubmit}
                             isLoading={isLoading}
