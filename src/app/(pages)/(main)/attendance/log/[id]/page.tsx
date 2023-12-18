@@ -24,6 +24,7 @@ import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import { useRouter } from "next13-progressbar";
 import { Attendance } from "src/types/attendanceType";
 import { useToast } from "../../../../../../../@/components/ui/use-toast";
+import BarChart from "src/components/barChart";
 
 type EditModalProps = {
     row: dAttendance;
@@ -376,7 +377,7 @@ const Log = ({ params }: { params: { id: string } }) => {
                     />
                 </div>
             </div>
-            <StackChart />
+            <BarChart userId={params.id} />
         </div>
     );
 };

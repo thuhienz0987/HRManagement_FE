@@ -52,7 +52,7 @@ export default withAuth(
       return NextResponse.rewrite(new URL("/denied", request.url));
     }
 
-    //employee-list
+    //add-employee
     if (
       request.nextUrl.pathname == "/employee/add-employee" &&
       !request.nextauth.token?.roles.includes(process.env.HRManager)
