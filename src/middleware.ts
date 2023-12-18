@@ -45,11 +45,19 @@ export default withAuth(
 
         //employee-list
         if (
-            request.nextUrl.pathname == "/attendance/employee-list" &&
+            request.nextUrl.pathname == "/employee/employee-list" &&
             !(
                 request.nextauth.token?.roles.includes(process.env.HRManager) ||
                 request.nextauth.token?.roles.includes(process.env.CEO)
             )
+        ) {
+            return NextResponse.rewrite(new URL("/denied", request.url));
+        }
+
+        //add-employee
+        if (
+            request.nextUrl.pathname == "/employee/add-employee" &&
+            !request.nextauth.token?.roles.includes(process.env.HRManager)
         ) {
             return NextResponse.rewrite(new URL("/denied", request.url));
         }

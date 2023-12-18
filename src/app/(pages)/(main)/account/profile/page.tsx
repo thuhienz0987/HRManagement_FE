@@ -21,6 +21,7 @@ const UserProfile = () => {
   const searchParams = useSearchParams();
   const _id = searchParams.get("id");
   const [profile, setProfile] = useState<User>();
+  const [position, setPosition] = useState<User>();
   const axiosPrivate = useAxiosPrivate();
   useEffect(() => {
     const getUserProfile = async (_id: string) => {
@@ -36,6 +37,20 @@ const UserProfile = () => {
     else {
       _id && getUserProfile(_id);
     }
+
+    // const getUserPosition = async (_id: string) => {
+    //   try {
+    //     const res = await axiosPrivate.get<UserResponse>("/user/" + _id);
+    //     console.log(res.data);
+    //     setProfile(res.data);
+    //   } catch (e) {
+    //     console.log({ e });
+    //   }
+    // };
+    // if (_id == session?.user._id) setProfile(session?.user);
+    // else {
+    //   _id && getUserProfile(_id);
+    // }
   }, []);
   const basicInformation = [
     { label: "Full name", value: profile?.name },
@@ -50,6 +65,8 @@ const UserProfile = () => {
     { label: "Home town", value: profile?.homeTown },
     { label: "Ethnic", value: profile?.ethnicGroup },
     { label: "Employee code", value: profile?.code },
+    { label: "Position", value: profile?.positionId?.name },
+
     // { label: "Position", value: profile?.positionId },
   ];
   const contactInformation = [
@@ -61,6 +78,10 @@ const UserProfile = () => {
     },
   ];
 
+  const salaryInformation = [
+    { label: "Salary grade", value: profile?.salaryGrade },
+    { label: "Basic salary", value: profile?.positionId?.basicSalary },
+  ];
   const moveToEditScreen = () => {
     router.replace("/account/edit-profile?id=" + _id);
   };
@@ -89,9 +110,6 @@ const UserProfile = () => {
                 alt="Employee avatar"
                 className="h-full rounded-full "
               />
-              <button className=" w-12 h-12 bg-bar rounded-[14px] border-4 border-white items-center justify-center flex absolute">
-                <CameraIcon width="22" height="18" />
-              </button>
             </div>
           </div>
           <div className="flex flex-1">
@@ -122,6 +140,29 @@ const UserProfile = () => {
           <div className="flex flex-1">
             <div className="grid grid-rows-3 grid-flow-col auto-rows-min w-full pt-4 pb-3 px-5 gap-y-2 gap-x-7 ">
               {contactInformation.map((info) => (
+                <div className="w-full h-fit flex flex-wrap text-[#5B5F7B]">
+                  <p className="w-1/4 block text-start break-words font-semibold">
+                    {info.label}:
+                  </p>
+                  <p className=" text-start font-normal">{info.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact information */}
+      <div className="w-11/12 mt-9 p-10 bg-white rounded-md">
+        <div className="  bg-[#F1F6FF] rounded-lg flex flex-row shadow-md ">
+          <div className="flex flex-col w-1/4">
+            <div className=" rounded-tl-lg rounded-br-xl bg-button h-fit w-fit p-1 font-semibold text-white">
+              Salary Information
+            </div>
+          </div>
+          <div className="flex flex-1">
+            <div className="grid grid-rows-3 grid-flow-col auto-rows-min w-full pt-4 pb-3 px-5 gap-y-2 gap-x-7 ">
+              {salaryInformation.map((info) => (
                 <div className="w-full h-fit flex flex-wrap text-[#5B5F7B]">
                   <p className="w-1/4 block text-start break-words font-semibold">
                     {info.label}:
