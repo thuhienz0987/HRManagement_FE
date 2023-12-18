@@ -87,22 +87,25 @@ const Main = ({ children }: { children: React.ReactNode }) => {
       href: "/employee",
       icon: UserIcon,
       subSidebar: [
-          {
-              name: "Employee List",
-              href: "/employee-list",
-              isHidden:
-              session?.user.roles.includes(process.env.HRManager) ||
-              session?.user.roles.includes(process.env.CEO)
+        {
+          name: "Employee List",
+          href: "/employee-list",
+          isHidden:
+            session?.user.roles.includes(process.env.HRManager) ||
+            session?.user.roles.includes(process.env.CEO)
               ? false
               : true,
-          },
-          {
-              name: "Add New Employee",
-              href: "/add-employee",
-          },
+        },
+        {
+          name: "Add New Employee",
+          href: "/add-employee",
+          isHidden: session?.user.roles.includes(process.env.HRManager)
+            ? false
+            : true,
+        },
       ],
       isHidden: false,
-  },
+    },
     {
       name: "Performance Rate",
       href: "/performance-rate",
