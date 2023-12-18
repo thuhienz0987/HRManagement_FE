@@ -71,15 +71,15 @@ const Main = ({ children }: { children: React.ReactNode }) => {
           name: "Absent form",
           href: "/absent-form",
         },
-        {
-          name: "Employee list",
-          href: "/employee-list",
-          isHidden:
-            session?.user.roles.includes(process.env.HRManager) ||
-            session?.user.roles.includes(process.env.CEO)
-              ? false
-              : true,
-        },
+        // {
+        //   name: "Employee list",
+        //   href: "/employee-list",
+        //   isHidden:
+        //     session?.user.roles.includes(process.env.HRManager) ||
+        //     session?.user.roles.includes(process.env.CEO)
+        //       ? false
+        //       : true,
+        // },
         {
           name: "Attendance log",
           href:
@@ -91,6 +91,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
       ],
       isHidden: false,
     },
+
     {
       name: "Performance Rate",
       href: "/performance-rate",
