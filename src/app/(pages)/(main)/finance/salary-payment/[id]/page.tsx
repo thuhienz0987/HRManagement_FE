@@ -9,6 +9,8 @@ import { format, parseISO } from "date-fns";
 import { useToast } from "../../../../../../../@/components/ui/use-toast";
 import { Salary } from "src/types/salaryTypes";
 import { Allowances } from "src/types/allowancesType";
+import allowRows from "src/helper/allowRoles";
+import { useSession } from "next-auth/react";
 
 
 type dSalary = Salary & {
@@ -30,6 +32,7 @@ const SalaryDetails = ({
     };
 }) => {
     const router = useRouter();
+    const { data: session } = useSession();
     const [salary, setSalary] = useState<dSalary>();
     const [allowances, setAllowances] = useState<dAllowances[]>();
     const [idAllowance, setIdAllowance] = useState<string[]>();
@@ -237,19 +240,21 @@ const SalaryDetails = ({
     }
     return (
         <div className="flex flex-1 flex-col px-[4%] items-center pb-4">
-            <div className="flex gap-3 self-end mb-2">
-                <RegularButton
-                    label="Submit"
-                    additionalStyle=""
-                    callback={handleSubmit}
-                    isLoading={isLoading}
-                />
-                {/* <RegularButton
-                    label="cancel"
-                    additionalStyle="bg-[#BDBDBD]"
-                    callback={moveToEditScreen}
-                /> */}
-            </div>
+            {allowRows([process.env.HRManager], session?.user.roles || []) && (
+                <div className="flex gap-3 self-end mb-2">
+                    <RegularButton
+                        label="Submit"
+                        additionalStyle=""
+                        callback={handleSubmit}
+                        isLoading={isLoading}
+                    />
+                    {/* <RegularButton
+                        label="cancel"
+                        additionalStyle="bg-[#BDBDBD]"
+                        callback={moveToEditScreen}
+                    /> */}
+                </div>
+            )}
             {/* Basic information */}
             <div className=" w-11/12 rounded-lg flex bg-white flex-col md:flex-row">
                 <div className="flex flex-1 flex-col items-center">
@@ -262,23 +267,25 @@ const SalaryDetails = ({
                             />
                         </div>
                     </div>
-                    <div className="flex text-[#5B5F7B] gap-10 flex-col mt-7 ml-7">
-                        <p className="inline text-start break-words font-semibold">List of allowances:</p>
-                        {allowances?.map((allowance) => (
-                        <div className="w-full gap-2 flex flex-row items-center" key={allowance._id}>
-                            <Checkbox
-                            color="warning" isSelected={idAllowance?.includes(allowance._id)}
-                            onChange={(event) => handleCheckboxChange(event, allowance._id)}
-                            />
-                            <p className="text-start break-words font-semibold">
-                            {`${allowance.name}: ${new Intl.NumberFormat('vi-VN', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }).format(parseFloat(allowance.amount))}`}
-                            </p>
+                    {allowRows([process.env.HRManager], session?.user.roles || []) && (
+                        <div className="flex text-[#5B5F7B] gap-10 flex-col mt-7 ml-7">
+                            <p className="inline text-start break-words font-semibold">List of allowances:</p>
+                            {allowances?.map((allowance) => (
+                            <div className="w-full gap-2 flex flex-row items-center" key={allowance._id}>
+                                <Checkbox
+                                color="warning" isSelected={idAllowance?.includes(allowance._id)}
+                                onChange={(event) => handleCheckboxChange(event, allowance._id)}
+                                />
+                                <p className="text-start break-words font-semibold">
+                                {`${allowance.name}: ${new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND',
+                                }).format(parseFloat(allowance.amount))}`}
+                                </p>
+                            </div>
+                            ))}
                         </div>
-                        ))}
-                    </div>
+                    )}
                 </div>
                 <div className="flex flex-[2_2_0%] flex-col">
                     <div className="md:grid flex flex-col grid-cols-1 md:grid-cols-2 md:grid-flow-row w-full pt-16 pb-3 px-5 gap-y-5 gap-x-7">
