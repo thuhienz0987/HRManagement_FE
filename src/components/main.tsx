@@ -40,7 +40,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
     {
       name: "Attendance ",
       href: "/attendance",
-      icon: UserIcon,
+      icon: AttendanceIcon,
       subSidebar: [
         {
           name: "Attendance Form",
@@ -61,18 +61,34 @@ const Main = ({ children }: { children: React.ReactNode }) => {
               : true,
         },
         {
-          name: "Absent",
+          name: "Absent List",
           href: "/absent",
           // isHidden: session?.user.roles.includes(process.env.HRManager)
           //   ? false
           //   : true,
         },
         {
-          name: "Absent form",
+          name: "Absent Form",
           href: "/absent-form",
         },
         {
-          name: "Employee list",
+          name: "Attendance Log",
+          href:
+            session?.user.roles.includes(process.env.HRManager) ||
+            session?.user.roles.includes(process.env.CEO)
+              ? "/log"
+              : "/log/" + session?.user._id,
+        },
+      ],
+      isHidden: false,
+    },
+    {
+      name: "Employee",
+      href: "/employee",
+      icon: UserIcon,
+      subSidebar: [
+        {
+          name: "Employee List",
           href: "/employee-list",
           isHidden:
             session?.user.roles.includes(process.env.HRManager) ||
@@ -81,12 +97,11 @@ const Main = ({ children }: { children: React.ReactNode }) => {
               : true,
         },
         {
-          name: "Attendance log",
-          href:
-            session?.user.roles.includes(process.env.HRManager) ||
-            session?.user.roles.includes(process.env.CEO)
-              ? "/log"
-              : "/log/" + session?.user._id,
+          name: "Add New Employee",
+          href: "/add-employee",
+          isHidden: session?.user.roles.includes(process.env.HRManager)
+            ? false
+            : true,
         },
       ],
       isHidden: false,
@@ -115,12 +130,12 @@ const Main = ({ children }: { children: React.ReactNode }) => {
       isHidden: false,
     },
     {
-      name: "Reports",
+      name: "Statistic",
       href: "/reports",
       icon: PresentationChartLineIcon,
       subSidebar: [
         {
-          name: "Attendance report",
+          name: "Attendance Statistic",
           href: "/attendance",
           isHidden:
             session?.user.roles.includes(process.env.HRManager) ||
@@ -129,7 +144,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
               : true,
         },
         {
-          name: "Leave report",
+          name: "Leave Statistic",
           href: "/leave",
           isHidden:
             session?.user.roles.includes(process.env.HRManager) ||
@@ -138,17 +153,8 @@ const Main = ({ children }: { children: React.ReactNode }) => {
               : true,
         },
         {
-          name: "New attendance report",
+          name: "New Statistic",
           href: "/new-attendance",
-          isHidden:
-            session?.user.roles.includes(process.env.HRManager) ||
-            session?.user.roles.includes(process.env.CEO)
-              ? false
-              : true,
-        },
-        {
-          name: "Outcome report",
-          href: "/outcome",
           isHidden:
             session?.user.roles.includes(process.env.HRManager) ||
             session?.user.roles.includes(process.env.CEO)
