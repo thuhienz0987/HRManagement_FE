@@ -5,4 +5,6 @@ export const metadata: Metadata = {
   title: "Absent",
   description: "Absent",
 };
-export default Page;
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}
