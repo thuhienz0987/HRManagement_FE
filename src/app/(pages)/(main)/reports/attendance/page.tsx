@@ -1,57 +1,253 @@
 "use client";
+import { Input } from "@nextui-org/react";
+import { format, startOfToday } from "date-fns";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
+import CustomDropdown from "src/components/customDropdown";
 import PieChart from "src/components/pieChart";
+import TableFirstForm, {
+    ColumnEnum,
+    ColumnType,
+} from "src/components/tableFirstForm";
+import allowRows from "src/helper/allowRoles";
+import { SearchIcon } from "src/svgs";
+import { Department, User } from "src/types/userType";
 
 type NewEmpResponse = {
-  departmentName: string;
-  employeeRatio: number;
+    departmentName: string;
+    employeeRatio: number;
+};
+
+type EmployeeAttendance = User & {
+    user: User;
+    totalOvertimeHours: number;
+    totalWorkingDays: number;
+};
+
+type dDepartment = Department & {
+    value: string;
 };
 
 const Reports = () => {
-  const axiosPrivate = useAxiosPrivate();
-  const [newEmpLabel, setNewEmpLabel] = useState<string[]>();
-  const [newEmpRatio, setNewEmpRatio] = useState<number[]>();
-  useEffect(() => {
-    const getNewEmpRatio = async () => {
-      try {
-        const res = await axiosPrivate.get<NewEmpResponse[]>(
-          "/departmentNewEmployeeRatio/10/2023"
-        );
-        let label: string[] = [];
-        let ratio: number[] = [];
-        res.data.forEach((dept) => {
-          label.push(dept.departmentName);
-          ratio.push(dept.employeeRatio);
-        });
-        setNewEmpLabel(label);
-        setNewEmpRatio(ratio);
-      } catch (e) {
-        console.log({ e });
-      }
+    const axiosPrivate = useAxiosPrivate();
+    const { data: session } = useSession();
+    const [newEmpLabel, setNewEmpLabel] = useState<string[]>();
+    const [newEmpRatio, setNewEmpRatio] = useState<number[]>();
+    const columns: ColumnType[] = [
+        {
+            title: "No",
+            type: ColumnEnum.indexColumn,
+            key: "no",
+        },
+        {
+            title: "Employee Code",
+            type: ColumnEnum.textColumn,
+            key: "code",
+        },
+        {
+            title: "Full Name",
+            type: ColumnEnum.textColumn,
+            key: "name",
+        },
+        {
+            title: "Working day",
+            type: ColumnEnum.textColumn,
+            key: "totalWorkingDays",
+        },
+        {
+            title: "Overtime",
+            type: ColumnEnum.textColumn,
+            key: "totalOvertimeHours",
+        },
+        {
+            title: "Action",
+            type: ColumnEnum.functionColumn,
+            key: "action",
+        },
+    ];
+    const today = startOfToday();
+    const [employeeAttendances, setEmployeeAttendances] =
+        useState<EmployeeAttendance[]>();
+    const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
+    const thisMonth = "/" + currentMonth + "/" + today.getFullYear();
+    const [selectedMonth, setSelectedMonth] = useState<string>(thisMonth);
+    const [departments, setDepartments] = useState<dDepartment[]>();
+    const [sortedDept, setSortedDept] = useState<string>();
+    const [searchQuery, setSearchQuery] = useState<string>();
+    const startDay = new Date(2023, 10, 1, 0, 0, 0, 0);
+    function getMonthsBetweenDates() {
+        let months = [];
+        let date: Date = startDay;
+        while (startDay <= today) {
+            if (date.getMonth() < today.getMonth()) {
+                const month = date.getMonth() + 1;
+                const year = date.getFullYear();
+                months.push({
+                    name: format(date, "MMM yyyy"),
+                    value: "/" + month + "/" + year,
+                });
+            }
+
+            date.setMonth(date.getMonth() + 1);
+        }
+
+        return months;
+    }
+    useEffect(() => {
+        const getEmployees = async (month: number, year: number) => {
+            try {
+                const res = await axiosPrivate.get<EmployeeAttendance[]>(
+                    `/attendancesByMonth_total/${month}/${year}`,
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        withCredentials: true,
+                    }
+                );
+                res.data.map((employee) => {
+                    employee._id = employee.user._id;
+                    employee.code = employee.user.code;
+                    employee.name = employee.user.name;
+                    employee.departmentId = employee.user.departmentId;
+                });
+                console.log(res.data);
+                setEmployeeAttendances(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        const getDepartments = async () => {
+            try {
+                const res = await axiosPrivate.get<dDepartment[]>(
+                    "/departments"
+                );
+                res.data.map((dept) => (dept.value = dept.name));
+                setDepartments(res.data);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getDepartments();
+        getEmployees(currentMonth, today.getFullYear());
+    }, []);
+    const rows = () => {
+        let sortedEmp = employeeAttendances;
+        if (searchQuery) {
+            sortedEmp = sortedEmp?.filter(
+                (emp) =>
+                    emp.name
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    emp.code.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+        if (sortedDept) {
+            sortedEmp = sortedEmp?.filter(
+                (emp) => emp?.departmentId?.name == sortedDept
+            );
+        }
+        return sortedEmp;
     };
-    getNewEmpRatio();
-  }, []);
-  return (
-    <div className="flex w-full items-center justify-center">
-      <div className="flex w-[90%] self-center bg-white border border-blue-600 rounded-md">
-        {newEmpLabel && newEmpRatio && (
-          <PieChart
-            dataset={newEmpRatio}
-            label={newEmpLabel}
-            title="New employees"
-          />
-        )}
-        {newEmpLabel && newEmpRatio && (
-          <PieChart
-            dataset={newEmpRatio}
-            label={newEmpLabel}
-            title="New employees"
-          />
-        )}
-      </div>
-    </div>
-  );
+    useEffect(() => {
+        const getNewEmpRatio = async () => {
+            try {
+                const res = await axiosPrivate.get<NewEmpResponse[]>(
+                    "/departmentNewEmployeeRatio/10/2023"
+                );
+                let label: string[] = [];
+                let ratio: number[] = [];
+                res.data.forEach((dept) => {
+                    label.push(dept.departmentName);
+                    ratio.push(dept.employeeRatio);
+                });
+                setNewEmpLabel(label);
+                setNewEmpRatio(ratio);
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getNewEmpRatio();
+    }, []);
+
+    const months = getMonthsBetweenDates();
+    return (
+        <div className="flex w-full items-center justify-center flex-col gap-3">
+            <div className=" flex gap-x-7 items-end w-[90%]">
+                <Input
+                    className="rounded w-auto flex-1"
+                    classNames={{
+                        inputWrapper: "bg-white border",
+                    }}
+                    radius="sm"
+                    variant="bordered"
+                    key={"a"}
+                    type="email"
+                    placeholder="Search"
+                    labelPlacement={"outside"}
+                    endContent={
+                        <div className="bg-black p-1 rounded opacity-80">
+                            <SearchIcon />
+                        </div>
+                    }
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {allowRows(
+                    [
+                        process.env.HRManager,
+                        process.env.CEO,
+                        process.env.DepartmentManager,
+                        process.env.TeamManager,
+                    ],
+                    session?.user.roles || []
+                ) && (
+                    <CustomDropdown
+                        placeholder="Select department"
+                        additionalStyle="flex-1 h-full"
+                        buttonStyle="bg-white border h-[39px]"
+                        options={departments}
+                        onSelect={setSortedDept}
+                        value={sortedDept}
+                    />
+                )}
+                <CustomDropdown
+                    placeholder="Month"
+                    options={months}
+                    buttonStyle="w-[120px] bg-white"
+                    value={selectedMonth}
+                    onSelect={(val) => setSelectedMonth(val)}
+                    // additionalStyle="w-[100px]"
+                />
+            </div>
+            <div className="flex flex-1 flex-col bg-white w-[90%] items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
+                <div className="w-[95%] self-center flex flex-col">
+                    <div className="w-full flex flex-row justify-between items-center">
+                        <h3 className=" text-[26px] font-semibold text-[#2C3D3A]">
+                            Attendance log
+                        </h3>
+                        <div className="flex gap-3">
+                            {/* <CustomDropdown
+                                placeholder="Month"
+                                additionalStyle="min-w-[100px]"
+                                buttonStyle="bg-white border"
+                            /> */}
+                        </div>
+                    </div>
+                    <TableFirstForm
+                        columns={columns}
+                        rows={rows()}
+                        // viewFunction={(id) => {
+                        //     router.push("/attendance/log/" + id);
+                        // }}
+                    />
+                </div>
+            </div>
+            <div className="flex w-[90%] h-[400px] self-center bg-white border border-blue-600 rounded-md">
+                {newEmpLabel && newEmpRatio && (
+                    <PieChart dataset={newEmpRatio} label={newEmpLabel} />
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default Reports;
