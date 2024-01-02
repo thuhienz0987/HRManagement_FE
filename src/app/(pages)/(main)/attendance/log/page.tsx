@@ -136,7 +136,7 @@ const Log = () => {
         <Input
           className="rounded w-auto flex-1"
           classNames={{
-            inputWrapper: "bg-white border",
+            inputWrapper: "bg-white border dark:bg-[#3b3b3b]",
           }}
           radius="sm"
           variant="bordered"
@@ -145,7 +145,7 @@ const Log = () => {
           placeholder="Search"
           labelPlacement={"outside"}
           endContent={
-            <div className="bg-black p-1 rounded opacity-80">
+            <div className="bg-black p-1 rounded opacity-80 dark:bg-[#3b3b3b]">
               <SearchIcon />
             </div>
           }
@@ -163,7 +163,7 @@ const Log = () => {
           <CustomDropdown
             placeholder="Select department"
             additionalStyle="flex-1 h-full"
-            buttonStyle="bg-white border h-[39px]"
+            buttonStyle="bg-white border h-[39px] dark:bg-[#3b3b3b]"
             options={departments}
             onSelect={setSortedDept}
             value={sortedDept}

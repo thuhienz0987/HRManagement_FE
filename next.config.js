@@ -24,9 +24,4 @@ const nextConfig = {
   },
 };
 
-module.exports = {
-  nextConfig,
-  mode: "jit",
-  darkMode: "class",
-  purge: ["./public/**/*.html", "./src/**/*.{js,jsx,ts,tsx,vue}"],
-};
+module.exports = nextConfig;

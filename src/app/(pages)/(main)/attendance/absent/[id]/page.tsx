@@ -230,8 +230,8 @@ const AbsentDetail = ({
               </>
             )}
           </div>
-          <div className="flex flex-1 flex-col bg-white  w-full min-h-unit-3 items-start pt-8 pb-20 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
-            <p className=" font-semibold text-2xl self-center mb-3 text-black">
+          <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start pt-8 pb-20 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
+            <p className=" font-semibold text-2xl self-center mb-3 text-black dark:text-button">
               Application for Leave of Absence
             </p>
             <div className="flex justify-between w-full">

@@ -188,28 +188,14 @@ const EmptyRow = ({
   return columns.map((column) => (
     <th
       key={column.key}
-      className={`${index % 2 ? "bg-[#E9EFF2] " : "bg-white"} ${
-        column.type == ColumnEnum.indexColumn && "flex-[0.5_1_0%]"
-      } ${
+      className={`${
+        index % 2
+          ? "bg-[#E9EFF2] dark:bg-[040D1230]"
+          : "bg-white dark:bg-[#040D1220]"
+      } ${column.type == ColumnEnum.indexColumn && "flex-[0.5_1_0%]"} ${
         column.type == ColumnEnum.indexWithCheckBox && "flex-[0.5_1_0%]"
       } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300 items-center text-[#2C3D3A] dark:text-whiteOff font-normal text-xs min-w-[110px]`}
     >
-      {/* {column.type == ColumnEnum.indexColumn && (
-                <>
-                    <Checkbox
-                        size="sm"
-                        color="default"
-                        classNames={{
-                            label: "text-xs text-gray-600",
-                            base: " self-start",
-                        }}
-                        onClick={() => setCheckedItem(!checkedItem)}
-                        isSelected={checkedItem}
-                    >
-                        {index + 1}
-                    </Checkbox>
-                </>
-            )} */}
       {"  "}
     </th>
   ));

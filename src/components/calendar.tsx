@@ -55,49 +55,8 @@ import { Holidays } from "src/types/holidaysType";
 import axios from "axios";
 import { useToast } from "../../@/components/ui/use-toast";
 import { SingleDatePicker } from "./singleDatePicker";
-
-const meetings = [
-  {
-    id: 1,
-    name: "Leslie Alexander",
-    imageUrl:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    startDatetime: "2022-05-11T13:00",
-    endDatetime: "2022-05-11T14:30",
-  },
-  {
-    id: 2,
-    name: "Michael Foster",
-    imageUrl:
-      "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    startDatetime: "2022-05-20T09:00",
-    endDatetime: "2022-05-20T11:30",
-  },
-  {
-    id: 3,
-    name: "Dries Vincent",
-    imageUrl:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    startDatetime: "2022-05-20T17:00",
-    endDatetime: "2022-05-20T18:30",
-  },
-  {
-    id: 4,
-    name: "Leslie Alexander",
-    imageUrl:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    startDatetime: "2022-06-09T13:00",
-    endDatetime: "2022-06-09T14:30",
-  },
-  {
-    id: 5,
-    name: "Michael Foster",
-    imageUrl:
-      "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    startDatetime: "2022-05-13T14:00",
-    endDatetime: "2022-05-13T14:30",
-  },
-];
+import { useTheme } from "next-themes";
+import { color } from "framer-motion";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -151,7 +110,7 @@ function Calendar() {
   ];
   const axiosPrivate = useAxiosPrivate();
   const { toast } = useToast();
-
+  const { theme } = useTheme();
   // useState
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
@@ -451,7 +410,7 @@ function Calendar() {
                     : "Eg. Tet holiday"
                 }
                 id="room"
-                buttonStyle="w-80 border-2 rounded-md border-[#e8e8e8]"
+                buttonStyle="w-80 border-2 rounded-md border-[#e8e8e8] dark:border-[#ffffff]"
                 onChange={(e) => {
                   selectedOption == "meeting"
                     ? eventForm.setFieldValue("name", e.target.value)
@@ -487,7 +446,7 @@ function Calendar() {
                           width: "100%",
                           borderWidth: "0px",
                           "& .MuiInputLabel-root.Mui-focused": {
-                            color: "#979797",
+                            color: theme === "light" ? "#000000" : "#ffffff",
                           }, //styles the label
                           "& .MuiOutlinedInput-root": {
                             "&:hover > fieldset": {},
@@ -542,9 +501,9 @@ function Calendar() {
               <CustomDropdown
                 label="Type"
                 placeholder="Choose type"
-                buttonStyle="w-80 bg-white"
+                buttonStyle="w-80 bg-white dark:bg-[#3b3b3b] dark:border-white"
                 additionalStyle="mt-2 rounded-md"
-                labelStyle="text-xs text-[#24243f] pb-2 font-semibold"
+                labelStyle="text-xs text-[#24243f] pb-2 font-semibold dark:text-whiteOff"
                 options={eventOps}
                 onSelect={(val) => setSelectedOption(val)}
                 value={selectedOption}
@@ -578,7 +537,7 @@ function Calendar() {
                     }}
                   >
                     <PopoverTrigger>
-                      <Button className=" max-w-xs bg-white border-2 rounded-md flex justify-start pl-3 text-gray-400">
+                      <Button className=" max-w-xs bg-white dark:bg-[#3b3b3b] dark:border-white border-2 rounded-md flex justify-start pl-3 text-gray-400">
                         {selectedEmpId.length ? (
                           <TopContent selected={selectedEmpId} />
                         ) : (
@@ -663,7 +622,7 @@ function Calendar() {
                     }}
                   >
                     <PopoverTrigger>
-                      <Button className=" max-w-xs bg-white border-2 rounded-md flex justify-start pl-3 text-gray-400">
+                      <Button className=" max-w-xs bg-white dark:bg-[#3b3b3b] dark:border-white border-2 rounded-md flex justify-start pl-3 text-gray-400">
                         {selectedOptEmpId.length ? (
                           <TopContent selected={selectedOptEmpId} />
                         ) : (
@@ -759,7 +718,7 @@ function Calendar() {
                     Description
                   </p>
                   <Textarea
-                    className="h-[100px] w-11/12"
+                    className="h-[100px] w-11/12 dark:border-white"
                     onChange={(e) =>
                       eventForm.setFieldValue("description", e.target.value)
                     }
@@ -848,13 +807,13 @@ function Calendar() {
             </ScrollShadow>
           </div>
         </div>
-        <div className="lg:max-w-md flex w-full shadow-lg bg-white flex-col">
+        <div className="lg:max-w-md flex w-full shadow-lg bg-white dark:bg-dark flex-col">
           {(user?.roles.includes(process.env.HRManager) && (
             <button
               onClick={onOpen}
-              className="self-end mt-5 mr-6 transform transition-all ring-0 ring-gray-300 hover:ring-4 ring-opacity-30 duration-200 rounded-full"
+              className="self-end mt-5 mr-6 transform transition-all ring-0 ring-gray-300  hover:ring-4 ring-opacity-30 duration-200 rounded-full"
             >
-              <CalendarIcon />
+              <CalendarIcon stroke="#C89E31" />
             </button>
           )) ||
             (user?.roles.includes(process.env.CEO) && (

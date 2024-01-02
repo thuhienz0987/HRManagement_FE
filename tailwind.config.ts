@@ -25,7 +25,7 @@ const config: Config = {
         primaryAuth: "rgba(159,162,180, 0.5)",
         dark: "#191919",
         bar_dark: "#040D12",
-        bg_dark: "#519872",
+        bg_dark: "#395B64",
         bar: "#2c3d3a",
         bg: "#FEFAEE",
         button: "#C89E31",

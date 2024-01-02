@@ -9,8 +9,8 @@ export default function AuthProvider({
   children: React.ReactNode;
 }) {
   return (
-    <Providers>
-      <SessionProvider>{children}</SessionProvider>
-    </Providers>
+    <SessionProvider>
+      <Providers>{children}</Providers>
+    </SessionProvider>
   );
 }

@@ -136,9 +136,9 @@ function StackChart() {
   }, []);
 
   return (
-    <div className="flex flex-col flex-grow border border-blue-700 rounded-xl bg-white max-lg:h-[400px]">
+    <div className="flex flex-col flex-grow border border-blue-700 rounded-xl bg-white dark:bg-dark max-lg:h-[400px]">
       <h1
-        className={`self-left ml-3 my-4 text-xl font-medium text-black ${tenor_sans.className}`}
+        className={`self-left ml-3 my-4 text-xl font-medium text-black dark:text-button ${tenor_sans.className}`}
       >
         Attendance statistic
       </h1>
