@@ -331,7 +331,7 @@ const Salary = () => {
     const [formState, setFormState] = useState<Partial<Allowances>>({});
 
     return (
-      <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
+      <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
         <div className="flex w-[40%] items-start py-10 gap-48 self-center">
           <Input
             value={formState.code}
@@ -340,7 +340,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="text"
-            label={<p className="text-[#5B5F7B]">Code</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Code</p>}
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({ ...formState, code: e.target.value })
@@ -355,7 +355,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="text"
-            label={<p className="text-[#5B5F7B]">Name</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Name</p>}
             labelPlacement={"outside-left"}
             onChange={(e) =>
               setFormState({ ...formState, name: e.target.value })
@@ -368,7 +368,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="money"
-            label={<p className="text-[#5B5F7B]">Amount</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Amount</p>}
             labelPlacement={"outside-left"}
             onChange={(e) =>
               setFormState({ ...formState, amount: e.target.value })
@@ -397,7 +397,7 @@ const Salary = () => {
     const [formState, setFormState] = useState<Partial<Holidays>>({});
 
     return (
-      <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
+      <div className="flex flex-1 flex-col bg-white  dark:bg-dark w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
         <div className="flex w-full items-start py-10 gap-48">
           <Input
             value={formState.name}
@@ -406,7 +406,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="text"
-            label={<p className="text-[#5B5F7B]">Name</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Name</p>}
             labelPlacement={"outside-left"}
             onChange={(e) =>
               setFormState({ ...formState, name: e.target.value })
@@ -419,7 +419,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="date"
-            label={<p className="text-[#5B5F7B]">Day</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Day</p>}
             labelPlacement={"outside-left"}
             onChange={(e) =>
               setFormState({ ...formState, day: e.target.value })
@@ -551,7 +551,7 @@ const Salary = () => {
     const [formState, setFormState] = useState(row);
 
     return (
-      <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
+      <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
         <div className="flex w-[40%] items-start py-10 gap-48 self-center">
           <Input
             value={formState.code}
@@ -560,7 +560,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="text"
-            label={<p className="text-[#5B5F7B]">Code</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Code</p>}
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({ ...formState, code: e.target.value })
@@ -575,7 +575,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="text"
-            label={<p className="text-[#5B5F7B]">Name</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Name</p>}
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({ ...formState, name: e.target.value })
@@ -588,7 +588,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="money"
-            label={<p className="text-[#5B5F7B]">Amount</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Amount</p>}
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({ ...formState, amount: e.target.value })
@@ -615,7 +615,7 @@ const Salary = () => {
     const [formState, setFormState] = useState(row);
 
     return (
-      <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
+      <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
         <div className="flex w-full items-start py-10 gap-48">
           <Input
             value={formState.name}
@@ -624,7 +624,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="text"
-            label={<p className="text-[#5B5F7B]">Name</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Name</p>}
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({ ...formState, name: e.target.value })
@@ -637,7 +637,7 @@ const Salary = () => {
             variant="bordered"
             key={"a"}
             type="date"
-            label={<p className="text-[#5B5F7B]">Day</p>}
+            label={<p className="text-[#5B5F7B] dark:text-whiteOff">Day</p>}
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({ ...formState, day: e.target.value })
@@ -784,14 +784,15 @@ const Salary = () => {
         </>
       )}
       <div className="flex flex-1 flex-col w-full items-center rounded gap-y-11 ">
-        <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
+        <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
           <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
-            <div className="text-[#2C3D3A] block text-3xl font-semibold">
+            <div className="text-[#2C3D3A] dark:text-button block text-3xl font-semibold">
               Salary Component
             </div>
             <div className=" flex gap-4 w-[30%] items-end justify-between">
               <CustomDropdown
                 label="Type"
+                buttonStyle="dark:bg-[#3b3b3b]"
                 placeholder="Select type"
                 additionalStyle="flex-1"
                 options={typeList}

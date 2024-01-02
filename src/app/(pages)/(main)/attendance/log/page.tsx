@@ -136,7 +136,7 @@ const Log = () => {
         <Input
           className="rounded w-auto flex-1"
           classNames={{
-            inputWrapper: "bg-white border",
+            inputWrapper: "bg-white border dark:bg-[#3b3b3b]",
           }}
           radius="sm"
           variant="bordered"
@@ -145,7 +145,7 @@ const Log = () => {
           placeholder="Search"
           labelPlacement={"outside"}
           endContent={
-            <div className="bg-black p-1 rounded opacity-80">
+            <div className="bg-black p-1 rounded opacity-80 dark:bg-[#3b3b3b]">
               <SearchIcon />
             </div>
           }
@@ -163,17 +163,17 @@ const Log = () => {
           <CustomDropdown
             placeholder="Select department"
             additionalStyle="flex-1 h-full"
-            buttonStyle="bg-white border h-[39px]"
+            buttonStyle="bg-white border h-[39px] dark:bg-[#3b3b3b]"
             options={departments}
             onSelect={setSortedDept}
             value={sortedDept}
           />
         )}
       </div>
-      <div className="flex flex-1 flex-col bg-white w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
+      <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
         <div className="w-[95%] self-center flex flex-col">
           <div className="w-full flex flex-row justify-between items-center">
-            <h3 className=" text-[26px] font-semibold text-[#2C3D3A]">
+            <h3 className=" text-[26px] font-semibold text-[#2C3D3A] dark:text-button">
               Attendance log
             </h3>
             <div className="flex gap-3">

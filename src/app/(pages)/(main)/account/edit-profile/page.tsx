@@ -306,7 +306,7 @@ const EditUserProfile = () => {
         />
       </div>
       {/* Basic information */}
-      <div className=" w-11/12 rounded-lg flex bg-white flex-col md:flex-row">
+      <div className=" w-11/12 rounded-lg flex bg-white dark:bg-dark flex-col md:flex-row">
         <div className="flex flex-col w-1/4 self-center md:self-start">
           <ImageUploading
             value={images}
@@ -342,7 +342,7 @@ const EditUserProfile = () => {
 
         <div className="flex flex-1">
           <div className="md:grid flex flex-col grid-cols-1 md:grid-cols-2 md:grid-flow-row w-full pt-16 pb-3 px-5 gap-y-2 gap-x-7">
-            <h3 className="rounded col-span-2 text-[26px] font-semibold text-[#2C3D3A]">
+            <h3 className="rounded col-span-2 text-[26px] font-semibold text-[#2C3D3A] dark:text-button">
               Attendance log
             </h3>
 
@@ -353,7 +353,7 @@ const EditUserProfile = () => {
                 variant="bordered"
                 key={"name"}
                 type="text"
-                label={<p className="text-[#5B5F7B] font-medium">Full name</p>}
+                label={<p className="text-[#5B5F7B] font-medium ">Full name</p>}
                 placeholder="Enter your name"
                 labelPlacement={"outside"}
                 name="fullName"
@@ -369,7 +369,7 @@ const EditUserProfile = () => {
                 <CustomDropdown
                   label="Department"
                   placeholder="Select department"
-                  buttonStyle="bg-white"
+                  buttonStyle="bg-white dark:bg-[#3b3b3b]"
                   options={departments}
                   value={formik.values.department}
                   onSelect={(value) =>
@@ -387,7 +387,7 @@ const EditUserProfile = () => {
                 label="Position"
                 placeholder="Select position"
                 onSelect={(value) => formik.setFieldValue("position", value)}
-                buttonStyle="bg-white"
+                buttonStyle="bg-white  dark:bg-[#3b3b3b]"
                 options={positions}
                 value={formik.values.position}
                 disable
@@ -401,7 +401,7 @@ const EditUserProfile = () => {
                 <CustomDropdown
                   label="Team"
                   placeholder="Select team"
-                  buttonStyle="bg-white"
+                  buttonStyle="bg-white  dark:bg-[#3b3b3b]"
                   options={
                     teams ?? [
                       {
@@ -450,7 +450,7 @@ const EditUserProfile = () => {
               <CustomDropdown
                 label="Gender"
                 placeholder="Select gender"
-                buttonStyle="bg-white"
+                buttonStyle="bg-white  dark:bg-[#3b3b3b]"
                 onSelect={(value) => {
                   formik.setFieldValue("gender", value);
                 }}
@@ -565,13 +565,13 @@ const EditUserProfile = () => {
                 onSelect={() => null}
                 options={academicLevels}
                 value={formik.values.academicLevel}
-                buttonStyle="bg-white"
+                buttonStyle="bg-white  dark:bg-[#3b3b3b]"
               />
               {errors.academicLevel && touched.academicLevel && (
                 <span className={errorClassName}>{errors.academicLevel}</span>
               )}
             </div>
-            <h3 className="rounded col-span-2 text-[26px] font-semibold text-[#2C3D3A]">
+            <h3 className="rounded col-span-2 text-[26px] font-semibold text-[#2C3D3A]  dark:text-button">
               Salary Information
             </h3>
             {/* varies by position */}
