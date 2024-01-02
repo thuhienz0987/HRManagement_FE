@@ -170,10 +170,10 @@ const Log = () => {
           />
         )}
       </div>
-      <div className="flex flex-1 flex-col bg-white w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
+      <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
         <div className="w-[95%] self-center flex flex-col">
           <div className="w-full flex flex-row justify-between items-center">
-            <h3 className=" text-[26px] font-semibold text-[#2C3D3A]">
+            <h3 className=" text-[26px] font-semibold text-[#2C3D3A] dark:text-button">
               Attendance log
             </h3>
             <div className="flex gap-3">

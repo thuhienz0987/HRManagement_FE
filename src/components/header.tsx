@@ -48,7 +48,7 @@ function Header({
 
   return (
     <div
-      className={`w-full dark:bg-bar bg-bar_light
+      className={`w-full bg-bar dark:bg-bar_dark
       } flex justify-between h-14 items-center px-3 fixed right-0 z-10`}
     >
       <div className="flex justify-center items-center gap-3">

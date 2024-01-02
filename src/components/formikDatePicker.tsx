@@ -41,8 +41,8 @@ export function FormikDatePicker({
   };
 
   return (
-    <div className="w-full bg-white">
-      <p className="text-[#5B5F7B] block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none">
+    <div className="w-full bg-white dark:bg-dark">
+      <p className="light:text-[#5B5F7B] dark:text-whiteOff block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none">
         {label}
       </p>
       <Popover>
@@ -55,7 +55,7 @@ export function FormikDatePicker({
               buttonStyle && buttonStyle
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="mr-2 h-4 w-" />
             {date?.from ? (
               date.to ? (
                 <>
@@ -70,7 +70,10 @@ export function FormikDatePicker({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0 bg-white" align="start">
+        <PopoverContent
+          className="w-full p-0 bg-white dark:bg-bar_dark"
+          align="start"
+        >
           <Calendar
             initialFocus
             mode="range"

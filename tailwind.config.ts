@@ -21,8 +21,11 @@ const config: Config = {
 
     extend: {
       colors: {
+        whiteOff: "#FAF9F6",
         primaryAuth: "rgba(159,162,180, 0.5)",
-        bar_light: "#38B6FF",
+        dark: "#191919",
+        bar_dark: "#040D12",
+        bg_dark: "#519872",
         bar: "#2c3d3a",
         bg: "#FEFAEE",
         button: "#C89E31",

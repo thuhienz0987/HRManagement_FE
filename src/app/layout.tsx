@@ -14,11 +14,9 @@ export const metadata: Metadata = {
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <Providers>
-        <body className={inter.className}>
-          <AuthProvider>{children}</AuthProvider>
-        </body>
-      </Providers>
+      <body className={inter.className}>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 };

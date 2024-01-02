@@ -22,13 +22,13 @@ const TraceBar = ({
           <p
             //hover:underline
             className={`text-sm font-normal  ${
-              subOption ? "text-[#7E8CAC] " : "text-[#2C3D3A]"
+              subOption ? "text-[#7E8CAC] dark:text-whiteOff" : "text-[#2C3D3A]"
             }`}
           >
             {option?.name}
           </p>
         </button>
-        {subOption && <ArrowIcon width="12" height="12" />}
+        {subOption && <ArrowIcon width="12" height="12" fill="#2C3D3A" />}
         <button>
           <p
             //hover:underline
