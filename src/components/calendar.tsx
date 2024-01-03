@@ -448,6 +448,9 @@ function Calendar() {
                           "& .MuiInputLabel-root.Mui-focused": {
                             color: theme === "light" ? "#000000" : "#ffffff",
                           }, //styles the label
+                          "& .MuiInputLabel-root": {
+                            color: theme === "light" ? "#000000" : "#ffffff",
+                          },
                           "& .MuiOutlinedInput-root": {
                             "&:hover > fieldset": {},
                             height: "40px",
@@ -455,6 +458,9 @@ function Calendar() {
                           },
                           "& .MuiOutlinedInput-notchedOutline": {
                             border: "2px solid #E8E8E8",
+                          },
+                          "& .MuiInputBase-input": {
+                            color: theme === "light" ? "black" : "white",
                           },
                         }}
                       />

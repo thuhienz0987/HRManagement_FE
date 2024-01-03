@@ -98,14 +98,14 @@ function Header({
         </button>
         <div
           onBlur={() => setVisible(false)}
-          className={`absolute w-60 py-2 bg-white self-start right-2 top-12 border rounded-sm border-slate-300 flex flex-col transition-all duration-300 origin-top ${
+          className={`absolute w-60 py-2 bg-white dark:bg-dark self-start right-2 top-12 border rounded-sm border-slate-300 flex flex-col transition-all duration-300 origin-top ${
             visible ? "opacity-100" : " opacity-0 invisible scale-y-0"
           }`}
         >
           {options.map((option) => (
             <button
               key={option.name}
-              className={` h-[60px] hover:bg-[#73A2996B] w-full text-start px-4 text-sm font-normal`}
+              className={` h-[60px] hover:bg-[#73A2996B] dark:hover:bg-button w-full text-start px-4 text-sm font-normal`}
               onClick={option.callback}
             >
               {option.name}

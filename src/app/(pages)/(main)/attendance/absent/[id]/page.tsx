@@ -323,12 +323,12 @@ const AbsentDetail = ({
                 </>
               )}
           </div>
-          <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start pt-8 pb-20 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
-            <p className=" font-semibold text-2xl self-center mb-3 text-black">
+          <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start pt-8 pb-20 px-28 gap-4 text-[#5B5F7B] dark:text-whiteOff text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
+            <p className=" font-semibold text-2xl self-center mb-3 text-black dark:text-button">
               Application for Leave of Absence
             </p>
             <div className="flex justify-between w-full">
-              <div className="flex text-[#5B5F7B] gap-2">
+              <div className="flex text-[#5B5F7B] dark:text-whiteOff gap-2">
                 <p className="inline text-start break-words font-semibold">
                   Dear:
                 </p>
@@ -336,7 +336,7 @@ const AbsentDetail = ({
                   {`${HRManager?.name} - HRManager`}
                 </p>
               </div>
-              <div className="flex text-[#5B5F7B] gap-2">
+              <div className="flex text-[#5B5F7B] dark:text-whiteOff gap-2">
                 <p className="inline text-start break-words font-semibold">
                   Date:
                 </p>
@@ -347,7 +347,7 @@ const AbsentDetail = ({
             </div>
             <div className="md:grid flex flex-col grid-cols-1 md:grid-cols-2 md:grid-flow-row w-full gap-y-4 gap-x-7">
               {basicInformation.map((info) => (
-                <div className="w-full h-fit flex flex-wrap text-[#5B5F7B]">
+                <div className="w-full h-fit flex flex-wrap text-[#5B5F7B] dark:text-whiteOff">
                   <p className="w-1/2 block text-start break-words font-semibold">
                     {info?.label}
                   </p>

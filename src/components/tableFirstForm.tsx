@@ -53,10 +53,10 @@ const TableFirstForm = ({
         </h3>
       )}
       <hr className="w-full h-[2px] bg-[#12306080] dark:bg-[#C89E3180] border-[1px] mt-4" />
-      <table className="border-[#C89E3150] border-[2px] mt-5 flex flex-col max-lg:overflow-x-scroll">
+      <table className="border-[#C89E3150] dark:border-button border-[2px] mt-5 flex flex-col max-lg:overflow-x-scroll">
         {/* title row */}
         <tbody>
-          <tr className=" font-sans text-[#2C3D3A] dark:text-[#C89E3170] text-xs h-12  flex w-full">
+          <tr className=" font-sans text-[#2C3D3A] dark:text-button text-xs h-12  flex w-full ">
             {columns.map((column, index) => (
               <th
                 className={`${
@@ -64,7 +64,7 @@ const TableFirstForm = ({
                   "flex-[0.5_1_0%]"
                 } ${
                   column.type == ColumnEnum.indexColumn && "flex-[0.5_1_0%]"
-                } border-x-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-[#C89E3150] min-w-[110px] bg-[#dde1e6] dark:bg-[#040D1250]`}
+                } border-x-[1px] flex flex-row flex-1 items-center gap-1 p-2 dark:border-b-button dark:border-b-2 border-[#C89E3150] dark:border-button min-w-[110px] bg-[#dde1e6] dark:bg-[#040D1250]`}
               >
                 {(() => {
                   switch (column.type) {
@@ -106,7 +106,7 @@ const TableFirstForm = ({
             (row, index) =>
               index >= (currentPage - 1) * 5 &&
               index <= (currentPage - 1) * 5 + 4 && (
-                <tr className=" font-sans text-gray-600 dark:text-[#FAF9F6] text-xs h-12 flex w-full">
+                <tr className=" font-sans text-gray-600 dark:text-[#FAF9F6] text-xs h-12 flex w-full ">
                   <RenderRow
                     row={row}
                     index={index}
@@ -136,14 +136,14 @@ const TableFirstForm = ({
               </tr>
             ))}
           {rows?.length == 0 && (
-            <tr className=" font-sans text-gray-600  dark:text-[#C89E3180] text-xs h-12 flex w-full">
+            <tr className=" font-sans text-gray-600  dark:text-button text-xs h-12 flex w-full">
               <p>There is no data yet for this table</p>
             </tr>
           )}
         </tbody>
       </table>
       <div className="flex justify-between mt-3">
-        <h5 className="text-[#0F1E5D] dark:text-[#C89E3180] text-sm">
+        <h5 className="text-[#0F1E5D] dark:text-button text-sm">
           Displayed
           <span className="font-semibold">
             {" "}
@@ -190,11 +190,11 @@ const EmptyRow = ({
       key={column.key}
       className={`${
         index % 2
-          ? "bg-[#E9EFF2] dark:bg-[040D1230]"
-          : "bg-white dark:bg-[#040D1220]"
+          ? "bg-[#E9EFF2] dark:bg-[#404338]"
+          : "bg-white dark:bg-[#6b6e5e]"
       } ${column.type == ColumnEnum.indexColumn && "flex-[0.5_1_0%]"} ${
         column.type == ColumnEnum.indexWithCheckBox && "flex-[0.5_1_0%]"
-      } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300 items-center text-[#2C3D3A] dark:text-whiteOff font-normal text-xs min-w-[110px]`}
+      } flex flex-row flex-1 gap-1 p-2 border-x-[1px] border-slate-300 dark:border-button items-center text-[#2C3D3A] dark:text-whiteOff font-normal text-xs min-w-[110px]`}
     >
       {"  "}
     </th>
