@@ -1,5 +1,6 @@
 import { ArrowIcon, BackIcon } from "src/svgs";
 import { SideBarOptionType, SubSidebar } from "./optionButton";
+import { useTheme } from "next-themes";
 
 const TraceBar = ({
   option,
@@ -8,6 +9,7 @@ const TraceBar = ({
   option: SideBarOptionType | undefined;
   subOption: SubSidebar | undefined;
 }) => {
+  const { theme } = useTheme();
   return (
     <div className="flex my-6 px-[4%] w-full justify-end items-center">
       {/* <button
@@ -22,17 +24,25 @@ const TraceBar = ({
           <p
             //hover:underline
             className={`text-sm font-normal  ${
-              subOption ? "text-[#7E8CAC] dark:text-whiteOff" : "text-[#2C3D3A]"
+              subOption
+                ? "text-[#7E8CAC] dark:text-[#C89E3180]"
+                : "text-[#2C3D3A] dark:text-button"
             }`}
           >
             {option?.name}
           </p>
         </button>
-        {subOption && <ArrowIcon width="12" height="12" fill="#2C3D3A" />}
+        {subOption && (
+          <ArrowIcon
+            width="12"
+            height="12"
+            fill={theme === "light" ? "#2C3D3A" : "#C89E31"}
+          />
+        )}
         <button>
           <p
             //hover:underline
-            className=" text-sm font-normal  text-[#2C3D3A]"
+            className=" text-sm font-normal  text-[#2C3D3A] dark:text-button"
           >
             {subOption?.name}
           </p>

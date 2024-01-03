@@ -170,7 +170,7 @@ const Log = ({ params }: { params: { id: string } }) => {
             key={"a"}
             type="text"
             disabled
-            label={<p className="text-[#5B5F7B]">Date</p>}
+            label={<p className="text-[#5B5F7B] dark:text-button">Date</p>}
             labelPlacement={"outside"}
           />
         </div>
@@ -183,7 +183,9 @@ const Log = ({ params }: { params: { id: string } }) => {
             key={"a"}
             type="time"
             step="1"
-            label={<p className="text-[#5B5F7B]">Arrive time</p>}
+            label={
+              <p className="text-[#5B5F7B] dark:text-button">Arrive time</p>
+            }
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({
@@ -200,7 +202,9 @@ const Log = ({ params }: { params: { id: string } }) => {
             key={"a"}
             step="1"
             type="time"
-            label={<p className="text-[#5B5F7B]">Leave time</p>}
+            label={
+              <p className="text-[#5B5F7B] dark:text-button">Leave time</p>
+            }
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({

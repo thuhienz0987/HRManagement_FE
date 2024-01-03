@@ -301,7 +301,9 @@ const DailyAttendance = () => {
             key={"a"}
             type="text"
             disabled={true}
-            label={<p className="text-[#5B5F7B]">Employee code</p>}
+            label={
+              <p className="text-[#5B5F7B] dark:text-button">Employee code</p>
+            }
             labelPlacement={"outside"}
           />
           <Input
@@ -312,7 +314,7 @@ const DailyAttendance = () => {
             key={"a"}
             type="text"
             disabled={true}
-            label={<p className="text-[#5B5F7B]">Full name</p>}
+            label={<p className="text-[#5B5F7B] dark:text-button">Full name</p>}
             labelPlacement={"outside"}
           />
         </div>
@@ -325,7 +327,9 @@ const DailyAttendance = () => {
             key={"a"}
             type="time"
             step="1"
-            label={<p className="text-[#5B5F7B]">Arrive time</p>}
+            label={
+              <p className="text-[#5B5F7B] dark:text-button">Arrive time</p>
+            }
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({ ...formState, arriveTime: e.target.value })
@@ -339,7 +343,9 @@ const DailyAttendance = () => {
             key={"a"}
             step="1"
             type="time"
-            label={<p className="text-[#5B5F7B]">Leave time</p>}
+            label={
+              <p className="text-[#5B5F7B] dark:text-button">Leave time</p>
+            }
             labelPlacement={"outside"}
             onChange={(e) =>
               setFormState({ ...formState, leaveTime: e.target.value })
@@ -415,18 +421,16 @@ const DailyAttendance = () => {
       <div className="flex flex-1 flex-col bg-white  dark:bg-dark w-full min-h-unit-3 items-start py-16 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
         <div className=" flex w-full px-6 gap-x-7 items-end ">
           <Input
-            className="rounded w-auto flex-1"
+            className="rounded w-auto flex-1 "
             radius="sm"
             variant="bordered"
             key={"a"}
             type="email"
-            label={
-              <p className="text-[#5B5F7B] dark:text-whiteOff">Employee code</p>
-            }
+            label={<p className="text-[#5B5F7B]">Employee code</p>}
             placeholder="Search"
             labelPlacement={"outside"}
             endContent={
-              <button className="bg-black p-1 rounded">
+              <button className="bg-black p-1 rounded dark:bg-transparent">
                 <SearchIcon />
               </button>
             }

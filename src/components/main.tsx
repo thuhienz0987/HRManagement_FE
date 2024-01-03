@@ -66,9 +66,9 @@ const Main = ({ children }: { children: React.ReactNode }) => {
         {
           name: "Absent List",
           href: "/absent",
-          // isHidden: session?.user.roles.includes(process.env.HRManager)
-          //   ? false
-          //   : true,
+          isHidden: session?.user.roles.includes(process.env.HRManager)
+            ? false
+            : true,
         },
         {
           name: "Absent Form",

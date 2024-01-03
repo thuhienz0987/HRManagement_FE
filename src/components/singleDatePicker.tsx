@@ -33,7 +33,7 @@ export function SingleDatePicker({
           <Button
             variant={"outline"}
             className={cn(
-              "justify-start text-left font-normal border-2 rounded-lg w-full",
+              "justify-start text-left font-normal border-2 dark:border-white rounded-lg w-full",
               !date && "text-muted-foreground h-10",
               buttonStyle && buttonStyle
             )}

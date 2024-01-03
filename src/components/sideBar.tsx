@@ -112,7 +112,7 @@ const SideBar = ({
                           <ul
                             role="list"
                             className={
-                              "  p-2 bg-[#46605B7F] rounded-b-md transition ease-in-out duration-1000" +
+                              "  p-2 bg-[#46605B7F] dark:bg-[rgb(45,44,44)] rounded-b-md transition ease-in-out duration-1000" +
                               (hasOpenedSubList(option)
                                 ? " translate-y-0 opacity-1 visible z-20 relative "
                                 : " -translate-y-15 opacity-0 invisible -z-10 absolute ")
@@ -135,11 +135,11 @@ const SideBar = ({
                         ) : null}
                         {option.subSidebar.length &&
                         mode == SideBarMode.Small ? (
-                          <HoverCardContent className=" w-60 ml-[5px] bg-white">
+                          <HoverCardContent className=" w-60 ml-[5px] bg-white  ">
                             <ul
                               role="list"
                               className={
-                                "  p-2 bg-[#2C3D3A] rounded-b-md transition ease-in-out duration-1000"
+                                "  p-2 bg-[#2C3D3A] dark:bg-dark rounded-b-md transition ease-in-out duration-1000"
                                 // (hasOpenedSubList(
                                 //     option
                                 // )
