@@ -18,6 +18,7 @@ import Header from "./header";
 import { useSession } from "next-auth/react";
 import AttendanceIcon from "src/svgs/attendance";
 import StarIcon from "src/svgs/star";
+import ReportFlagIcon from "src/svgs/reportFlag";
 
 const Main = ({ children }: { children: React.ReactNode }) => {
   const initMode: SideBarMode = SideBarMode.Large;
@@ -201,6 +202,27 @@ const Main = ({ children }: { children: React.ReactNode }) => {
           isHidden: session?.user.roles.includes(process.env.HRManager)
             ? false
             : true,
+        },
+      ],
+      isHidden: false,
+    },
+    {
+      name: "Report",
+      href: "/report-mistake",
+      icon: ReportFlagIcon,
+      subSidebar: [
+        {
+          name: "Report From",
+          href: "/report-form",
+        },
+        {
+          name: "Report List",
+          href: "/report-list",
+          isHidden:
+            session?.user.roles.includes(process.env.CEO) ||
+            session?.user.roles.includes(process.env.HRManager)
+              ? false
+              : true,
         },
       ],
       isHidden: false,
