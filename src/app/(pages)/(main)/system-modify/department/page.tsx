@@ -179,11 +179,11 @@ const Department = () => {
       getEmployees();
     }, []);
     return (
-      <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
+      <div className="flex flex-1 flex-col bg-white  dark:bg-dark w-full min-h-unit-3 items-start pt-8 pb-20 mb-8 px-28 gap-4 text-[#5B5F7B]  text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
         <div className="flex w-full items-start py-10 gap-48">
           <Input
             value={formState.name}
-            className="rounded w-auto flex-1"
+            className="rounded w-auto flex-1 dark:bg-[#3b3b3b]"
             radius="sm"
             variant="bordered"
             key={"a"}
@@ -198,7 +198,7 @@ const Department = () => {
             <Input
               className="rounded w-auto flex-1"
               classNames={{
-                inputWrapper: "bg-white border",
+                inputWrapper: "bg-white border dark:bg-[#3b3b3b]",
               }}
               radius="sm"
               variant="bordered"
@@ -208,7 +208,7 @@ const Department = () => {
               labelPlacement={"outside"}
               label={<p className="text-[#5B5F7B] font-medium">Manager</p>}
               endContent={
-                <div className="bg-black p-1 rounded opacity-80">
+                <div className="bg-black p-1 rounded opacity-80 dark:bg-[#3b3b3b]">
                   <SearchIcon />
                 </div>
               }
@@ -332,9 +332,9 @@ const Department = () => {
         />
       )}
       <div className="flex flex-1 flex-col w-full items-center rounded ">
-        <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
+        <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
           <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
-            <div className="text-[#2C3D3A] block text-3xl font-semibold">
+            <div className="text-[#2C3D3A] dark:text-button block text-3xl font-semibold ">
               Department Management
             </div>
           </div>

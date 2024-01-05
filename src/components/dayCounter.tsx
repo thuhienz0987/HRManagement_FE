@@ -9,66 +9,66 @@ const tenor_sans = Tenor_Sans({ subsets: ["latin"], weight: "400" });
 const telex = Telex({ subsets: ["latin"], weight: "400" });
 
 function DayCounter({
-    width,
-    height,
-    fill,
-    stroke,
+  width,
+  height,
+  fill,
+  stroke,
 }: {
-    width?: string;
-    height?: string;
-    fill?: string;
-    stroke?: string;
+  width?: string;
+  height?: string;
+  fill?: string;
+  stroke?: string;
 }) {
-    const imgPath = "../../public/assets/images/calendar.png";
-    const ref = useRef<HTMLDivElement>(null);
-    const [divWidth, setWidth] = useState(0);
-    const axiosPrivate = useAxiosPrivate();
-    const [availableDay, setAvailableDay] = useState<number>();
-    const { data: session } = useSession();
-    useEffect(() => {
-        const getAvailableDays = async () => {
-            try {
-                const res = await axiosPrivate.get<number>(
-                    "/remainingLeaveRequestDays/" + session?.user._id
-                );
-                setAvailableDay(res.data);
-            } catch (err) {
-                console.log(err);
-            }
-        };
-        getAvailableDays();
-    }, []);
+  const imgPath = "../../public/assets/images/calendar.png";
+  const ref = useRef<HTMLDivElement>(null);
+  const [divWidth, setWidth] = useState(0);
+  const axiosPrivate = useAxiosPrivate();
+  const [availableDay, setAvailableDay] = useState<number>();
+  const { data: session } = useSession();
+  useEffect(() => {
+    const getAvailableDays = async () => {
+      try {
+        const res = await axiosPrivate.get<number>(
+          "/remainingLeaveRequestDays/" + session?.user._id
+        );
+        setAvailableDay(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getAvailableDays();
+  }, []);
 
-    useEffect(() => {
-        setWidth(ref.current?.offsetWidth || 0);
-    }, [ref.current?.offsetWidth]);
-    return (
-        <div
-            className="flex flex-1 flex-col border bg-bar p-2 rounded-xl overflow-hidden w-full items-center justify-center"
-            ref={ref}
+  useEffect(() => {
+    setWidth(ref.current?.offsetWidth || 0);
+  }, [ref.current?.offsetWidth]);
+  return (
+    <div
+      className="flex flex-1 flex-col border bg-bar dark:bg-bar_dark p-2 rounded-xl overflow-hidden w-full items-center justify-center"
+      ref={ref}
+    >
+      <h3
+        className={`self-center     my-4 text-xl font-medium text-[#C89E31] ${tenor_sans.className}`}
+      >
+        Available Paid Leave
+      </h3>
+      <div className="flex relative justify-center">
+        <ColorCalendarIcon
+          width={ref.current?.offsetWidth.toString() || "200"}
+          height={divWidth.toString()}
+        />
+        <p
+          className={`absolute self-center mt-6 text-8xl font-semibold text-black  ${telex.className}`}
         >
-            <h3
-                className={`self-center     my-4 text-xl font-medium text-[#C89E31] ${tenor_sans.className}`}
-            >
-                Available Paid Leave
-            </h3>
-            <div className="flex relative justify-center">
-                <ColorCalendarIcon
-                    width={ref.current?.offsetWidth.toString() || "200"}
-                    height={divWidth.toString()}
-                />
-                <p
-                    className={`absolute self-center mt-6 text-8xl font-semibold text-black ${telex.className}`}
-                >
-                    {availableDay}
-                </p>
-            </div>
+          {availableDay}
+        </p>
+      </div>
 
-            {/* <div className="flex flex-1 justify-center bg-[url('../../public/assets/images/calendar.png')] bg-no-repeat items-center font-medium text-8xl w-full">
+      {/* <div className="flex flex-1 justify-center bg-[url('../../public/assets/images/calendar.png')] bg-no-repeat items-center font-medium text-8xl w-full">
                 10
             </div> */}
-        </div>
-    );
+    </div>
+  );
 }
 
 export default DayCounter;

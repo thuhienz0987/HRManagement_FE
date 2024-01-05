@@ -98,10 +98,10 @@ const UserProfile = () => {
         )}
 
       {/* Basic information */}
-      <div className=" p-10 bg-white w-11/12 rounded-md">
-        <div className="  bg-[#F1F6FF] rounded-lg flex flex-row shadow-md">
+      <div className=" p-10 bg-white dark:bg-dark w-11/12 rounded-md">
+        <div className="  bg-bar_dark rounded-lg flex flex-row shadow-md">
           <div className="flex flex-col w-1/4">
-            <div className=" rounded-tl-lg rounded-br-xl bg-button h-fit w-fit p-1 font-semibold text-white">
+            <div className=" rounded-tl-lg rounded-br-xl bg-button h-fit w-fit p-1 font-semibold text-white dark:text-dark">
               Basic Information
             </div>
             <div className="flex mt-[20%] mx-7 w-3/4 items-end flex-col justify-end">
@@ -115,7 +115,7 @@ const UserProfile = () => {
           <div className="flex flex-1">
             <div className="grid grid-rows-6 grid-flow-col auto-rows-min w-full pt-16 pb-3 px-3 gap-y-2 gap-x-3 ">
               {basicInformation.map((info) => (
-                <div className="w-full h-fit flex flex-wrap text-[#5B5F7B] items-end">
+                <div className="w-full h-fit flex flex-wrap text-[#5B5F7B] dark:text-whiteOff items-end">
                   <p className=" w-[50%] block text-start whitespace-nowrap font-semibold">
                     {info.label}:
                   </p>
@@ -130,17 +130,17 @@ const UserProfile = () => {
       </div>
 
       {/* Contact information */}
-      <div className="w-11/12 mt-9 p-10 bg-white rounded-md">
-        <div className="  bg-[#F1F6FF] rounded-lg flex flex-row shadow-md ">
+      <div className="w-11/12 mt-9 p-10 bg-white dark:bg-dark rounded-md">
+        <div className="  bg-[#F1F6FF] dark:bg-bar_dark rounded-lg flex flex-row shadow-md ">
           <div className="flex flex-col w-1/4">
-            <div className=" rounded-tl-lg rounded-br-xl bg-button h-fit w-fit p-1 font-semibold text-white">
+            <div className=" rounded-tl-lg rounded-br-xl bg-button h-fit w-fit p-1 font-semibold text-white dark:text-dark">
               Contact Information
             </div>
           </div>
           <div className="flex flex-1">
             <div className="grid grid-rows-3 grid-flow-col auto-rows-min w-full pt-4 pb-3 px-5 gap-y-2 gap-x-7 ">
               {contactInformation.map((info) => (
-                <div className="w-full h-fit flex flex-wrap text-[#5B5F7B]">
+                <div className="w-full h-fit flex flex-wrap text-[#5B5F7B] dark:text-whiteOff">
                   <p className="w-1/4 block text-start break-words font-semibold">
                     {info.label}:
                   </p>
@@ -153,17 +153,17 @@ const UserProfile = () => {
       </div>
 
       {/* Contact information */}
-      <div className="w-11/12 mt-9 p-10 bg-white rounded-md">
-        <div className="  bg-[#F1F6FF] rounded-lg flex flex-row shadow-md ">
+      <div className="w-11/12 mt-9 p-10 bg-white dark:bg-dark rounded-md">
+        <div className="  bg-[#F1F6FF] dark:bg-bar_dark rounded-lg flex flex-row shadow-md ">
           <div className="flex flex-col w-1/4">
-            <div className=" rounded-tl-lg rounded-br-xl bg-button h-fit w-fit p-1 font-semibold text-white">
+            <div className=" rounded-tl-lg rounded-br-xl bg-button h-fit w-fit p-1 font-semibold text-white dark:text-dark">
               Salary Information
             </div>
           </div>
           <div className="flex flex-1">
             <div className="grid grid-rows-3 grid-flow-col auto-rows-min w-full pt-4 pb-3 px-5 gap-y-2 gap-x-7 ">
               {salaryInformation.map((info) => (
-                <div className="w-full h-fit flex flex-wrap text-[#5B5F7B]">
+                <div className="w-full h-fit flex flex-wrap text-[#5B5F7B] dark:text-whiteOff">
                   <p className="w-1/4 block text-start break-words font-semibold">
                     {info.label}:
                   </p>

@@ -26,9 +26,12 @@ const Main = ({ children }: { children: React.ReactNode }) => {
   const { data: session } = useSession({
     required: true,
     onUnauthenticated() {
-      redirect("/login");
+      redirect("/signIn");
     },
   });
+  useEffect(() => {
+    console.log("ROLES____+_", session);
+  }, []);
   const SideBarOps: SideBarOptionType[] = [
     {
       name: "Dashboard",
@@ -63,9 +66,9 @@ const Main = ({ children }: { children: React.ReactNode }) => {
         {
           name: "Absent List",
           href: "/absent",
-          // isHidden: session?.user.roles.includes(process.env.HRManager)
-          //   ? false
-          //   : true,
+          isHidden: session?.user.roles.includes(process.env.HRManager)
+            ? false
+            : true,
         },
         {
           name: "Absent Form",
@@ -237,7 +240,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
           <SideBar mode={mode} setMode={setMode} SideBarOps={SideBarOps} />
           <div
             className={
-              " flex min-h-[calc(100vh-3.5rem)] flex-col absolute right-0 overflow-y duration-300 -z-10 w-full bg-bg " +
+              " flex min-h-[calc(100vh-3.5rem)] flex-col absolute right-0 overflow-y duration-300 -z-10 w-full bg-bg dark:bg-bg_dark " +
               (mode == SideBarMode.Large
                 ? " md:w-[calc(100%-14rem)]"
                 : " md:w-[calc(100%-56px)]")
