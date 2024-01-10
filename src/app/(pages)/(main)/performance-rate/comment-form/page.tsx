@@ -73,6 +73,16 @@ const CommentForm = () => {
     const axiosPrivate = useAxiosPrivate();
     const { toast } = useToast();
 
+    const today = new Date();
+    const lastMonth = add(today, {
+        months: -1,
+    });
+    const [selectedMonth, setSelectedMonth] = useState<string>(
+        "/" + (lastMonth.getMonth() + 1) + "/" + lastMonth.getFullYear()
+    );
+    const startDay = new Date(2023, 10, 1, 0, 0, 0, 0);
+    const months = getMonthsBetweenDates(startDay, add(today, { months: -1 }));
+
     const formik = useFormik({
         initialValues: {
             rate: 10,
@@ -147,16 +157,9 @@ const CommentForm = () => {
         },
     });
 
-    const today = new Date();
-    const lastMonth = add(today, {
-        months: -1,
-    });
-    const [selectedMonth, setSelectedMonth] = useState<string>(
-        "/" + (lastMonth.getMonth() + 1) + "/" + lastMonth.getFullYear()
-    );
-    const startDay = new Date(2023, 10, 1, 0, 0, 0, 0);
-    const months = getMonthsBetweenDates(startDay, add(today, { months: -1 }));
-    // console.log(getMonthsBetweenDates());
+    //   return months;
+    // }
+    // const months = getMonthsBetweenDates();
 
     const columns: ColumnType[] = [
         {
@@ -285,16 +288,16 @@ const CommentForm = () => {
     return (
         <div className="flex flex-1 flex-col px-[4%] items-center pb-4 rounded gap-y-9">
             <div className="flex flex-1 flex-col w-full items-center rounded gap-y-11 ">
-                <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start pt-8 pb-20 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
+                <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start pt-8 pb-20 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
                     <div className="flex w-full justify-between items-center">
-                        <h1 className="text-bar block text-3xl font-semibold">
+                        <h1 className="text-bar dark:text-button block text-3xl font-semibold">
                             {getHeader()}
                         </h1>
                         <div className="flex gap-3 self-end mb-2">
                             <CustomDropdown
                                 placeholder="Month"
                                 options={months}
-                                buttonStyle="w-[120px] bg-white"
+                                buttonStyle="w-[120px] bg-white dark:bg-[#3b3b3b]"
                                 value={selectedMonth}
                                 onSelect={(val) => setSelectedMonth(val)}
                                 // additionalStyle="w-[100px]"
@@ -308,7 +311,8 @@ const CommentForm = () => {
                             <Input
                                 className="rounded w-auto flex-1"
                                 classNames={{
-                                    inputWrapper: "bg-white border",
+                                    inputWrapper:
+                                        "bg-white border dark:bg-[#3b3b3b]",
                                 }}
                                 radius="sm"
                                 variant="bordered"
@@ -317,12 +321,12 @@ const CommentForm = () => {
                                 placeholder="Search"
                                 labelPlacement={"outside"}
                                 label={
-                                    <p className="text-[#5B5F7B] font-medium">
+                                    <p className="text-[#5B5F7B] font-medium dark:text-whiteOff">
                                         Employee code
                                     </p>
                                 }
                                 endContent={
-                                    <div className="bg-black p-1 rounded opacity-80">
+                                    <div className="bg-black p-1 rounded opacity-80 dark:bg-[#3b3b3b]">
                                         <SearchIcon />
                                     </div>
                                 }
@@ -390,7 +394,9 @@ const CommentForm = () => {
                         </div>
 
                         <div className="flex flex-1 flex-col gap-1">
-                            <p className="text-[#5B5F7B] font-medium">Score</p>
+                            <p className="text-[#5B5F7B] font-medium dark:text-whiteOff">
+                                Score
+                            </p>
                             <div className="flex gap-2">
                                 {Array.from(
                                     { length: 10 },
@@ -419,7 +425,7 @@ const CommentForm = () => {
                         </div>
                     </div>
                     <div className="w-full gap-2 flex flex-col py-4">
-                        <p className="text-start break-words font-semibold ">
+                        <p className="text-start break-words font-semibold dark:text-whiteOff">
                             Description:
                         </p>
                         <Textarea
@@ -435,16 +441,17 @@ const CommentForm = () => {
                         )}
                     </div>
                 </div>
-                <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
+                <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
                     <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
-                        <div className="text-[#2C3D3A] block text-3xl font-semibold">
+                        <div className="text-[#2C3D3A] dark:text-button block text-3xl font-semibold">
                             {tableName} 's comments
                         </div>
                         <div className=" flex gap-x-3 items-end">
                             <Input
                                 className="rounded w-auto flex-1"
                                 classNames={{
-                                    inputWrapper: "bg-white border",
+                                    inputWrapper:
+                                        "bg-white border dark:bg-[#3b3b3b]",
                                 }}
                                 radius="sm"
                                 variant="bordered"
@@ -453,7 +460,7 @@ const CommentForm = () => {
                                 placeholder="Search"
                                 labelPlacement={"outside"}
                                 endContent={
-                                    <button className="bg-black p-1 rounded">
+                                    <button className="bg-black p-1 rounded dark:bg-[#3b3b3b]">
                                         <SearchIcon />
                                     </button>
                                 }

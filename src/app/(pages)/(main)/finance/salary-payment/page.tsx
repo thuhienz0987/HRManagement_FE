@@ -331,9 +331,9 @@ const AdminSalary = () => {
                         />
                     </div> */}
                     <div className="flex flex-1 flex-col w-full items-center rounded ">
-                        <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
+                        <div className="flex flex-1 flex-col bg-white   dark:bg-dark w-full min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
                             <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
-                                <div className="text-[#5B5F7B] block text-3xl font-semibold">
+                                <div className="text-[#5B5F7B] dark:text-button block text-3xl font-semibold">
                                     Salary
                                 </div>
                                 {/* <div className="flex gap-x-3 items-end">

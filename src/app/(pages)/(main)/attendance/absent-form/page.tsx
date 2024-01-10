@@ -24,8 +24,9 @@ const absentFormSchema = yup.object({
     .string()
     .required("Reason cannot be blank")
     .max(500, "Reason length must be less than 500 characters"),
-  agreeCommitment: yup.boolean()
-    .oneOf([true],"Please read and accept the Absent Policy"),
+  agreeCommitment: yup
+    .boolean()
+    .oneOf([true], "Please read and accept the Absent Policy"),
   date: yup.object().shape({
     from: yup
       .date()
@@ -50,85 +51,84 @@ const AbsentForm = () => {
     { label: "Full name:", value: session?.user.name },
     { label: "Position:", value: session?.user.positionId.name },
     { label: "Employee code:", value: session?.user.code },
-    !session?.user.roles.includes(process.env.CEO)?{ label: "Department:", value: session?.user.departmentId?.name }:undefined,
+    !session?.user.roles.includes(process.env.CEO)
+      ? { label: "Department:", value: session?.user.departmentId?.name }
+      : undefined,
   ];
   useEffect(() => {
     const getHRManager = async () => {
-        try {
-            const res = await axiosPrivate.get<User>(
-                "/hr-manager"
-            );
-            setHRManager(res.data);
-        } catch (e) {
-            console.log({ e });
-        }
+      try {
+        const res = await axiosPrivate.get<User>("/hr-manager");
+        setHRManager(res.data);
+      } catch (e) {
+        console.log({ e });
+      }
     };
 
     getHRManager();
-}, []);
+  }, []);
 
-  const formik = useFormik({
-    initialValues: {
-      reason: "",
-      agreeCommitment: false,
-      date: {
-        from: new Date(),
-        to: new Date(),
+  const formik = useFormik(
+    {
+      initialValues: {
+        reason: "",
+        agreeCommitment: false,
+        date: {
+          from: new Date(),
+          to: new Date(),
+        },
       },
-    },
-    validationSchema: absentFormSchema,
+      validationSchema: absentFormSchema,
 
-    onSubmit: async ({ reason, date }) => {
-      const startDate = new Date(date.from);
-      const endDate = new Date(date.to);
+      onSubmit: async ({ reason, date }) => {
+        const startDate = new Date(date.from);
+        const endDate = new Date(date.to);
         setIsLoading(true);
         try {
-          console.log({startDate},{endDate})
+          console.log({ startDate }, { endDate });
           const response = await axiosPrivate.post<LeaveRequest>(
-              `/leaveRequest`,
-              {
-                reason: reason,
-                startDate: startDate,
-                endDate: endDate,
-                userId: session?.user._id
-              },
-              {
-                headers: { "Content-Type": "application/json" },
-                withCredentials: true,
+            `/leaveRequest`,
+            {
+              reason: reason,
+              startDate: startDate,
+              endDate: endDate,
+              userId: session?.user._id,
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+              withCredentials: true,
             }
           );
           console.log("success", JSON.stringify(response.data));
-          router.push('/attendance/absent');
+          router.push("/attendance/absent");
           toast({
-              title: `Absent form was submitted`,
-              description: [
-                `reason: ${reason}\n`,
-                `startDate: ${startDate}\n`,
-                `endDate: ${endDate}`,
-              ],
-          });
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          console.log("err", err.response?.data);
-          toast({
-            title: `Submit error`,
+            title: `Absent form was submitted`,
             description: [
-              `Error message: ${err.response?.data.error}\t`
+              `reason: ${reason}\n`,
+              `startDate: ${startDate}\n`,
+              `endDate: ${endDate}`,
             ],
           });
-        } else {
-          console.log("err", err);
-          toast({
-            title: `Submit error`,
-            description: `An error occurred while submitting.`,
-          });
+        } catch (err) {
+          if (axios.isAxiosError(err)) {
+            console.log("err", err.response?.data);
+            toast({
+              title: `Submit error`,
+              description: [`Error message: ${err.response?.data.error}\t`],
+            });
+          } else {
+            console.log("err", err);
+            toast({
+              title: `Submit error`,
+              description: `An error occurred while submitting.`,
+            });
+          }
+        } finally {
+          setIsLoading(false);
         }
-      } finally {
-        setIsLoading(false);
-      }
-      }
-    },
-  // }
+      },
+    }
+    // }
   );
 
   // Destructure the formik object
@@ -141,37 +141,107 @@ const AbsentForm = () => {
         tittleStyle="text-4xl font-semibold self-center"
         size="5xl"
         body={
-            <>
-              <p className="text-2xl font-semibold text-center mb-10">Absent Policy</p>
-              <div className="text-m text-[black]] dark:text-[#black] font-medium flex-col">
-                <p className="mb-3">1. <span className="text-yellow-600">Report all absences promptly:</span> Notify your supervisor or designated contact as soon as possible, preferably before the start of your scheduled work time.</p>
-                <p className="mb-3">2. <span className="text-yellow-600">Provide clear explanation:</span> Briefly explain the reason for your absence, differentiating between excused and unexcused.</p>
-                <p className="mb-3">3. <span className="text-yellow-600">Follow documentation procedures:</span> Submit any required documentation, such as doctor's notes or family emergency verification, within the specified timeframe.</p>
-                <p className="mb-3">4. <span className="text-yellow-600">Seek approval for extended absences:</span> Request advance permission for planned absences beyond a specific duration.</p>
-                <p className="mb-3">5. <span className="text-yellow-600">Respect notice periods:</span> Adhere to any established notice requirements for foreseeable absences.</p>
-                <p className="mb-3">6. <span className="text-yellow-600">Minimize disruption:</span> Inform colleagues and team members of your absence and arrange for coverage, if possible.</p>
-                <p className="mb-3">7. <span className="text-yellow-600">Maintain availability:</span> Be reachable during business hours for urgent matters unless extenuating circumstances prevent it.</p>
-                <p className="mb-3">8. <span className="text-yellow-600">Utilize available resources:</span> Utilize sick leave, vacation time, or other paid leave options for authorized absences.</p>
-                <p className="mb-3">9. <span className="text-yellow-600">Comply with disciplinary actions:</span> Accept and follow any disciplinary measures taken for exceeding absence limits or violating policy guidelines.</p>
-                <p className="mb-3">10. <span className="text-yellow-600">Address underlying issues:</span> If chronic absenteeism persists, explore possible solutions with your supervisor or seek support services if available.</p>
-              </div>
-            </>
+          <>
+            <p className="text-2xl font-semibold text-center mb-10">
+              Absent Policy
+            </p>
+            <div className="text-m text-[black]] dark:text-[#black] font-medium flex-col">
+              <p className="mb-3">
+                1.{" "}
+                <span className="text-yellow-600">
+                  Report all absences promptly:
+                </span>{" "}
+                Notify your supervisor or designated contact as soon as
+                possible, preferably before the start of your scheduled work
+                time.
+              </p>
+              <p className="mb-3">
+                2.{" "}
+                <span className="text-yellow-600">
+                  Provide clear explanation:
+                </span>{" "}
+                Briefly explain the reason for your absence, differentiating
+                between excused and unexcused.
+              </p>
+              <p className="mb-3">
+                3.{" "}
+                <span className="text-yellow-600">
+                  Follow documentation procedures:
+                </span>{" "}
+                Submit any required documentation, such as doctor's notes or
+                family emergency verification, within the specified timeframe.
+              </p>
+              <p className="mb-3">
+                4.{" "}
+                <span className="text-yellow-600">
+                  Seek approval for extended absences:
+                </span>{" "}
+                Request advance permission for planned absences beyond a
+                specific duration.
+              </p>
+              <p className="mb-3">
+                5.{" "}
+                <span className="text-yellow-600">Respect notice periods:</span>{" "}
+                Adhere to any established notice requirements for foreseeable
+                absences.
+              </p>
+              <p className="mb-3">
+                6. <span className="text-yellow-600">Minimize disruption:</span>{" "}
+                Inform colleagues and team members of your absence and arrange
+                for coverage, if possible.
+              </p>
+              <p className="mb-3">
+                7.{" "}
+                <span className="text-yellow-600">Maintain availability:</span>{" "}
+                Be reachable during business hours for urgent matters unless
+                extenuating circumstances prevent it.
+              </p>
+              <p className="mb-3">
+                8.{" "}
+                <span className="text-yellow-600">
+                  Utilize available resources:
+                </span>{" "}
+                Utilize sick leave, vacation time, or other paid leave options
+                for authorized absences.
+              </p>
+              <p className="mb-3">
+                9.{" "}
+                <span className="text-yellow-600">
+                  Comply with disciplinary actions:
+                </span>{" "}
+                Accept and follow any disciplinary measures taken for exceeding
+                absence limits or violating policy guidelines.
+              </p>
+              <p className="mb-3">
+                10.{" "}
+                <span className="text-yellow-600">
+                  Address underlying issues:
+                </span>{" "}
+                If chronic absenteeism persists, explore possible solutions with
+                your supervisor or seek support services if available.
+              </p>
+            </div>
+          </>
         }
         isOpen={isOpen}
         onClose={onClose}
         footerButton={false}
-    />
-      <div className="flex flex-1 flex-col bg-white w-full min-h-unit-3 items-start pt-8 pb-20 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
-        <p className=" font-semibold text-2xl self-center mb-3 text-black">
+      />
+      <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full min-h-unit-3 items-start pt-8 pb-20 px-28 gap-4 text-[#5B5F7B] text-sm shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg">
+        <p className=" font-semibold text-2xl self-center mb-3 text-black dark:text-button">
           Application for Leave of Absence
         </p>
         <div className="flex justify-between w-full">
-          <div className="flex text-[#5B5F7B] gap-2">
-            <p className="inline text-start break-words font-semibold">Dear:</p>
+          <div className="flex text-[#5B5F7B] dark:text-[#FAF9F670] gap-2">
+            <p className="inline text-start break-words font-semibold  dark:text-[#FAF9F690] ">
+              Dear:
+            </p>
             <p className=" text-start font-normal inline">{`${HRManager?.name} - HRManager`}</p>
           </div>
-          <div className="flex text-[#5B5F7B] gap-2">
-            <p className="inline text-start break-words font-semibold">Date:</p>
+          <div className="flex text-[#5B5F7B] dark:text-[#FAF9F670] gap-2">
+            <p className="inline text-start break-words font-semibold dark:text-[#FAF9F690] ">
+              Date:
+            </p>
             <p className=" text-start font-normal inline">
               {format(today, "dd/MM/yyyy")}
             </p>
@@ -179,8 +249,8 @@ const AbsentForm = () => {
         </div>
         <div className="md:grid flex flex-col grid-cols-1 md:grid-cols-2 md:grid-flow-row w-full gap-y-4 gap-x-7">
           {basicInformation.map((info) => (
-            <div className="w-full h-fit flex flex-wrap text-[#5B5F7B]">
-              <p className="w-1/2 block text-start break-words font-semibold">
+            <div className="w-full h-fit flex flex-wrap text-[#5B5F7B] dark:text-[#FAF9F670]">
+              <p className="w-1/2 block text-start break-words font-semibold dark:text-[#FAF9F690] ">
                 {info?.label}
               </p>
               <p className=" text-start font-normal">{info?.value}</p>
@@ -188,9 +258,12 @@ const AbsentForm = () => {
           ))}
         </div>
         <div>
-          <p className="text-start font-semibold inline">Requested day off:</p>
+          <p className="text-start font-semibold inline dark:text-[#FAF9F690]">
+            Requested day off:
+          </p>
           <FormikDatePicker
             // label="Requested day off:"
+
             buttonStyle="border-1 rounded-sm"
             selected={formik.values.date}
             onChange={(date) => {
@@ -200,56 +273,60 @@ const AbsentForm = () => {
             }}
           />
           {!formik.values.date?.from && (
-            <span className={errorClassName}>
-              You must choose a date range
-            </span>
+            <span className={errorClassName}>You must choose a date range</span>
           )}
           {errors.date?.from && touched.date && (
-            <span className={errorClassName}>
-              {errors.date.from}
-            </span>
+            <span className={errorClassName}>{errors.date.from}</span>
           )}
           {errors.date?.to && touched.date && (
-            <span className={errorClassName}>
-              {errors.date.to}
-            </span>
+            <span className={errorClassName}>{errors.date.to}</span>
           )}
         </div>
         <div className="w-full gap-2 flex flex-col">
-          <p className="text-start break-words font-semibold">Reason:</p>
+          <p className="text-start break-words font-semibold dark:text-[#FAF9F690]">
+            Reason:
+          </p>
           <Textarea
-            className="h-[100px]"
+            className="h-[100px] dark:border-[#FAF9F670]"
             name="reason"
             value={formik.values.reason}
             onChange={handleChange}
           />
           {errors.reason && touched.reason && (
-            <span className={errorClassName}>
-              {errors.reason}
-            </span>
+            <span className={errorClassName}>{errors.reason}</span>
           )}
         </div>
         <div className="w-full gap-2 flex flex-row items-center">
-          <Checkbox  color="warning" defaultSelected={formik.values.agreeCommitment}
-          onChange={() => {
-            formik.setFieldValue("agreeCommitment", !formik.values.agreeCommitment);
-            // formik.setFieldError("agreeCommitment", undefined); // Reset the error for agreeCommitment
-          }}/>
-          <p className="text-start break-words font-semibold">I have read and agree the </p>
+          <Checkbox
+            color="warning"
+            defaultSelected={formik.values.agreeCommitment}
+            onChange={() => {
+              formik.setFieldValue(
+                "agreeCommitment",
+                !formik.values.agreeCommitment
+              );
+              // formik.setFieldError("agreeCommitment", undefined); // Reset the error for agreeCommitment
+            }}
+          />
+          <p className="text-start break-words font-semibold dark:text-[#FAF9F690]">
+            I have read and agree the{" "}
+          </p>
           <button
-              onClick={onOpen}
-              className="transform transition-all ring-5 ring-yellow-300 hover:ring-2 ring-opacity-30 duration-200 rounded-full text-yellow-600 text-start break-words font-semibold underline"
+            onClick={onOpen}
+            className="transform transition-all ring-5 ring-yellow-300 hover:ring-2 ring-opacity-30 duration-200 rounded-full text-yellow-600 text-start break-words font-semibold underline"
           >
-              Absent Policy
+            Absent Policy
           </button>
         </div>
         {errors.agreeCommitment && touched.agreeCommitment && (
-          <span className={errorClassName}>
-              {errors.agreeCommitment}
-          </span>
+          <span className={errorClassName}>{errors.agreeCommitment}</span>
         )}
         <div className="flex gap-3 self-end mt-2">
-          <RegularButton label="Submit" callback={handleSubmit} isLoading={isLoading}/>
+          <RegularButton
+            label="Submit"
+            callback={handleSubmit}
+            isLoading={isLoading}
+          />
         </div>
       </div>
     </div>

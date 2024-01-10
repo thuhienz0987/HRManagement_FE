@@ -11,58 +11,58 @@ import { DateRange } from "react-day-picker";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
 
 export function DatePicker({
-    label,
-    buttonStyle,
+  label,
+  buttonStyle,
 }: {
-    label?: string;
-    buttonStyle?: string;
+  label?: string;
+  buttonStyle?: string;
 }) {
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: new Date(),
-        to: addDays(new Date(), 1),
-    });
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: new Date(),
+    to: addDays(new Date(), 1),
+  });
 
-    return (
-        <div className="w-full bg-white">
-            <p className="text-[#5B5F7B] block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none">
-                {label}
-            </p>
-            <Popover>
-                <PopoverTrigger>
-                    <Button
-                        variant={"outline"}
-                        className={cn(
-                            "justify-start text-left font-normal border-2 rounded-lg w-full",
-                            !date && "text-muted-foreground h-10",
-                            buttonStyle && buttonStyle
-                        )}
-                    >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date?.from ? (
-                            date.to ? (
-                                <>
-                                    {format(date.from, "LLL dd, y")} -{" "}
-                                    {format(date.to, "LLL dd, y")}
-                                </>
-                            ) : (
-                                format(date.from, "LLL dd, y")
-                            )
-                        ) : (
-                            <span>Pick a date</span>
-                        )}
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0 bg-white">
-                    <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={date?.from}
-                        selected={date}
-                        onSelect={setDate}
-                        numberOfMonths={2}
-                    />
-                </PopoverContent>
-            </Popover>
-        </div>
-    );
+  return (
+    <div className="w-full bg-white dark:bg-dark">
+      <p className="text-[#5B5F7B] block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none">
+        {label}
+      </p>
+      <Popover>
+        <PopoverTrigger>
+          <Button
+            variant={"outline"}
+            className={cn(
+              "justify-start text-left font-normal border-2 rounded-lg w-full",
+              !date && "text-muted-foreground h-10",
+              buttonStyle && buttonStyle
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date?.from ? (
+              date.to ? (
+                <>
+                  {format(date.from, "LLL dd, y")} -{" "}
+                  {format(date.to, "LLL dd, y")}
+                </>
+              ) : (
+                format(date.from, "LLL dd, y")
+              )
+            ) : (
+              <span>Pick a date</span>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0 bg-white  dark:bg-bar_dark">
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={setDate}
+            numberOfMonths={2}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
 }
