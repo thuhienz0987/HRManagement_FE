@@ -318,9 +318,9 @@ const CommentForm = () => {
                 onClose={onClose}
                 footerButton={false}
             />
-            <div className="flex flex-1 flex-col bg-white min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg w-[90%] self-center">
+            <div className="flex flex-1 flex-col bg-white dark:bg-dark min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg w-[90%] self-center">
                 <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
-                    <div className="text-[#2C3D3A] block text-3xl font-semibold">
+                    <div className="text-[#2C3D3A] dark:text-button block text-3xl font-semibold">
                         Personal's comments
                     </div>
                 </div>
@@ -332,16 +332,16 @@ const CommentForm = () => {
                 [process.env.CEO, process.env.HRManager],
                 session?.user.roles || []
             ) && (
-                <div className="flex flex-1 flex-col bg-white min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg w-[90%] self-center">
+                <div className="flex flex-1 flex-col bg-white dark:bg-dark min-h-unit-3 items-start py-16 gap-2 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg w-[90%] self-center">
                     <div className=" flex w-full px-16 gap-x-3 items-end justify-between">
-                        <div className="text-[#2C3D3A] block text-3xl font-semibold">
+                        <div className="text-[#2C3D3A] dark:text-button block text-3xl font-semibold">
                             Employee's comments
                         </div>
                         <div className=" flex gap-x-3 items-end">
                             <CustomDropdown
                                 placeholder="Month"
                                 options={months}
-                                buttonStyle="w-[120px] bg-white"
+                                buttonStyle="w-[120px] bg-white dark:bg-[#3b3b3b]"
                                 value={selectedMonth}
                                 onSelect={(val) => setSelectedMonth(val)}
                             />

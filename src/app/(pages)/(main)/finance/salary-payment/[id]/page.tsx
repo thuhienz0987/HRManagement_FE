@@ -393,11 +393,11 @@ const SalaryDetails = ({
           <div className="flex flex-1 flex-row">
             <table className="border-[rgba(194, 201, 250, 1)] border-[2px] w-[90%] mt-5 flex flex-col mb-10">
               <tbody>
-                <tr className="font-sans text-[#2C3D3A]  text-xs h-12 bg-[#ffffff] flex w-full">
+                <tr className="font-sans text-[#2C3D3A] dark:text-button  text-xs h-12 bg-[#ffffff] dark:bg-dark  flex w-full">
                   {totalColumns.map((column, index) => (
                     <th
                       key={index}
-                      className={`border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 ${
+                      className={`border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 dark:border-button ${
                         column.title === "No" ? "w-[10]" : "" // Adjust the width for the "No" column
                       }`}
                     >
@@ -408,21 +408,21 @@ const SalaryDetails = ({
                 {totalRows.map((data, index) => (
                   <tr
                     key={index}
-                    className="font-sans text-[#2C3D3A] text-xs h-12 bg-[#ffffff] flex w-full"
+                    className="font-sans text-[#2C3D3A] dark:text-whiteOff text-xs h-12 bg-[#ffffff]  dark:bg-dark flex w-full"
                   >
                     <td
-                      className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300"
+                      className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 dark:border-button"
                       style={{ width: "3rem" }}
                     >
                       {data.no}
                     </td>
-                    <td className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300">
+                    <td className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 dark:border-button">
                       {data.details}
                     </td>
                     <td
-                      className={`border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 ${
+                      className={`border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 dark:border-button ${
                         data.calculation === "summation"
-                          ? "text-bar"
+                          ? "text-bar dark:text-whiteOff"
                           : data.calculation === "subtraction"
                           ? "text-red-500"
                           : ""
@@ -430,29 +430,29 @@ const SalaryDetails = ({
                     >
                       {data.amount}
                     </td>
-                    <td className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300">
+                    <td className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 dark:border-button">
                       {data.note}
                     </td>
                   </tr>
                 ))}
-                <tr className="font-sans text-[#2C3D3A] text-xs h-12 bg-bar flex w-full">
-                  <td className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300"></td>
+                <tr className="font-sans text-[#2C3D3A] text-xs h-12 bg-bar dark:bg-[#C89E3130] flex w-full">
+                  <td className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 dark:border-button"></td>
                   <td
                     className="border-[1px] flex flex-row flex-1 items-center gap-1 
-                                p-2 border-slate-300 text-button font-bold"
+                                p-2 border-slate-300 dark:border-button text-button font-bold"
                   >
                     Total
                   </td>
                   <td
                     className="border-[1px] flex flex-row flex-1 items-center gap-1 
-                                p-2 border-slate-300 text-button font-bold"
+                                p-2 border-slate-300 dark:border-button text-button font-bold"
                   >
                     {new Intl.NumberFormat("vi-VN", {
                       style: "currency",
                       currency: "VND",
                     }).format(totalSalary)}
                   </td>
-                  <td className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300"></td>
+                  <td className="border-[1px] flex flex-row flex-1 items-center gap-1 p-2 border-slate-300 dark:border-button"></td>
                 </tr>
               </tbody>
             </table>

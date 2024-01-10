@@ -371,7 +371,7 @@ const SalaryReports = () => {
                 <Input
                     className="rounded w-auto flex-1"
                     classNames={{
-                        inputWrapper: "bg-white border",
+                        inputWrapper: "bg-white dark:bg-[#3b3b3b] border",
                     }}
                     radius="sm"
                     variant="bordered"
@@ -380,7 +380,7 @@ const SalaryReports = () => {
                     placeholder="Search"
                     labelPlacement={"outside"}
                     endContent={
-                        <div className="bg-black p-1 rounded opacity-80">
+                        <div className="bg-black dark:bg-transparent p-1 rounded opacity-80">
                             <SearchIcon />
                         </div>
                     }
@@ -398,7 +398,7 @@ const SalaryReports = () => {
                     <CustomDropdown
                         placeholder="Select department"
                         additionalStyle="flex-1 h-full"
-                        buttonStyle="bg-white border h-[39px]"
+                        buttonStyle="bg-white dark:bg-[#3b3b3b] border h-[39px]"
                         options={departments}
                         onSelect={setSortedDept}
                         value={sortedDept}
@@ -407,17 +407,17 @@ const SalaryReports = () => {
                 <CustomDropdown
                     placeholder="Month"
                     options={months}
-                    buttonStyle="w-[120px] bg-white"
+                    buttonStyle="w-[120px] bg-white dark:bg-[#3b3b3b]"
                     value={selectedMonth}
                     onSelect={(val) => setSelectedMonth(val)}
                     // additionalStyle="w-[100px]"
                 />
                 <RegularButton label="Export excel" callback={exportToExcel} />
             </div>
-            <div className="flex flex-1 flex-col bg-white w-[90%] items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
+            <div className="flex flex-1 flex-col bg-white dark:bg-dark  w-[90%] items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
                 <div className="w-[95%] self-center flex flex-col">
                     <div className="w-full flex flex-row justify-between items-center">
-                        <h3 className=" text-[26px] font-semibold text-[#2C3D3A]">
+                        <h3 className=" text-[26px] font-semibold text-[#2C3D3A] dark:text-button">
                             Salary payment list
                         </h3>
                         <div className="flex gap-3">
@@ -437,8 +437,8 @@ const SalaryReports = () => {
                     />
                 </div>
             </div>
-            <div className="flex flex-col w-[90%] self-center bg-white border shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)]  rounded-md py-6 my-4">
-                <h2 className={`text-[26px] font-semibold text-[#2C3D3A] ml-5`}>
+            <div className="flex flex-col w-[90%] self-center bg-white dark:bg-dark border shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)]  rounded-md py-6 my-4">
+                <h2 className={`text-[26px] font-semibold text-[#2C3D3A] dark:text-button ml-5`}>
                     Attendance per department
                 </h2>
                 <div className="flex flex-1 justify-between px-5 self-center w-full">
