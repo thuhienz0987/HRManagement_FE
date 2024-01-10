@@ -343,7 +343,7 @@ const EditUserProfile = () => {
         <div className="flex flex-1">
           <div className="md:grid flex flex-col grid-cols-1 md:grid-cols-2 md:grid-flow-row w-full pt-16 pb-3 px-5 gap-y-2 gap-x-7">
             <h3 className="rounded col-span-2 text-[26px] font-semibold text-[#2C3D3A] dark:text-button">
-              Attendance log
+              Basic Information
             </h3>
 
             <div>
