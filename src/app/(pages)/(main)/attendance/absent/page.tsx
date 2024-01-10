@@ -97,91 +97,95 @@ const Absent = () => {
                     lr.createdAt = new Date(lr.createdAt);
                 });
                 setLeaveRequests(res.data);
-                console.log('leaveRequests',res.data);
+                console.log("leaveRequests", res.data);
             } catch (e) {
                 console.log({ e });
             }
         };
-        if(session?.user.roles.includes(process.env.HRManager))
+        if (session?.user.roles.includes(process.env.HRManager))
             getLeaveRequest();
-        else
-            getLeaveRequestByUserId(session?.user._id);
+        else getLeaveRequestByUserId(session?.user._id);
     }, []);
     const todayLeaveRequests = leaveRequests?.filter((req) => {
-        const reqDate = new Date(req.createdAt);
-        return (
-            reqDate.getDate() == today.getDate() &&
-            reqDate.getMonth() == today.getMonth() &&
-            reqDate.getFullYear() == today.getFullYear()
-        );
+        const reqDate = req.startDate;
+        return reqDate == format(today, "dd/MM/yyyy");
     });
     const handleView = (id: string) => {
         router.push("/attendance/absent/" + id);
     };
     const isCurrentUser = (leaveRequestId: string) => {
-        const leaveRequest = leaveRequests?.find((leaveRequest) => leaveRequest._id === leaveRequestId)
-        if(leaveRequest?.userId._id === session?.user._id && leaveRequest?.status === "pending")
+        const leaveRequest = leaveRequests?.find(
+            (leaveRequest) => leaveRequest._id === leaveRequestId
+        );
+        if (
+            leaveRequest?.userId._id === session?.user._id &&
+            leaveRequest?.status === "pending"
+        )
             return true;
-        else
-            return false;
+        else return false;
     };
     const handleEdit = (id: string) => {
         const functionName = "edit";
-        if(isCurrentUser(id))
-            router.push("/attendance/absent/" + id + "?functionName=" + functionName);
+        if (isCurrentUser(id))
+            router.push(
+                "/attendance/absent/" + id + "?functionName=" + functionName
+            );
         else
             toast({
                 title: `Error Permission`,
                 description: `You don't have permission to do this action`,
-            })
+            });
     };
     const handleDelete = async (id: string) => {
-        if(isCurrentUser(id))
-            {
-                try {
-                    const res = await axiosPrivate.delete<dLeaveRequest>(
-                        "/leaveRequest/" + id,
-                        {
-                            headers: { "Content-Type": "application/json" },
-        
-                            withCredentials: true,
-                        }
-                    );
-                    console.log({ res });
-                    const updatedLeaveRequest = leaveRequests?.filter(leaveRequest => leaveRequest._id !== id);
-                    setLeaveRequests(updatedLeaveRequest);
-                    const leaveRequest = leaveRequests?.find((leaveRequest) => leaveRequest._id === id);
+        if (isCurrentUser(id)) {
+            try {
+                const res = await axiosPrivate.delete<dLeaveRequest>(
+                    "/leaveRequest/" + id,
+                    {
+                        headers: { "Content-Type": "application/json" },
+
+                        withCredentials: true,
+                    }
+                );
+                console.log({ res });
+                const updatedLeaveRequest = leaveRequests?.filter(
+                    (leaveRequest) => leaveRequest._id !== id
+                );
+                setLeaveRequests(updatedLeaveRequest);
+                const leaveRequest = leaveRequests?.find(
+                    (leaveRequest) => leaveRequest._id === id
+                );
+                toast({
+                    title: `Delete leave request successfully `,
+                    description: [
+                        `Employee: ${leaveRequest?.userId.name}\t`,
+                        `Start date: ${leaveRequest?.startDate}\t`,
+                        `End date: ${leaveRequest?.endDate}\t`,
+                        `Reason: ${leaveRequest?.reason}`,
+                    ],
+                });
+            } catch (e) {
+                console.log({ e }, { id });
+                if (axios.isAxiosError(e)) {
+                    console.log(e.status);
                     toast({
-                        title: `Delete leave request successfully `,
-                        description: [
-                            `Employee: ${leaveRequest?.userId.name}\t`,
-                            `Start date: ${leaveRequest?.startDate}\t`,
-                            `End date: ${leaveRequest?.endDate}\t`,
-                            `Reason: ${leaveRequest?.reason}`
-                            ]  
+                        title: `Error `,
+                        description: e.response?.data?.error,
                     });
-                } catch (e) {
-                    console.log({ e }, { id });
-                    if (axios.isAxiosError(e)) {
-                        console.log(e.status);
-                        toast({
-                          title: `Error `,
-                          description: e.response?.data?.error,
-                        });
-                      } else {
-                        console.log(e);
-                        toast({
-                          title: `Error `,
-                          description: "Something has went wrong, please try again",
-                        });
-                      }
+                } else {
+                    console.log(e);
+                    toast({
+                        title: `Error `,
+                        description:
+                            "Something has went wrong, please try again",
+                    });
                 }
             }
-        else
+        } else
             toast({
                 title: `Error Permission`,
                 description: `You don't have permission to do this action`,
-            })
+            });
     };
 
     return (
@@ -193,8 +197,12 @@ const Absent = () => {
                         columns={columns}
                         tableName="Today absent requests"
                         viewFunction={handleView}
-                        deleteFunction={(leaveRequestId) => handleDelete(leaveRequestId)}
-                        editFunction={(leaveRequestId) => handleEdit(leaveRequestId)}
+                        deleteFunction={(leaveRequestId) =>
+                            handleDelete(leaveRequestId)
+                        }
+                        editFunction={(leaveRequestId) =>
+                            handleEdit(leaveRequestId)
+                        }
                     />
                 </div>
                 <div className="flex bg-white w-full gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg p-7">
@@ -203,8 +211,12 @@ const Absent = () => {
                         tableName="Absent requests list"
                         rows={leaveRequests}
                         viewFunction={handleView}
-                        deleteFunction={(leaveRequestId) => handleDelete(leaveRequestId)}
-                        editFunction={(leaveRequestId) => handleEdit(leaveRequestId)}
+                        deleteFunction={(leaveRequestId) =>
+                            handleDelete(leaveRequestId)
+                        }
+                        editFunction={(leaveRequestId) =>
+                            handleEdit(leaveRequestId)
+                        }
                     />
                 </div>
             </div>

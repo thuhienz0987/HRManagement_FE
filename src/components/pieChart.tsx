@@ -28,7 +28,7 @@ export default function PieChart({
         labels: label,
         datasets: [
             {
-                label: "# of Votes",
+                label: "% of organization",
                 data: dataset,
                 backgroundColor: ["#FFA600", "#FF5630", "#FEFAEE", "73A299"],
                 borderWidth: 1,

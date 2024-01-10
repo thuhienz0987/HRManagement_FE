@@ -17,7 +17,7 @@ import { SearchIcon } from "src/svgs";
 import { User, Department } from "src/types/userType";
 import { Key, useEffect, useState } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
-import { format, parseISO, startOfToday } from "date-fns";
+import { add, format, parseISO, startOfToday } from "date-fns";
 import { useSession } from "next-auth/react";
 import * as yup from "yup";
 import { useFormik } from "formik";
@@ -25,6 +25,7 @@ import { CommentGet, CommentSend } from "src/types/commentType";
 import { useToast } from "../../../../../../@/components/ui/use-toast";
 import axios, { AxiosError } from "axios";
 import { errorClassName } from "src/componentsClassName/errorClassName";
+import getMonthsBetweenDates from "src/helper/getMonthBetweenDays";
 
 type CommentResponse = {
     message: string;
@@ -147,28 +148,15 @@ const CommentForm = () => {
     });
 
     const today = new Date();
-    const lastMonth = "/" + today.getMonth() + "/" + today.getFullYear();
-    const [selectedMonth, setSelectedMonth] = useState<string>(lastMonth);
+    const lastMonth = add(today, {
+        months: -1,
+    });
+    const [selectedMonth, setSelectedMonth] = useState<string>(
+        "/" + (lastMonth.getMonth() + 1) + "/" + lastMonth.getFullYear()
+    );
     const startDay = new Date(2023, 10, 1, 0, 0, 0, 0);
-    function getMonthsBetweenDates() {
-        let months = [];
-        let date: Date = startDay;
-        while (startDay <= today) {
-            if (date.getMonth() < today.getMonth()) {
-                const month = date.getMonth() + 1;
-                const year = date.getFullYear();
-                months.push({
-                    name: format(date, "MMM yyyy"),
-                    value: "/" + month + "/" + year,
-                });
-            }
-
-            date.setMonth(date.getMonth() + 1);
-        }
-
-        return months;
-    }
-    const months = getMonthsBetweenDates();
+    const months = getMonthsBetweenDates(startDay, add(today, { months: -1 }));
+    // console.log(getMonthsBetweenDates());
 
     const columns: ColumnType[] = [
         {
@@ -273,6 +261,7 @@ const CommentForm = () => {
                 setComments(res.data);
             } catch (e) {
                 console.log(e);
+                setComments([]);
             }
         };
         getCommentByMonth();
@@ -401,9 +390,7 @@ const CommentForm = () => {
                         </div>
 
                         <div className="flex flex-1 flex-col gap-1">
-                            <p className="text-[#5B5F7B] font-medium">
-                                  Score
-                            </p>
+                            <p className="text-[#5B5F7B] font-medium">Score</p>
                             <div className="flex gap-2">
                                 {Array.from(
                                     { length: 10 },

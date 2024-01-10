@@ -2,21 +2,31 @@
 import { Input } from "@nextui-org/react";
 import { format, startOfToday } from "date-fns";
 import { useSession } from "next-auth/react";
+import { Tenor_Sans } from "next/font/google";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "src/app/api/useAxiosPrivate";
 import CustomDropdown from "src/components/customDropdown";
 import PieChart from "src/components/pieChart";
+import RegularButton from "src/components/regularButton";
 import TableFirstForm, {
     ColumnEnum,
     ColumnType,
 } from "src/components/tableFirstForm";
 import allowRows from "src/helper/allowRoles";
+import getMonthsBetweenDates from "src/helper/getMonthBetweenDays";
 import { SearchIcon } from "src/svgs";
 import { Department, User } from "src/types/userType";
+import XLSX from "sheetjs-style";
 
-type NewEmpResponse = {
-    departmentName: string;
-    employeeRatio: number;
+type AttendancePercentageResponse = {
+    result: [
+        {
+            departmentName: string;
+            departmentAttendances: number;
+            departmentPercent: number;
+        }
+    ];
+    totalAmount: number;
 };
 
 type EmployeeAttendance = User & {
@@ -29,11 +39,15 @@ type dDepartment = Department & {
     value: string;
 };
 
+const tenor_sans = Tenor_Sans({ subsets: ["latin"], weight: "400" });
+
 const Reports = () => {
     const axiosPrivate = useAxiosPrivate();
     const { data: session } = useSession();
-    const [newEmpLabel, setNewEmpLabel] = useState<string[]>();
-    const [newEmpRatio, setNewEmpRatio] = useState<number[]>();
+    const [attendanceLabel, setAttendanceLabel] = useState<string[]>();
+    const [attendanceRatio, setAttendanceRatio] = useState<number[]>();
+    const [attendanceQuantity, setAttendanceQuantity] = useState<number[]>();
+    const [totalAttendance, setTotalAttendance] = useState<number>();
     const columns: ColumnType[] = [
         {
             title: "No",
@@ -69,53 +83,35 @@ const Reports = () => {
     const today = startOfToday();
     const [employeeAttendances, setEmployeeAttendances] =
         useState<EmployeeAttendance[]>();
-    const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
-    const thisMonth = "/" + currentMonth + "/" + today.getFullYear();
+    // const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
+    const thisMonth = "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
     const [selectedMonth, setSelectedMonth] = useState<string>(thisMonth);
     const [departments, setDepartments] = useState<dDepartment[]>();
     const [sortedDept, setSortedDept] = useState<string>();
     const [searchQuery, setSearchQuery] = useState<string>();
     const startDay = new Date(2023, 10, 1, 0, 0, 0, 0);
-    function getMonthsBetweenDates() {
-        let months = [];
-        let date: Date = startDay;
-        while (startDay <= today) {
-            if (date.getMonth() < today.getMonth()) {
-                const month = date.getMonth() + 1;
-                const year = date.getFullYear();
-                months.push({
-                    name: format(date, "MMM yyyy"),
-                    value: "/" + month + "/" + year,
-                });
-            }
-
-            date.setMonth(date.getMonth() + 1);
+    const getEmployees = async () => {
+        try {
+            const res = await axiosPrivate.get<EmployeeAttendance[]>(
+                `/attendancesByMonth_total${selectedMonth}`,
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                }
+            );
+            res.data.map((employee) => {
+                employee._id = employee.user._id;
+                employee.code = employee.user.code;
+                employee.name = employee.user.name;
+                employee.departmentId = employee.user.departmentId;
+            });
+            console.log(res.data);
+            setEmployeeAttendances(res.data);
+        } catch (e) {
+            console.log({ e });
         }
-
-        return months;
-    }
+    };
     useEffect(() => {
-        const getEmployees = async (month: number, year: number) => {
-            try {
-                const res = await axiosPrivate.get<EmployeeAttendance[]>(
-                    `/attendancesByMonth_total/${month}/${year}`,
-                    {
-                        headers: { "Content-Type": "application/json" },
-                        withCredentials: true,
-                    }
-                );
-                res.data.map((employee) => {
-                    employee._id = employee.user._id;
-                    employee.code = employee.user.code;
-                    employee.name = employee.user.name;
-                    employee.departmentId = employee.user.departmentId;
-                });
-                console.log(res.data);
-                setEmployeeAttendances(res.data);
-            } catch (e) {
-                console.log({ e });
-            }
-        };
         const getDepartments = async () => {
             try {
                 const res = await axiosPrivate.get<dDepartment[]>(
@@ -128,8 +124,10 @@ const Reports = () => {
             }
         };
         getDepartments();
-        getEmployees(currentMonth, today.getFullYear());
     }, []);
+    useEffect(() => {
+        getEmployees();
+    }, [selectedMonth]);
     const rows = () => {
         let sortedEmp = employeeAttendances;
         if (searchQuery) {
@@ -149,27 +147,151 @@ const Reports = () => {
         return sortedEmp;
     };
     useEffect(() => {
-        const getNewEmpRatio = async () => {
+        const getAttendanceRatio = async () => {
             try {
-                const res = await axiosPrivate.get<NewEmpResponse[]>(
-                    "/departmentNewEmployeeRatio/10/2023"
-                );
+                const res =
+                    await axiosPrivate.get<AttendancePercentageResponse>(
+                        "/attendanceDepartmentsPercentByMonth" + selectedMonth
+                    );
                 let label: string[] = [];
                 let ratio: number[] = [];
-                res.data.forEach((dept) => {
+                let quantity: number[] = [];
+                console.log(res.data);
+                res.data.result.forEach((dept) => {
                     label.push(dept.departmentName);
-                    ratio.push(dept.employeeRatio);
+                    ratio.push(dept.departmentPercent);
+                    quantity.push(dept.departmentAttendances);
                 });
-                setNewEmpLabel(label);
-                setNewEmpRatio(ratio);
+                setAttendanceLabel(label);
+                setAttendanceRatio(ratio);
+                setAttendanceQuantity(quantity);
+                setTotalAttendance(res.data.totalAmount);
             } catch (e) {
                 console.log({ e });
             }
         };
-        getNewEmpRatio();
+        getAttendanceRatio();
     }, []);
 
-    const months = getMonthsBetweenDates();
+    const exportToExcel = async () => {
+        let workbook = XLSX.utils.book_new();
+
+        // let worksheet = workbook.addWorksheet("Goals");
+        // let worksheet = workbook.Sheets["Attendance Report"];
+        const titleRow = [
+            "No",
+            "Employee Code",
+            "Full name",
+            "Department",
+            "Working day",
+            "Overtime",
+        ];
+        let worksheet = XLSX.utils.aoa_to_sheet([titleRow]);
+        worksheet["A1"].s = {
+            font: {
+                name: "arial",
+                bold: true,
+                color: "#2C3D3A",
+            },
+            fill: {
+                fgColor: { rgb: "9BBB59" },
+            },
+        };
+        worksheet["B1"].s = {
+            font: {
+                name: "arial",
+                bold: true,
+                color: "#2C3D3A",
+            },
+            fill: {
+                fgColor: { rgb: "9BBB59" },
+            },
+        };
+        worksheet["C1"].s = {
+            font: {
+                name: "arial",
+                bold: true,
+                color: "#2C3D3A",
+            },
+            fill: {
+                fgColor: { rgb: "9BBB59" },
+            },
+        };
+        worksheet["D1"].s = {
+            font: {
+                name: "arial",
+                bold: true,
+                color: "#2C3D3A",
+            },
+            fill: {
+                fgColor: { rgb: "9BBB59" },
+            },
+        };
+        worksheet["E1"].s = {
+            font: {
+                name: "arial",
+                bold: true,
+                color: "#2C3D3A",
+            },
+            fill: {
+                fgColor: { rgb: "9BBB59" },
+            },
+        };
+        worksheet["F1"].s = {
+            font: {
+                name: "arial",
+                bold: true,
+                color: "#2C3D3A",
+            },
+            fill: {
+                fgColor: { rgb: "9BBB59" },
+            },
+        };
+        worksheet["!cols"] = [
+            { wch: 3 },
+            { wch: 15 },
+            { wch: 10 },
+            { wch: 12 },
+            { wch: 12 },
+            { wch: 8 },
+        ];
+        // fitToColumn(titleRow);
+        // function fitToColumn(arrayOfArray: string[]) {
+        //     // get maximum character of each column
+        //     return arrayOfArray.map((a, i) => ({
+        //         wch: a.length,
+        //     }));
+        // }
+        await employeeAttendances?.forEach((item, index) => {
+            XLSX.utils.sheet_add_aoa(
+                worksheet,
+                [
+                    [
+                        index + 1 + "",
+                        item.code + "",
+                        item.name + "",
+                        item?.departmentId?.name + "" || "",
+                        item.totalWorkingDays + "",
+                        item.totalOvertimeHours + "",
+                    ],
+                ],
+                { origin: -1 }
+            );
+        });
+        console.log({ worksheet });
+        try {
+            // XLSX.utils.book_append_sheet(wb, ws)
+            XLSX.utils.book_append_sheet(
+                workbook,
+                worksheet,
+                "Attendance Report"
+            );
+            XLSX.writeFile(workbook, "AttendanceReport.xlsx");
+        } catch (err) {
+            console.log({ err });
+        }
+    };
+    const months = getMonthsBetweenDates(startDay, today);
     return (
         <div className="flex w-full items-center justify-center flex-col gap-3">
             <div className=" flex gap-x-7 items-end w-[90%]">
@@ -217,6 +339,7 @@ const Reports = () => {
                     onSelect={(val) => setSelectedMonth(val)}
                     // additionalStyle="w-[100px]"
                 />
+                <RegularButton label="Export excel" callback={exportToExcel} />
             </div>
             <div className="flex flex-1 flex-col bg-white w-[90%] items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
                 <div className="w-[95%] self-center flex flex-col">
@@ -241,10 +364,31 @@ const Reports = () => {
                     />
                 </div>
             </div>
-            <div className="flex w-[90%] h-[400px] self-center bg-white border border-blue-600 rounded-md">
-                {newEmpLabel && newEmpRatio && (
-                    <PieChart dataset={newEmpRatio} label={newEmpLabel} />
-                )}
+            <div className="flex flex-col w-[90%] self-center bg-white border shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)]  rounded-md py-6 my-4">
+                <h2 className={`text-[26px] font-semibold text-[#2C3D3A] ml-5`}>
+                    Attendance per department
+                </h2>
+                <div className="flex flex-1 justify-between px-5 self-center w-full">
+                    <div className="flex flex-col justify-center">
+                        {totalAttendance && (
+                            <p>Total Attendance: {totalAttendance}</p>
+                        )}
+                        {attendanceQuantity &&
+                            attendanceLabel?.map((item, index) => (
+                                <p>
+                                    {item}: {attendanceQuantity[index]}
+                                </p>
+                            ))}
+                    </div>
+                    <div className="flex w-[400px] h-[400px] items-stretch">
+                        {attendanceLabel && attendanceRatio && (
+                            <PieChart
+                                dataset={attendanceRatio}
+                                label={attendanceLabel}
+                            />
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );
