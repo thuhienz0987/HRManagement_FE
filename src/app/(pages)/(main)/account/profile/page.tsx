@@ -99,7 +99,7 @@ const UserProfile = () => {
 
       {/* Basic information */}
       <div className=" p-10 bg-white dark:bg-dark w-11/12 rounded-md">
-        <div className="  bg-bar_dark rounded-lg flex flex-row shadow-md">
+        <div className=" bg-white dark:bg-bar_dark rounded-lg flex flex-row shadow-md">
           <div className="flex flex-col w-1/4">
             <div className=" rounded-tl-lg rounded-br-xl bg-button h-fit w-fit p-1 font-semibold text-white dark:text-dark">
               Basic Information
