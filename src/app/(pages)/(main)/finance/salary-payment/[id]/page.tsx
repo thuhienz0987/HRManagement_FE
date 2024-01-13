@@ -235,6 +235,38 @@ const SalaryDetails = ({
       );
     }
   };
+  const handleConfirmSalary = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosPrivate.put(
+        `/confirmSalary/${params.id}`,
+        {
+          payDay: new Date(),
+        },
+        { 
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+      console.log("success", JSON.stringify(response.data));
+      router.push("/finance/salary-payment");
+      toast({
+        title: `${salary?.userId.name}'s salary payment has been confirmed `,
+        description: format(new Date(), "EEEE, MMMM dd, yyyy 'at' h:mm a"),
+      });
+    } catch (err) {
+      console.log("err", err);
+      toast({
+        title: `${salary?.userId.name}'s salary payment has not been confirmed yet due to error `,
+        description: format(new Date(), "EEEE, MMMM dd, yyyy 'at' h:mm a"),
+      });
+      //   setTitle('Error');
+      //   setMessage(err.response.data.error);
+      //   setLoading(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
@@ -267,19 +299,14 @@ const SalaryDetails = ({
   };
   return (
     <div className="flex flex-1 flex-col px-[4%] items-center pb-4">
-      {allowRows([process.env.HRManager], session?.user.roles || []) && (
-        <div className="flex gap-3 self-end mb-2">
+      {allowRows([process.env.HRManager], session?.user.roles || []) && (salary?.payDay === null) && (
+        <div className="flex gap-3 self-end mb-2 mr-12">
           <RegularButton
-            label="Submit"
+            label="Update"
             additionalStyle=""
             callback={handleSubmit}
             isLoading={isLoading}
           />
-          {/* <RegularButton
-                        label="cancel"
-                        additionalStyle="bg-[#BDBDBD]"
-                        callback={moveToEditScreen}
-                    /> */}
         </div>
       )}
       {/* Basic information */}
@@ -294,7 +321,7 @@ const SalaryDetails = ({
               />
             </div>
           </div>
-          {allowRows([process.env.HRManager], session?.user.roles || []) && (
+          {allowRows([process.env.HRManager], session?.user.roles || []) && (salary?.payDay === null) && (
             <div className="flex text-[#5B5F7B] dark:text-whiteOff gap-10 flex-col mt-7 ml-7">
               <p className="inline text-start break-words font-semibold">
                 List of allowances:
@@ -390,8 +417,8 @@ const SalaryDetails = ({
               </p>
             </div>
           </div>
-          <div className="flex flex-1 flex-row">
-            <table className="border-[rgba(194, 201, 250, 1)] border-[2px] w-[90%] mt-5 flex flex-col mb-10">
+          <div className="flex flex-1 flex-col">
+            <table className="border-[rgba(194, 201, 250, 1)] border-[2px] w-[91%] mt-5 flex flex-col mb-10">
               <tbody>
                 <tr className="font-sans text-[#2C3D3A] dark:text-button  text-xs h-12 bg-[#ffffff] dark:bg-dark  flex w-full">
                   {totalColumns.map((column, index) => (
@@ -456,6 +483,16 @@ const SalaryDetails = ({
                 </tr>
               </tbody>
             </table>
+            {allowRows([process.env.HRManager], session?.user.roles || []) && (salary?.payDay === null) && (
+              <div className="flex mr-16 mb-10 gap-3 self-end">
+                <RegularButton
+                  label="Confirm salary payment"
+                  additionalStyle=""
+                  callback={handleConfirmSalary}
+                  isLoading={isLoading}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

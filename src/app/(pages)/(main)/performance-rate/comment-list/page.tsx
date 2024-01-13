@@ -26,6 +26,7 @@ type dCommentGet = CommentGet & {
     revieweeCode?: string;
     reviewerName?: string;
     commentDate: string;
+    calculatedSalary: string;
     createdAt: string;
     reviewDay: string;
     month: string;
@@ -63,6 +64,11 @@ const CommentForm = () => {
             key: "no",
         },
         {
+            title: "Reviewer name",
+            type: ColumnEnum.textColumn,
+            key: "reviewerName",
+        },
+        {
             title: "Score",
             type: ColumnEnum.textColumn,
             key: "rate",
@@ -76,16 +82,6 @@ const CommentForm = () => {
             title: "Month",
             type: ColumnEnum.textColumn,
             key: "month",
-        },
-        {
-            title: "Comment Date",
-            type: ColumnEnum.textColumn,
-            key: "reviewDay",
-        },
-        {
-            title: "Action",
-            type: ColumnEnum.functionColumn,
-            key: "action",
         },
     ];
     const empColumns: ColumnType[] = [
@@ -120,6 +116,11 @@ const CommentForm = () => {
             key: "month",
         },
         {
+            title: "Calculated Salary",
+            type: ColumnEnum.textColumn,
+            key: "calculatedSalary",
+        },
+        {
             title: "Action",
             type: ColumnEnum.functionColumn,
             key: "action",
@@ -136,6 +137,7 @@ const CommentForm = () => {
                 res.data.map((emp) => {
                     const reviewDay = new Date(emp.createdAt);
                     const reviewOfMonth = new Date(emp.commentMonth);
+                    emp.reviewerName = emp.reviewerId.name;
                     emp.reviewDay = format(reviewDay, "dd/MM/yyyy");
                     emp.month = format(reviewOfMonth, "MMM, yyyy");
                 });
@@ -160,25 +162,24 @@ const CommentForm = () => {
         };
         getAllowances();
     }, []);
-
+    const getEmployeeComments = async () => {
+        try {
+            const res = await axiosPrivate.get<dCommentGet[]>("/comments");
+            console.log(res.data);
+            res.data.map((emp) => {
+                emp.revieweeName = emp.revieweeId.name;
+                emp.reviewerName = emp.reviewerId.name;
+                const reviewDay = new Date(emp.createdAt);
+                const reviewOfMonth = new Date(emp.commentMonth);
+                emp.reviewDay = format(reviewDay, "dd/MM/yyyy");
+                emp.month = format(reviewOfMonth, "MMM, yyyy");
+            });
+            setEmpComments(res.data);
+        } catch (e) {
+            console.log(e);
+        }
+    };
     useEffect(() => {
-        const getEmployeeComments = async () => {
-            try {
-                const res = await axiosPrivate.get<dCommentGet[]>("/comments");
-                console.log(res.data);
-                res.data.map((emp) => {
-                    emp.revieweeName = emp.revieweeId.name;
-                    emp.reviewerName = emp.reviewerId.name;
-                    const reviewDay = new Date(emp.createdAt);
-                    const reviewOfMonth = new Date(emp.commentMonth);
-                    emp.reviewDay = format(reviewDay, "dd/MM/yyyy");
-                    emp.month = format(reviewOfMonth, "MMM, yyyy");
-                });
-                setEmpComments(res.data);
-            } catch (e) {
-                console.log(e);
-            }
-        };
         getEmployeeComments();
     }, []);
     const handleCheckboxChange = (
@@ -200,13 +201,26 @@ const CommentForm = () => {
             );
         }
     };
+    useEffect(() => {
+        console.log('idAllowanceeeeee',idAllowance)
+    }, [idAllowance]);
     const salaryFunction = (id: string) => {
-        const employee = empComments.find(
+        setIdAllowance([]);
+        const comment = empComments.find(
             (comment) => comment._id === id
-        )?.revieweeId;
-        setSelectedEmp(employee);
-        console.log({ selectedEmp });
-        onOpen();
+        );
+        if (comment?.calculatedSalary === 'Not yet')
+            {
+                setSelectedEmp(comment?.revieweeId);
+                console.log({ selectedEmp });
+                onOpen();
+            }
+        else
+            toast({
+                title: `Error`,
+                description: `This comment have been used to calculate salary`,
+            });
+        
     };
     const calculateSalary = async () => {
         setIsLoading(true);
@@ -223,8 +237,9 @@ const CommentForm = () => {
                 }
             );
             console.log("success", JSON.stringify(response.data));
+            getEmployeeComments();
             onClose();
-            router.push("/finance/salary-payment");
+            // router.push("/finance/salary-payment");
             toast({
                 title: `${selectedEmp?.name}'s salary has been calculated `,
                 description: format(
@@ -351,12 +366,12 @@ const CommentForm = () => {
                         <TableFirstForm
                             columns={empColumns}
                             rows={row()}
-                            salaryFunction={
+                            salaryFunction={(cmtId) =>
                                 allowRows(
                                     [process.env.HRManager, process.env.CEO],
                                     session?.user.roles || []
                                 )
-                                    ? salaryFunction
+                                    ? salaryFunction(cmtId)
                                     : undefined
                             }
                         />
