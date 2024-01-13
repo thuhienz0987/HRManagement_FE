@@ -52,7 +52,7 @@ const CustomDropdown = ({
       {label && (
         <p
           className={`block text-small font-medium pb-1.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none  ${
-            labelStyle ? labelStyle : "text-[#5B5F7B] dark:text-[#5B5F7B]"
+            labelStyle ? labelStyle : "text-[#5B5F7B] dark:text-whiteOff"
           } `}
         >
           {label}

@@ -17,6 +17,7 @@ import getMonthsBetweenDates from "src/helper/getMonthBetweenDays";
 import { SearchIcon } from "src/svgs";
 import { Department, User } from "src/types/userType";
 import XLSX from "sheetjs-style";
+import { Salary } from "src/types/salaryTypes";
 
 type AttendancePercentageResponse = {
     result: [
@@ -39,9 +40,16 @@ type dDepartment = Department & {
     value: string;
 };
 
+type dSalary = Salary & {
+    departmentName: string;
+    employeeCode: string;
+    employeeName: string;
+    month: string;
+};
+
 const tenor_sans = Tenor_Sans({ subsets: ["latin"], weight: "400" });
 
-const Reports = () => {
+const SalaryReports = () => {
     const axiosPrivate = useAxiosPrivate();
     const { data: session } = useSession();
     const [attendanceLabel, setAttendanceLabel] = useState<string[]>();
@@ -50,29 +58,34 @@ const Reports = () => {
     const [totalAttendance, setTotalAttendance] = useState<number>();
     const columns: ColumnType[] = [
         {
-            title: "No",
-            type: ColumnEnum.indexColumn,
-            key: "no",
+            title: "Month",
+            type: ColumnEnum.textColumn,
+            key: "month",
         },
         {
-            title: "Employee Code",
+            title: "Salary for present",
             type: ColumnEnum.textColumn,
-            key: "code",
+            key: "dayMoney",
         },
         {
-            title: "Full Name",
+            title: "Allowance",
             type: ColumnEnum.textColumn,
-            key: "name",
+            key: "allowanceAmount",
         },
         {
-            title: "Working day",
+            title: "Bonus",
             type: ColumnEnum.textColumn,
-            key: "totalWorkingDays",
+            key: "bonusMoney",
         },
         {
-            title: "Overtime",
+            title: "Salary",
             type: ColumnEnum.textColumn,
-            key: "totalOvertimeHours",
+            key: "totalSalary",
+        },
+        {
+            title: "Received Date",
+            type: ColumnEnum.textColumn,
+            key: "createdAt",
         },
         {
             title: "Action",
@@ -80,6 +93,38 @@ const Reports = () => {
             key: "action",
         },
     ];
+    // const columns: ColumnType[] = [
+    //     {
+    //         title: "No",
+    //         type: ColumnEnum.indexColumn,
+    //         key: "no",
+    //     },
+    //     {
+    //         title: "Employee Code",
+    //         type: ColumnEnum.textColumn,
+    //         key: "code",
+    //     },
+    //     {
+    //         title: "Full Name",
+    //         type: ColumnEnum.textColumn,
+    //         key: "name",
+    //     },
+    //     {
+    //         title: "Working day",
+    //         type: ColumnEnum.textColumn,
+    //         key: "totalWorkingDays",
+    //     },
+    //     {
+    //         title: "Overtime",
+    //         type: ColumnEnum.textColumn,
+    //         key: "totalOvertimeHours",
+    //     },
+    //     {
+    //         title: "Action",
+    //         type: ColumnEnum.functionColumn,
+    //         key: "action",
+    //     },
+    // ];
     const today = startOfToday();
     const [employeeAttendances, setEmployeeAttendances] =
         useState<EmployeeAttendance[]>();
@@ -89,28 +134,53 @@ const Reports = () => {
     const [departments, setDepartments] = useState<dDepartment[]>();
     const [sortedDept, setSortedDept] = useState<string>();
     const [searchQuery, setSearchQuery] = useState<string>();
+    const [salaries, setSalaries] = useState<dSalary[]>();
     const startDay = new Date(2023, 10, 1, 0, 0, 0, 0);
-    const getEmployees = async () => {
+    const getSalaries = async () => {
         try {
-            const res = await axiosPrivate.get<EmployeeAttendance[]>(
-                `/attendancesByMonth_total${selectedMonth}`,
-                {
-                    headers: { "Content-Type": "application/json" },
-                    withCredentials: true,
-                }
+            const res = await axiosPrivate.get<dSalary[]>(
+                `/salariesByMonthYear${selectedMonth}`
             );
-            res.data.map((employee) => {
-                employee._id = employee.user._id;
-                employee.code = employee.user.code;
-                employee.name = employee.user.name;
-                employee.departmentId = employee.user.departmentId;
+            console.log("success", res.data);
+            res.data.map((salary) => {
+                salary.departmentName = salary.userId.departmentId.name;
+                salary.employeeCode = salary.userId.code;
+                salary.employeeName = salary.userId.name;
+                salary.createdAt = format(
+                    new Date(salary.createdAt),
+                    "dd/MM/yyyy"
+                );
+                salary.totalSalary = new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                }).format(parseFloat(salary.totalSalary));
             });
-            console.log(res.data);
-            setEmployeeAttendances(res.data);
+            setSalaries(res.data);
         } catch (e) {
             console.log({ e });
         }
     };
+    // const getEmployees = async () => {
+    //     try {
+    //         const res = await axiosPrivate.get<EmployeeAttendance[]>(
+    //             `/attendancesByMonth_total${selectedMonth}`,
+    //             {
+    //                 headers: { "Content-Type": "application/json" },
+    //                 withCredentials: true,
+    //             }
+    //         );
+    //         res.data.map((employee) => {
+    //             employee._id = employee.user._id;
+    //             employee.code = employee.user.code;
+    //             employee.name = employee.user.name;
+    //             employee.departmentId = employee.user.departmentId;
+    //         });
+    //         console.log(res.data);
+    //         setEmployeeAttendances(res.data);
+    //     } catch (e) {
+    //         console.log({ e });
+    //     }
+    // };
     useEffect(() => {
         const getDepartments = async () => {
             try {
@@ -126,22 +196,25 @@ const Reports = () => {
         getDepartments();
     }, []);
     useEffect(() => {
-        getEmployees();
+        // getEmployees();
+        getSalaries();
     }, [selectedMonth]);
     const rows = () => {
-        let sortedEmp = employeeAttendances;
+        let sortedEmp = salaries;
         if (searchQuery) {
             sortedEmp = sortedEmp?.filter(
-                (emp) =>
-                    emp.name
+                (salary) =>
+                    salary.employeeName
                         .toLowerCase()
                         .includes(searchQuery.toLowerCase()) ||
-                    emp.code.toLowerCase().includes(searchQuery.toLowerCase())
+                    salary.employeeCode
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase())
             );
         }
         if (sortedDept) {
             sortedEmp = sortedEmp?.filter(
-                (emp) => emp?.departmentId?.name == sortedDept
+                (salary) => salary?.departmentName == sortedDept
             );
         }
         return sortedEmp;
@@ -298,7 +371,7 @@ const Reports = () => {
                 <Input
                     className="rounded w-auto flex-1"
                     classNames={{
-                        inputWrapper: "bg-white border dark:bg-[#3b3b3b]",
+                        inputWrapper: "bg-white dark:bg-[#3b3b3b] border",
                     }}
                     radius="sm"
                     variant="bordered"
@@ -341,11 +414,11 @@ const Reports = () => {
                 />
                 <RegularButton label="Export excel" callback={exportToExcel} />
             </div>
-            <div className="flex flex-1 flex-col bg-white dark:bg-dark w-[90%] items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
+            <div className="flex flex-1 flex-col bg-white dark:bg-dark  w-[90%] items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
                 <div className="w-[95%] self-center flex flex-col">
                     <div className="w-full flex flex-row justify-between items-center">
                         <h3 className=" text-[26px] font-semibold text-[#2C3D3A] dark:text-button">
-                            Attendance log
+                            Salary payment list
                         </h3>
                         <div className="flex gap-3">
                             {/* <CustomDropdown
@@ -394,4 +467,4 @@ const Reports = () => {
     );
 };
 
-export default Reports;
+export default SalaryReports;
