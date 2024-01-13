@@ -79,9 +79,9 @@ const SignInForm = (props: Props) => {
                 });
                 router.push("/dashboard");
             } catch (err: any) {
-                console.log("err", err.response.data);
+                console.log("err", err.response.data.message);
                 setVisible(true);
-                setErrorMessage(err.response.data.error);
+                setErrorMessage(err.response.data.message);
             }finally {
                 setIsLoading(false);
             }

@@ -6,7 +6,7 @@ import TableFirstForm, {
     ColumnEnum,
     ColumnType,
 } from "src/components/tableFirstForm";
-import StackChart from "src/components/stackChart";
+import SalaryStackChart from "src/components/salaryStackChart";
 import { SearchIcon } from "src/svgs";
 import { Label } from "@radix-ui/react-select";
 import axios, { AxiosError } from "axios";
@@ -77,7 +77,7 @@ const AdminSalary = () => {
         {
             title: "Received Date",
             type: ColumnEnum.textColumn,
-            key: "createdAt",
+            key: "payDay",
         },
         {
             title: "Action",
@@ -114,7 +114,7 @@ const AdminSalary = () => {
         {
             title: "Received Date",
             type: ColumnEnum.textColumn,
-            key: "createdAt",
+            key: "payDay",
         },
         {
             title: "Action",
@@ -130,8 +130,8 @@ const AdminSalary = () => {
                     salary.departmentName = salary.userId.departmentId.name;
                     salary.employeeCode = salary.userId.code;
                     salary.employeeName = salary.userId.name;
-                    salary.createdAt = format(
-                        new Date(salary.createdAt),
+                    salary.payDay = salary.payDay === null ? "Not yet" : format(
+                        new Date(salary.payDay),
                         "dd/MM/yyyy"
                     );
                     salary.totalSalary = new Intl.NumberFormat("vi-VN", {
@@ -202,9 +202,9 @@ const AdminSalary = () => {
     }, []);
 
     const rows = () => {
-        let sortedEmp = salaries;
+        let sortedSalary = salaries;
         if (searchQuery) {
-            sortedEmp = sortedEmp?.filter(
+            sortedSalary = sortedSalary?.filter(
                 (salary) =>
                     salary.employeeName
                         .toLowerCase()
@@ -215,11 +215,15 @@ const AdminSalary = () => {
             );
         }
         if (sortedDept) {
-            sortedEmp = sortedEmp?.filter(
+            sortedSalary = sortedSalary?.filter(
                 (salary) => salary?.departmentName == sortedDept
             );
         }
-        return sortedEmp;
+        let filteredRow = sortedSalary?.filter(
+            (sa) =>
+                format(new Date(sa.idComment.commentMonth), "/MM/yyyy") == selectedMonth
+        );
+        return filteredRow;
     };
     // function getYearsBetweenDates() {
     const editSalary = async (id: string) => {
@@ -307,7 +311,7 @@ const AdminSalary = () => {
                         </div>
                     </div>
                     <div className="w-full self-center flex h-[400px]">
-                        <StackChart />
+                        <SalaryStackChart />
                     </div>
                 </div>
             ) : (
@@ -336,15 +340,6 @@ const AdminSalary = () => {
                                 <div className="text-[#5B5F7B] dark:text-button block text-3xl font-semibold">
                                     Salary
                                 </div>
-                                {/* <div className="flex gap-x-3 items-end">
-                                    <CustomDropdown
-                                        placeholder="Year"
-                                        options={years}
-                                        buttonStyle="w-[120px] bg-white"
-                                        value={selectedYear}
-                                        onSelect={(val) => setSelectedYear(val)}
-                                    />
-                                </div> */}
                             </div>
                             <div className="w-[95%] self-center flex">
                                 <TableFirstForm
@@ -355,9 +350,9 @@ const AdminSalary = () => {
                             </div>
                         </div>
                     </div>
-                    {/* <div className="w-full self-center flex">
-                        <StackChart />
-                    </div> */}
+                    <div className="w-full self-center flex h-[400px]">
+                        <SalaryStackChart />
+                    </div>
                 </div>
             )}
         </>

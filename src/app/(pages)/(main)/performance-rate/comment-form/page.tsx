@@ -226,7 +226,7 @@ const CommentForm = () => {
                     "/leaders-without-comments/" +
                     session?.user.departmentId._id;
             if (session?.user.roles.includes(process.env.CEO))
-                url = "/managers-without-comments/";
+                url = "/managers-without-comments";
             try {
                 const res = await axiosPrivate.get<Employee[]>(
                     url + selectedMonth,
@@ -238,12 +238,15 @@ const CommentForm = () => {
                 res.data = res.data.filter((emp) => {
                     return emp._id != session?.user._id;
                 });
+                
                 setEmployees(res.data);
+                console.log({employees})
             } catch (e) {
                 console.log(e);
             }
         };
         getEmployees();
+        console.log({employees})
     }, [selectedMonth]);
 
     useEffect(() => {

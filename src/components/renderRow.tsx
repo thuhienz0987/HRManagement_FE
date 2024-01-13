@@ -112,7 +112,7 @@ export function RenderRow({
                       salaryFunction(row._id);
                     }}
                   >
-                    <p className="text-black-600 font-bold">$</p>
+                    <p className="text-yellow-500 font-bold">$</p>
                   </button>
                 </Tooltip>
               )}
