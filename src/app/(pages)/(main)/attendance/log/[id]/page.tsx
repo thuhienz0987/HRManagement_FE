@@ -74,6 +74,7 @@ const Log = ({ params }: { params: { id: string } }) => {
   ];
   const today = startOfToday();
   const [attendances, setAttendances] = useState<dAttendance[]>();
+  const [isLoading, setIsLoading] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
   const [sortedDept, setSortedDept] = useState<string>();
   const [editableRow, setEditableRow] = useState<dAttendance | null>(null);
@@ -167,7 +168,6 @@ const Log = ({ params }: { params: { id: string } }) => {
             className="rounded w-1/2 flex-1"
             radius="sm"
             variant="bordered"
-            key={"a"}
             type="text"
             disabled
             label={<p className="text-[#5B5F7B] dark:text-button">Date</p>}
@@ -180,7 +180,6 @@ const Log = ({ params }: { params: { id: string } }) => {
             className="rounded w-auto flex-1"
             radius="sm"
             variant="bordered"
-            key={"a"}
             type="time"
             step="1"
             label={
@@ -199,7 +198,6 @@ const Log = ({ params }: { params: { id: string } }) => {
             className="rounded w-auto flex-1"
             radius="sm"
             variant="bordered"
-            key={"a"}
             step="1"
             type="time"
             label={
@@ -227,6 +225,7 @@ const Log = ({ params }: { params: { id: string } }) => {
     );
   };
   const onSave = async (updatedRow: dAttendance) => {
+    setIsLoading(true);
     try {
       const [arriveTimeHours, arriveTimeMinutes, arriveTimeSeconds] =
         updatedRow.arriveTime.split(":");
@@ -315,9 +314,10 @@ const Log = ({ params }: { params: { id: string } }) => {
       });
     } catch (e) {
       console.log({ e });
+    }finally {
+      setIsLoading(false);
     }
   };
-  const handleSearch = () => {};
   return (
     <div className="flex flex-1 flex-col px-[4%] pb-4 rounded gap-y-9">
       <div className=" flex w-full gap-x-7 items-end ">
@@ -330,14 +330,6 @@ const Log = ({ params }: { params: { id: string } }) => {
             }}
           />
         )}
-        {/* <CustomDropdown
-                    placeholder="Select department"
-                    additionalStyle="flex-1 h-full"
-                    buttonStyle="bg-white border h-[39px]"
-                    options={departments}
-                    onSelect={setSortedDept}
-                    value={sortedDept}
-                /> */}
       </div>
       <div className="flex flex-1 flex-col bg-white dark:bg-dark w-full items-start py-4 gap-5 shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] rounded-lg ">
         <div className="w-[95%] self-center flex flex-col">
@@ -345,13 +337,6 @@ const Log = ({ params }: { params: { id: string } }) => {
             <h3 className=" text-[26px] font-semibold text-[#2C3D3A] dark:text-button">
               Attendance log
             </h3>
-            <div className="flex gap-3">
-              {/* <CustomDropdown
-                                placeholder="Month"
-                                additionalStyle="min-w-[100px]"
-                                buttonStyle="bg-white border"
-                            /> */}
-            </div>
           </div>
           <TableFirstForm
             columns={columns}

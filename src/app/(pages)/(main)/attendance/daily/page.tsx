@@ -127,7 +127,7 @@ const DailyAttendance = () => {
     };
     getDepartments();
     getAttendancesByDate(
-      today.getDate()-1,
+      today.getDate(),
       today.getMonth() + 1,
       today.getFullYear()
     );
