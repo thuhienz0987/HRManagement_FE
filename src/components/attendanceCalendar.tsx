@@ -145,12 +145,19 @@ function AttendanceCalendar() {
     const monthAttendance = attendances.find(
       (d) => d.month == date.getMonth() + 1 && d.year == date.getFullYear()
     );
+    
     if (!monthAttendance) return "null";
+    if (today.getDate() < date.getDate()) return "null";
+
     const dateAttendance = monthAttendance.attendance.find((d) => {
       const attendanceDate = new Date(d.attendanceDate);
       return attendanceDate.getDate() == date.getDate();
     });
-    if (!dateAttendance) return "absent";
+    
+    if (!dateAttendance) {
+      return "absent"
+    };
+
     const checkInTime = new Date(dateAttendance.checkInTime);
 
     console.log(checkInTime.getHours());
@@ -163,6 +170,7 @@ function AttendanceCalendar() {
       const checkOutTime = new Date(dateAttendance.checkOutTime);
       if (checkOutTime.getHours() <= 17) return "Come late/Leave early";
     }
+    
     return "ok";
   };
   return (
