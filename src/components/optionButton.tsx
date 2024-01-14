@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { SideBarMode } from "./sideBar";
 import { useState } from "react";
+import { usePosition } from "src/hooks/usePosition";
 
 export type SideBarOptionType = {
     name: string;
@@ -22,12 +23,14 @@ const OptionButton = ({
     checkIsCurrent,
     sidebarMode,
     hasOpenedSubList,
+    lor,
 }: {
     option: SideBarOptionType;
     pressOption: (option: SideBarOptionType) => void;
     checkIsCurrent: (option: SideBarOptionType) => boolean;
     sidebarMode: SideBarMode;
     hasOpenedSubList: (option: SideBarOptionType) => boolean;
+    lor: string;
 }) => {
     function delay(time: number) {
         return new Promise((resolve) => setTimeout(resolve, time));
@@ -42,6 +45,8 @@ const OptionButton = ({
     const handleMouseOut = () => {
         setIsHovered(false);
     };
+
+    const [value, setValue] = usePosition();
 
     return (
         <button
@@ -65,10 +70,21 @@ const OptionButton = ({
                     : " ") +
                 (sidebarMode == SideBarMode.Small &&
                     !checkIsCurrent(option) &&
+                    lor == "right" &&
+                    " hover:scale-110 hover:-scale-x-110 ") +
+                (sidebarMode == SideBarMode.Large &&
+                    lor == "right" &&
+                    !checkIsCurrent(option) &&
+                    " hover:scale-105 hover:-scale-x-105 ") +
+                (sidebarMode == SideBarMode.Small &&
+                    !checkIsCurrent(option) &&
+                    lor !== "right" &&
                     " hover:scale-110 ") +
                 (sidebarMode == SideBarMode.Large &&
+                    lor !== "right" &&
                     !checkIsCurrent(option) &&
-                    " hover:scale-105 ")
+                    " hover:scale-105 ") +
+                (lor == "right" && " -scale-x-100")
             }
         >
             <div
@@ -79,20 +95,26 @@ const OptionButton = ({
                         "group-hover:pl-3")
                 }
             >
-                <option.icon
-                    width="24"
-                    height="24"
-                    fill="none"
-                    stroke={
-                        checkIsCurrent(option) || isHovered ? "black" : "white"
-                    }
-                />
+                <div className={lor == "right" ? "-scale-x-100" : ""}>
+                    <option.icon
+                        width="24"
+                        height="24"
+                        fill="none"
+                        stroke={
+                            checkIsCurrent(option) || isHovered
+                                ? "black"
+                                : "white"
+                        }
+                    />
+                </div>
+
                 <div
                     className={
                         "ease-in-out duration-200 " +
                         (sidebarMode == SideBarMode.Small
                             ? " -translate-x-3 opacity-0 absolute left-12"
-                            : " translate-x-0 opacity-1 ")
+                            : " translate-x-0 opacity-1 ") +
+                        (lor == "right" && "-scale-x-100")
                     }
                 >
                     {option.name}
