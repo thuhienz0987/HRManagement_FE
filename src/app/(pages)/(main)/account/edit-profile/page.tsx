@@ -166,13 +166,13 @@ const EditUserProfile = () => {
         });
         console.log("success", JSON.stringify(response.data));
         toast({
-          title: `${profile?.name}'s profile has been updated `,
+          title: `${fullName}'s profile has been updated `,
           description: format(new Date(), "EEEE, MMMM dd, yyyy 'at' h:mm a"),
         });
       } catch (err) {
         console.log("err", err);
         toast({
-          title: `${profile?.name}'s profile has not been update yet due to error `,
+          title: `${fullName}'s profile has not been update yet due to error `,
           description: format(new Date(), "EEEE, MMMM dd, yyyy 'at' h:mm a"),
         });
         //   setTitle('Error');
