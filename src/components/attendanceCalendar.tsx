@@ -168,7 +168,7 @@ function AttendanceCalendar() {
       return "Come late/Leave early";
     if (dateAttendance.checkOutTime) {
       const checkOutTime = new Date(dateAttendance.checkOutTime);
-      if (checkOutTime.getHours() <= 17) return "Come late/Leave early";
+      if (checkOutTime.getHours() < 17) return "Come late/Leave early";
     }
     
     return "ok";
