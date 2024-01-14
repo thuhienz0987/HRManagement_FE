@@ -261,7 +261,8 @@ const CommentForm = () => {
                 res.data.map((emp) => {
                     emp.revieweeName = emp.revieweeId.name;
                     emp.revieweeCode = emp.revieweeId.code;
-                    const reviewDay = new Date(emp.createdAt);
+                    const day = new Date(emp.commentMonth);
+                    const reviewDay = new Date(day.getFullYear(), day.getMonth()+1, day.getDate());
                     emp.reviewDay = format(reviewDay, "dd/MM/yyyy");
                 });
                 setComments(res.data);

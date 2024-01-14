@@ -310,7 +310,7 @@ const AdminSalary = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="w-full self-center flex h-[400px]">
+                    <div className="w-full self-center flex h-[600px]">
                         <SalaryStackChart />
                     </div>
                 </div>
@@ -350,7 +350,7 @@ const AdminSalary = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="w-full self-center flex h-[400px]">
+                    <div className="w-full self-center flex h-[600px]">
                         <SalaryStackChart />
                     </div>
                 </div>

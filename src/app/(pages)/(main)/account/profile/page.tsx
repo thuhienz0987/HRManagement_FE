@@ -37,20 +37,6 @@ const UserProfile = () => {
     else {
       _id && getUserProfile(_id);
     }
-
-    // const getUserPosition = async (_id: string) => {
-    //   try {
-    //     const res = await axiosPrivate.get<UserResponse>("/user/" + _id);
-    //     console.log(res.data);
-    //     setProfile(res.data);
-    //   } catch (e) {
-    //     console.log({ e });
-    //   }
-    // };
-    // if (_id == session?.user._id) setProfile(session?.user);
-    // else {
-    //   _id && getUserProfile(_id);
-    // }
   }, []);
   const basicInformation = [
     { label: "Full name", value: profile?.name },
