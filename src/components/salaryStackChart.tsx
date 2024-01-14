@@ -57,7 +57,7 @@ function SalaryStackChart() {
     },
     indexAxis: 'x', // Add this line to switch to horizontal bar chart
     barPercentage: 0.2, // Adjust the spacing of the bars
-    categoryPercentage: 3.2, // Adjust the spacing between categories
+    categoryPercentage: 0.9, // Adjust the spacing between categories
     barThickness: 100,
     responsive: true,
     maintainAspectRatio: false,
