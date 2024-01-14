@@ -193,7 +193,9 @@ const Log = () => {
           />
         </div>
       </div>
-      <StackChart />
+      <div className="w-full self-center flex h-[400px]">
+        <StackChart />
+      </div>
     </div>
   );
 };

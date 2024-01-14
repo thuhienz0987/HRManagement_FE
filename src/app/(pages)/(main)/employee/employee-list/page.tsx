@@ -24,7 +24,7 @@ type dDepartment = Department & {
   value: string;
 };
 
-const AttendanceList = () => {
+const EmployeeList = () => {
   const router = useRouter();
   const axiosPrivate = useAxiosPrivate();
   const [employees, setEmployees] = useState<Employee[]>();
@@ -175,4 +175,4 @@ const AttendanceList = () => {
   );
 };
 
-export default AttendanceList;
+export default EmployeeList;

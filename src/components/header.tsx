@@ -35,7 +35,7 @@ function Header({
         // { name: "Personal Information" },
         // { name: "Attendance log" },
         // { name: "Absent request" },
-        { name: "Change password" },
+        // { name: "Change password" },
         { name: "Log out", callback: logOut },
     ];
     const [visible, setVisible] = useState(false);

@@ -37,20 +37,6 @@ const UserProfile = () => {
     else {
       _id && getUserProfile(_id);
     }
-
-    // const getUserPosition = async (_id: string) => {
-    //   try {
-    //     const res = await axiosPrivate.get<UserResponse>("/user/" + _id);
-    //     console.log(res.data);
-    //     setProfile(res.data);
-    //   } catch (e) {
-    //     console.log({ e });
-    //   }
-    // };
-    // if (_id == session?.user._id) setProfile(session?.user);
-    // else {
-    //   _id && getUserProfile(_id);
-    // }
   }, []);
   const basicInformation = [
     { label: "Full name", value: profile?.name },
@@ -99,7 +85,7 @@ const UserProfile = () => {
 
       {/* Basic information */}
       <div className=" p-10 bg-white dark:bg-dark w-11/12 rounded-md">
-        <div className="  bg-bar_dark rounded-lg flex flex-row shadow-md">
+        <div className=" bg-[#F1F6FF] dark:bg-bar_dark rounded-lg flex flex-row shadow-md">
           <div className="flex flex-col w-1/4">
             <div className=" rounded-tl-lg rounded-br-xl bg-button h-fit w-fit p-1 font-semibold text-white dark:text-dark">
               Basic Information

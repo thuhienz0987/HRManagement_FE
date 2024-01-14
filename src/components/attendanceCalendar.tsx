@@ -147,15 +147,22 @@ function AttendanceCalendar() {
             (d) =>
                 d.month == date.getMonth() + 1 && d.year == date.getFullYear()
         );
+
         if (!monthAttendance) return "null";
+        if (today.getDate() < date.getDate()) return "null";
+
         const dateAttendance = monthAttendance.attendance.find((d) => {
             const attendanceDate = new Date(d.attendanceDate);
             return attendanceDate.getDate() == date.getDate();
         });
-        if (!dateAttendance) return "absent";
+
+        if (!dateAttendance) {
+            return "absent";
+        }
+
         const checkInTime = new Date(dateAttendance.checkInTime);
 
-        // console.log(checkInTime.getHours());
+        console.log(checkInTime.getHours());
         if (
             checkInTime.getHours() > 7 ||
             (checkInTime.getHours() == 7 && checkInTime.getMinutes() >= 1)
@@ -163,8 +170,9 @@ function AttendanceCalendar() {
             return "Come late/Leave early";
         if (dateAttendance.checkOutTime) {
             const checkOutTime = new Date(dateAttendance.checkOutTime);
-            if (checkOutTime.getHours() <= 17) return "Come late/Leave early";
+            if (checkOutTime.getHours() < 17) return "Come late/Leave early";
         }
+
         return "ok";
     };
     return (
@@ -355,90 +363,90 @@ function AttendanceCalendar() {
                                                     type="button"
                                                     // onClick={() => setSelectedDay(day)}
                                                     className={`
-                                                    ${
-                                                        isEqual(
-                                                            day,
-                                                            selectedDay
-                                                        ) &&
-                                                        "text-[#2C3D3A] font-semibold dark:text-[#FAF9F6]"
-                                                    }
-                                                    ${
-                                                        !isEqual(
-                                                            day,
-                                                            selectedDay
-                                                        ) &&
-                                                        !isToday(day) &&
-                                                        isSameMonth(
-                                                            day,
-                                                            firstDayCurrentMonth
-                                                        ) &&
-                                                        dateStatus(day) !=
-                                                            "null" &&
-                                                        "text-[#F5F5DC] dark:text-white "
-                                                    }
-                                                    ${
-                                                        !isEqual(
-                                                            day,
-                                                            selectedDay
-                                                        ) &&
-                                                        !isToday(day) &&
-                                                        isSameMonth(
-                                                            day,
-                                                            firstDayCurrentMonth
-                                                        ) &&
-                                                        dateStatus(day) ==
-                                                            "null" &&
-                                                        "light:text-slate-800 dark:text-[#FAF9F680]"
-                                                    }
-                                                    ${
-                                                        !isEqual(
-                                                            day,
-                                                            selectedDay
-                                                        ) &&
-                                                        !isToday(day) &&
-                                                        !isSameMonth(
-                                                            day,
-                                                            firstDayCurrentMonth
-                                                        ) &&
-                                                        "text-slate-500 dark:text-[#FAF9F650]"
-                                                    }
-                                                    ${
-                                                        dateStatus(day) ==
-                                                            "absent" &&
-                                                        "bg-red-500"
-                                                    }
-                                                    ${
-                                                        dateStatus(day) ==
-                                                            "absent" &&
-                                                        "bg-red-500"
-                                                    }
-                                                    ${
-                                                        dateStatus(day) ==
-                                                            "Come late/Leave early" &&
-                                                        "bg-yellow-500"
-                                                    }
-                                                    ${
-                                                        dateStatus(day) ==
-                                                            "ok" &&
-                                                        "bg-[#29AB91]"
-                                                    }
-                                                    ${
-                                                        !isEqual(
-                                                            day,
-                                                            selectedDay
-                                                        ) &&
-                                                        "hover:bg-gray-200 hover:dark:bg-black hover:text-black"
-                                                    }
-                                                    ${
-                                                        ((isEqual(
-                                                            day,
-                                                            selectedDay
-                                                        ) ||
-                                                            isToday(day)) &&
-                                                            "font-semibold",
-                                                        "mx-auto flex h-8 w-8 items-center justify-center rounded-full")
-                                                    }
-                                            `}
+                                                      ${
+                                                          isEqual(
+                                                              day,
+                                                              selectedDay
+                                                          ) &&
+                                                          "text-[#2C3D3A] font-semibold dark:text-[#FAF9F6]"
+                                                      }
+                                                      ${
+                                                          !isEqual(
+                                                              day,
+                                                              selectedDay
+                                                          ) &&
+                                                          !isToday(day) &&
+                                                          isSameMonth(
+                                                              day,
+                                                              firstDayCurrentMonth
+                                                          ) &&
+                                                          dateStatus(day) !=
+                                                              "null" &&
+                                                          "text-[#F5F5DC] dark:text-white "
+                                                      }
+                                                      ${
+                                                          !isEqual(
+                                                              day,
+                                                              selectedDay
+                                                          ) &&
+                                                          !isToday(day) &&
+                                                          isSameMonth(
+                                                              day,
+                                                              firstDayCurrentMonth
+                                                          ) &&
+                                                          dateStatus(day) ==
+                                                              "null" &&
+                                                          "light:text-slate-800 dark:text-[#FAF9F680]"
+                                                      }
+                                                      ${
+                                                          !isEqual(
+                                                              day,
+                                                              selectedDay
+                                                          ) &&
+                                                          !isToday(day) &&
+                                                          !isSameMonth(
+                                                              day,
+                                                              firstDayCurrentMonth
+                                                          ) &&
+                                                          "text-slate-500 dark:text-[#FAF9F650]"
+                                                      }
+                                                      ${
+                                                          dateStatus(day) ==
+                                                              "absent" &&
+                                                          "bg-red-500"
+                                                      }
+                                                      ${
+                                                          dateStatus(day) ==
+                                                              "absent" &&
+                                                          "bg-red-500"
+                                                      }
+                                                      ${
+                                                          dateStatus(day) ==
+                                                              "Come late/Leave early" &&
+                                                          "bg-yellow-500"
+                                                      }
+                                                      ${
+                                                          dateStatus(day) ==
+                                                              "ok" &&
+                                                          "bg-[#29AB91]"
+                                                      }
+                                                      ${
+                                                          !isEqual(
+                                                              day,
+                                                              selectedDay
+                                                          ) &&
+                                                          "hover:bg-gray-200 hover:dark:bg-black hover:text-black"
+                                                      }
+                                                      ${
+                                                          ((isEqual(
+                                                              day,
+                                                              selectedDay
+                                                          ) ||
+                                                              isToday(day)) &&
+                                                              "font-semibold",
+                                                          "mx-auto flex h-8 w-8 items-center justify-center rounded-full")
+                                                      }
+                                              `}
                                                 >
                                                     <time
                                                         dateTime={format(

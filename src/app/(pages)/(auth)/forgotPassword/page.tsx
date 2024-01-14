@@ -66,7 +66,6 @@ const ForgotPasswordForm = (props: Props) => {
                 setErrorMessage(err.response.data.error);
             }
             finally {
-                router.prefetch("/signIn");
                 setIsLoading(false);
             }
             

@@ -74,11 +74,6 @@ const Reports = () => {
             type: ColumnEnum.textColumn,
             key: "totalOvertimeHours",
         },
-        {
-            title: "Action",
-            type: ColumnEnum.functionColumn,
-            key: "action",
-        },
     ];
     const today = startOfToday();
     const [employeeAttendances, setEmployeeAttendances] =

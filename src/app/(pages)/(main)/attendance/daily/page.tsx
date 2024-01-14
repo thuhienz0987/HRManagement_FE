@@ -37,6 +37,7 @@ const DailyAttendance = () => {
   const today = startOfToday();
   const axiosPrivate = useAxiosPrivate();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const [departments, setDepartments] = useState<dDepartment[]>();
   const [dailyAttendances, setDailyAttendances] =
     useState<dDailyAttendances[]>();
@@ -189,6 +190,7 @@ const DailyAttendance = () => {
     return sortedEmp;
   };
   const onSave = async (updatedRow: dDailyAttendances) => {
+    setIsLoading(true);
     try {
       const [arriveTimeHours, arriveTimeMinutes, arriveTimeSeconds] =
         updatedRow.arriveTime.split(":");
@@ -196,22 +198,20 @@ const DailyAttendance = () => {
       attendanceDate.setUTCHours(parseInt(arriveTimeHours, 10) - 7);
       attendanceDate.setUTCMinutes(parseInt(arriveTimeMinutes, 10));
       attendanceDate.setUTCSeconds(parseInt(arriveTimeSeconds, 10));
-
       updatedRow.checkInTime = attendanceDate.toISOString();
-
-      const [leaveTimeHours, leaveTimeMinutes, leaveTimeSeconds] =
-        updatedRow.leaveTime.split(":");
+      console.log('asdcs', updatedRow.leaveTime )
+      const leave = updatedRow.leaveTime !== undefined ? updatedRow.leaveTime : "00:00:00";
+      const [leaveTimeHours, leaveTimeMinutes, leaveTimeSeconds] = leave.split(":");
       attendanceDate.setUTCHours(parseInt(leaveTimeHours, 10) - 7);
       attendanceDate.setUTCMinutes(parseInt(leaveTimeMinutes, 10));
       attendanceDate.setUTCSeconds(parseInt(leaveTimeSeconds, 10));
-
       updatedRow.checkOutTime = attendanceDate.toISOString();
 
       const res = await axiosPrivate.put<dDailyAttendances>(
         "/attendance/" + updatedRow._id,
         {
           checkInTime: updatedRow.checkInTime,
-          checkOutTime: updatedRow.checkOutTime,
+          checkOutTime: updatedRow.leaveTime !== undefined ? updatedRow.checkOutTime : null,
           attendanceDate: editableRow?.attendanceDate,
         },
         {
@@ -230,7 +230,7 @@ const DailyAttendance = () => {
         (arriveTime.getHours() === 7 && arriveTime.getMinutes() > 0)
       )
         updatedRow.status = "Arrive late";
-
+      
       let leaveTime = new Date();
       leaveTime.setHours(parseInt(leaveTimeHours, 10));
       leaveTime.setMinutes(parseInt(leaveTimeMinutes, 10));
@@ -258,6 +258,15 @@ const DailyAttendance = () => {
         leaveTime.getHours() >= 17
       )
         updatedRow.status = "Complete";
+      if(updatedRow.leaveTime === undefined)
+      {
+        updatedRow.status = "Present";
+      }
+      if (
+        arriveTime.getHours() > 7 ||
+        (arriveTime.getHours() === 7 && arriveTime.getMinutes() > 0)
+      )
+        updatedRow.status = "Arrive late";
       const updatedAttendances = dailyAttendances?.map((attendance) =>
         attendance._id === updatedRow._id ? updatedRow : attendance
       );
@@ -265,21 +274,11 @@ const DailyAttendance = () => {
       setEditableRow(null);
       toast({
         title: `Updated arrive time and leave time of ${updatedRow?.fullName} `,
-        description: [
-          "Arrive time: ",
-          format(
-            parseISO(updatedRow.checkInTime.toString()),
-            "EEEE, MMMM dd, yyyy 'at' h:mm a"
-          ),
-          ", Leave time: ",
-          format(
-            parseISO(updatedRow.checkOutTime.toString()),
-            "EEEE, MMMM dd, yyyy 'at' h:mm a"
-          ),
-        ],
       });
     } catch (e) {
       console.log({ e });
+    }finally {
+      setIsLoading(false);
     }
   };
   const handleEdit = (id: string) => {
@@ -298,7 +297,6 @@ const DailyAttendance = () => {
             className="rounded w-auto flex-1 "
             radius="sm"
             variant="bordered"
-            key={"a"}
             type="text"
             disabled={true}
             label={
@@ -311,7 +309,6 @@ const DailyAttendance = () => {
             className="rounded w-auto flex-1"
             radius="sm"
             variant="bordered"
-            key={"a"}
             type="text"
             disabled={true}
             label={<p className="text-[#5B5F7B] dark:text-button">Full name</p>}
@@ -324,7 +321,6 @@ const DailyAttendance = () => {
             className="rounded w-auto flex-1"
             radius="sm"
             variant="bordered"
-            key={"a"}
             type="time"
             step="1"
             label={
@@ -340,7 +336,6 @@ const DailyAttendance = () => {
             className="rounded w-auto flex-1"
             radius="sm"
             variant="bordered"
-            key={"a"}
             step="1"
             type="time"
             label={
@@ -354,7 +349,7 @@ const DailyAttendance = () => {
         </div>
 
         <div className="flex gap-3 self-end mb-2">
-          <RegularButton label="Save" callback={() => onSave(formState)} />
+          <RegularButton label="Save" callback={() => onSave(formState)} isLoading={isLoading}/>
           <RegularButton
             label="Close"
             additionalStyle="bg-[#BDBDBD]"
@@ -424,7 +419,6 @@ const DailyAttendance = () => {
             className="rounded w-auto flex-1 "
             radius="sm"
             variant="bordered"
-            key={"a"}
             type="email"
             label={<p className="text-[#5B5F7B]">Employee code</p>}
             placeholder="Search"
