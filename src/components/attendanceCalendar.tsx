@@ -149,7 +149,7 @@ function AttendanceCalendar() {
         );
 
         if (!monthAttendance) return "null";
-        if (today.getDate() < date.getDate()) return "null";
+        if ((today.getDate() < date.getDate()) && (today.getFullYear() === date.getFullYear()) && (today.getMonth() === date.getMonth())) return "null";
 
         const dateAttendance = monthAttendance.attendance.find((d) => {
             const attendanceDate = new Date(d.attendanceDate);
