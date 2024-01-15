@@ -237,6 +237,7 @@ const SideBar = ({
                         defaultSelected={value == "right"}
                         size="lg"
                         color="default"
+                        classNames={{label: 'text-white'}}
                         className={
                             (mode == SideBarMode.Large && value == "left"
                                 ? " ml-2 self-start"

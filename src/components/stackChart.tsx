@@ -115,14 +115,18 @@ function StackChart() {
         let tempLate: number[] = [];
         let tempAbsent: number[] = [];
         reverse.map((day) => {
-          tempLabels.push(format(new Date(day.date), "dd"));
-          tempOnTime.push((day.onTimeEmployees * 100) / day.totalEmployees);
-          tempLate.push((day.lateEmployees * 100) / day.totalEmployees);
-          tempAbsent.push(
-            ((day.totalEmployees - day.lateEmployees - day.onTimeEmployees) *
-              100) /
-              day.totalEmployees
-          );
+          const days = new Date(day.date);
+          if(today >= days)
+          {
+            tempLabels.push(format(new Date(day.date), "dd"));
+            tempOnTime.push((day.onTimeEmployees * 100) / day.totalEmployees);
+            tempLate.push((day.lateEmployees * 100) / day.totalEmployees);
+            tempAbsent.push(
+              ((day.totalEmployees - day.lateEmployees - day.onTimeEmployees) *
+                100) /
+                day.totalEmployees
+            );
+          }
         });
         setLabels(tempLabels);
         setOnTime(tempOnTime);
