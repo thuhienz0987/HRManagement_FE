@@ -13,9 +13,9 @@
 | No. | MSSV | Full Name | Position |
 |-------|-------|-------|-------|
 | 1 | 21521008 | Mai Đình Khôi | FE dev |
-| 2 | 21522059 | Lê Thị Thu Hiền | BE dev |
+| 2 | 21522059 | Lê Thị Thu Hiền | BE/FE dev |
 | 3 | 21521571 | Trương Nguyễn Phước Trí | BE/FE dev |
-| 4 | 21521456 | Hồ Thị Thanh Thảo | FE Dev + UI Designer + Data |
+| 4 | 21521456 | Hồ Thị Thanh Thảo | FE Dev + UI Designer |
   
 </details>
 <details>
