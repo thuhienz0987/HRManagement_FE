@@ -226,7 +226,7 @@ const CommentForm = () => {
                     "/leaders-without-comments/" +
                     session?.user.departmentId._id;
             if (session?.user.roles.includes(process.env.CEO))
-                url = "/managers-without-comments/";
+                url = "/managers-without-comments";
             try {
                 const res = await axiosPrivate.get<Employee[]>(
                     url + selectedMonth,
@@ -238,12 +238,15 @@ const CommentForm = () => {
                 res.data = res.data.filter((emp) => {
                     return emp._id != session?.user._id;
                 });
+                
                 setEmployees(res.data);
+                console.log({employees})
             } catch (e) {
                 console.log(e);
             }
         };
         getEmployees();
+        console.log({employees})
     }, [selectedMonth]);
 
     useEffect(() => {
@@ -258,7 +261,8 @@ const CommentForm = () => {
                 res.data.map((emp) => {
                     emp.revieweeName = emp.revieweeId.name;
                     emp.revieweeCode = emp.revieweeId.code;
-                    const reviewDay = new Date(emp.createdAt);
+                    const day = new Date(emp.commentMonth);
+                    const reviewDay = new Date(day.getFullYear(), day.getMonth()+1, day.getDate());
                     emp.reviewDay = format(reviewDay, "dd/MM/yyyy");
                 });
                 setComments(res.data);

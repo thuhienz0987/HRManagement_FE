@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@nextui-org/react";
-import { format, startOfToday } from "date-fns";
+import { add, format, startOfToday } from "date-fns";
 import { useSession } from "next-auth/react";
 import { Tenor_Sans } from "next/font/google";
 import { useEffect, useState } from "react";
@@ -19,15 +19,15 @@ import { Department, User } from "src/types/userType";
 import XLSX from "sheetjs-style";
 import { Salary } from "src/types/salaryTypes";
 
-type AttendancePercentageResponse = {
-    result: [
+type SalaryPercentageResponse = {
+    departmentStatistic: [
         {
             departmentName: string;
-            departmentAttendances: number;
+            departmentSalaries: number;
             departmentPercent: number;
         }
     ];
-    totalAmount: number;
+    firmSalaries: number;
 };
 
 type EmployeeAttendance = User & {
@@ -54,28 +54,23 @@ const SalaryReports = () => {
     const { data: session } = useSession();
     const [attendanceLabel, setAttendanceLabel] = useState<string[]>();
     const [attendanceRatio, setAttendanceRatio] = useState<number[]>();
-    const [attendanceQuantity, setAttendanceQuantity] = useState<number[]>();
-    const [totalAttendance, setTotalAttendance] = useState<number>();
+    const [salaryQuantity, setSalaryQuantity] = useState<number[]>();
+    const [totalSalary, setTotalSalary] = useState<number>();
     const columns: ColumnType[] = [
         {
-            title: "Month",
-            type: ColumnEnum.textColumn,
-            key: "month",
+            title: "No",
+            type: ColumnEnum.indexColumn,
+            key: "no",
         },
         {
-            title: "Salary for present",
+            title: "Employee Code",
             type: ColumnEnum.textColumn,
-            key: "dayMoney",
+            key: "employeeCode",
         },
         {
-            title: "Allowance",
+            title: "Full Name",
             type: ColumnEnum.textColumn,
-            key: "allowanceAmount",
-        },
-        {
-            title: "Bonus",
-            type: ColumnEnum.textColumn,
-            key: "bonusMoney",
+            key: "employeeName",
         },
         {
             title: "Salary",
@@ -83,54 +78,24 @@ const SalaryReports = () => {
             key: "totalSalary",
         },
         {
+            title: "Department",
+            type: ColumnEnum.textColumn,
+            key: "departmentName",
+        },
+        {
             title: "Received Date",
             type: ColumnEnum.textColumn,
             key: "createdAt",
         },
-        {
-            title: "Action",
-            type: ColumnEnum.functionColumn,
-            key: "action",
-        },
     ];
-    // const columns: ColumnType[] = [
-    //     {
-    //         title: "No",
-    //         type: ColumnEnum.indexColumn,
-    //         key: "no",
-    //     },
-    //     {
-    //         title: "Employee Code",
-    //         type: ColumnEnum.textColumn,
-    //         key: "code",
-    //     },
-    //     {
-    //         title: "Full Name",
-    //         type: ColumnEnum.textColumn,
-    //         key: "name",
-    //     },
-    //     {
-    //         title: "Working day",
-    //         type: ColumnEnum.textColumn,
-    //         key: "totalWorkingDays",
-    //     },
-    //     {
-    //         title: "Overtime",
-    //         type: ColumnEnum.textColumn,
-    //         key: "totalOvertimeHours",
-    //     },
-    //     {
-    //         title: "Action",
-    //         type: ColumnEnum.functionColumn,
-    //         key: "action",
-    //     },
-    // ];
-    const today = startOfToday();
-    const [employeeAttendances, setEmployeeAttendances] =
-        useState<EmployeeAttendance[]>();
     // const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
-    const thisMonth = "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
-    const [selectedMonth, setSelectedMonth] = useState<string>(thisMonth);
+    const today = new Date();
+    const lastMonth = add(today, {
+        months: -1,
+    });
+    const [selectedMonth, setSelectedMonth] = useState<string>(
+        "/" + (lastMonth.getMonth() + 1) + "/" + lastMonth.getFullYear()
+    );
     const [departments, setDepartments] = useState<dDepartment[]>();
     const [sortedDept, setSortedDept] = useState<string>();
     const [searchQuery, setSearchQuery] = useState<string>();
@@ -160,27 +125,6 @@ const SalaryReports = () => {
             console.log({ e });
         }
     };
-    // const getEmployees = async () => {
-    //     try {
-    //         const res = await axiosPrivate.get<EmployeeAttendance[]>(
-    //             `/attendancesByMonth_total${selectedMonth}`,
-    //             {
-    //                 headers: { "Content-Type": "application/json" },
-    //                 withCredentials: true,
-    //             }
-    //         );
-    //         res.data.map((employee) => {
-    //             employee._id = employee.user._id;
-    //             employee.code = employee.user.code;
-    //             employee.name = employee.user.name;
-    //             employee.departmentId = employee.user.departmentId;
-    //         });
-    //         console.log(res.data);
-    //         setEmployeeAttendances(res.data);
-    //     } catch (e) {
-    //         console.log({ e });
-    //     }
-    // };
     useEffect(() => {
         const getDepartments = async () => {
             try {
@@ -220,31 +164,35 @@ const SalaryReports = () => {
         return sortedEmp;
     };
     useEffect(() => {
-        const getAttendanceRatio = async () => {
+        const getSalaryRatio = async () => {
             try {
-                const res =
-                    await axiosPrivate.get<AttendancePercentageResponse>(
-                        "/attendanceDepartmentsPercentByMonth" + selectedMonth
-                    );
+                const res = await axiosPrivate.get<SalaryPercentageResponse>(
+                    "/statisticSalariesByMonthYear" + selectedMonth
+                );
                 let label: string[] = [];
                 let ratio: number[] = [];
                 let quantity: number[] = [];
                 console.log(res.data);
-                res.data.result.forEach((dept) => {
+                res.data.departmentStatistic.forEach((dept) => {
                     label.push(dept.departmentName);
                     ratio.push(dept.departmentPercent);
-                    quantity.push(dept.departmentAttendances);
+                    quantity.push(dept.departmentSalaries);
                 });
                 setAttendanceLabel(label);
                 setAttendanceRatio(ratio);
-                setAttendanceQuantity(quantity);
-                setTotalAttendance(res.data.totalAmount);
+                setSalaryQuantity(quantity);
+                setTotalSalary(res.data.firmSalaries);
             } catch (e) {
                 console.log({ e });
+                
+                setAttendanceLabel(undefined);
+                setAttendanceRatio(undefined);
+                setSalaryQuantity(undefined);
+                setTotalSalary(undefined);
             }
         };
-        getAttendanceRatio();
-    }, []);
+        getSalaryRatio();
+    }, [selectedMonth]);
 
     const exportToExcel = async () => {
         let workbook = XLSX.utils.book_new();
@@ -256,8 +204,8 @@ const SalaryReports = () => {
             "Employee Code",
             "Full name",
             "Department",
-            "Working day",
-            "Overtime",
+            "Salary",
+            "Received Date",
         ];
         let worksheet = XLSX.utils.aoa_to_sheet([titleRow]);
         worksheet["A1"].s = {
@@ -322,30 +270,23 @@ const SalaryReports = () => {
         };
         worksheet["!cols"] = [
             { wch: 3 },
-            { wch: 15 },
             { wch: 10 },
+            { wch: 15 },
+            { wch: 15 },
             { wch: 12 },
-            { wch: 12 },
-            { wch: 8 },
+            { wch: 15 },
         ];
-        // fitToColumn(titleRow);
-        // function fitToColumn(arrayOfArray: string[]) {
-        //     // get maximum character of each column
-        //     return arrayOfArray.map((a, i) => ({
-        //         wch: a.length,
-        //     }));
-        // }
-        await employeeAttendances?.forEach((item, index) => {
+        await salaries?.forEach((item, index) => {
             XLSX.utils.sheet_add_aoa(
                 worksheet,
                 [
                     [
                         index + 1 + "",
-                        item.code + "",
-                        item.name + "",
-                        item?.departmentId?.name + "" || "",
-                        item.totalWorkingDays + "",
-                        item.totalOvertimeHours + "",
+                        item.userId.code + "",
+                        item.userId.name + "",
+                        item.userId?.departmentId?.name + "" || "",
+                        item.totalSalary + "",
+                        item.payDay ? item.payDay + "" : "Not yet",
                     ],
                 ],
                 { origin: -1 }
@@ -354,17 +295,28 @@ const SalaryReports = () => {
         console.log({ worksheet });
         try {
             // XLSX.utils.book_append_sheet(wb, ws)
-            XLSX.utils.book_append_sheet(
-                workbook,
-                worksheet,
-                "Attendance Report"
-            );
-            XLSX.writeFile(workbook, "AttendanceReport.xlsx");
+            const sheetName = `SalaryReportFor${selectedMonth.replaceAll(
+                "/",
+                "-"
+            )}`;
+            const excelName = `SalaryReport${selectedMonth.replaceAll(
+                "/",
+                "-"
+            )}.xlsx`;
+            console.log(sheetName, excelName);
+            XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+            XLSX.writeFile(workbook, excelName);
         } catch (err) {
             console.log({ err });
         }
     };
-    const months = getMonthsBetweenDates(startDay, today);
+    const toVND = (input: string) => {
+        return new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        }).format(parseFloat(input));
+    };
+    const months = getMonthsBetweenDates(startDay, lastMonth);
     return (
         <div className="flex w-full items-center justify-center flex-col gap-3">
             <div className=" flex gap-x-7 items-end w-[90%]">
@@ -438,18 +390,24 @@ const SalaryReports = () => {
                 </div>
             </div>
             <div className="flex flex-col w-[90%] self-center bg-white dark:bg-dark border shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)]  rounded-md py-6 my-4">
-                <h2 className={`text-[26px] font-semibold text-[#2C3D3A] dark:text-button ml-5`}>
-                    Attendance per department
+                <h2
+                    className={`text-[26px] font-semibold text-[#2C3D3A] dark:text-button ml-5`}
+                >
+                    Salary per department
                 </h2>
                 <div className="flex flex-1 justify-between px-5 self-center w-full">
+                    {!totalSalary && (
+                        <p>Not all employee's salaries are calculated, please calculate salary for the rest</p>
+                    )}
                     <div className="flex flex-col justify-center">
-                        {totalAttendance && (
-                            <p>Total Attendance: {totalAttendance}</p>
+                        {totalSalary && (
+                            <p>Total money: {toVND(totalSalary.toString())}</p>
                         )}
-                        {attendanceQuantity &&
+                        {salaryQuantity &&
                             attendanceLabel?.map((item, index) => (
                                 <p>
-                                    {item}: {attendanceQuantity[index]}
+                                    {item}:{" "}
+                                    {toVND(salaryQuantity[index].toString())}
                                 </p>
                             ))}
                     </div>

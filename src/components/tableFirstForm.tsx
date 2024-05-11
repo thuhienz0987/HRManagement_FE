@@ -41,9 +41,9 @@ const TableFirstForm = ({
   const [checkedAll, setCheckedAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const page = Math.ceil((rows && rows.length / 5) || 1);
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [rows]);
+  // useEffect(() => {
+  //   setCurrentPage(1);
+  // }, [rows]);
 
   return (
     <div className="flex flex-col bg-white dark:bg-dark w-full my-2">

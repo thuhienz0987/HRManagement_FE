@@ -18,10 +18,14 @@ import Header from "./header";
 import { useSession } from "next-auth/react";
 import AttendanceIcon from "src/svgs/attendance";
 import StarIcon from "src/svgs/star";
+import { usePosition } from "src/hooks/usePosition";
 
 const Main = ({ children }: { children: React.ReactNode }) => {
     const initMode: SideBarMode = SideBarMode.Large;
     const [mode, setMode] = useState<SideBarMode>(initMode);
+    const [value] = usePosition();
+    const [leftOrRight, setLOR] = useState(value);
+    console.log({ value });
 
     const { data: session } = useSession({
         required: true,
@@ -238,19 +242,35 @@ const Main = ({ children }: { children: React.ReactNode }) => {
     if (session)
         return (
             <>
-                <Header mode={mode} setMode={setMode} />
+                <Header
+                    mode={mode}
+                    setMode={setMode}
+                    SideBarOps={SideBarOps}
+                    setLOR={setLOR}
+                    leftOrRight={leftOrRight}
+                />
                 <div className="flex absolute w-full pt-[3.5rem]">
                     <SideBar
                         mode={mode}
                         setMode={setMode}
                         SideBarOps={SideBarOps}
+                        setLOR={setLOR}
+                        leftOrRight={leftOrRight}
                     />
                     <div
                         className={
-                            " flex min-h-[calc(100vh-3.5rem)] flex-col absolute right-0 overflow-y duration-300 -z-10 w-full bg-bg dark:bg-bg_dark " +
+                            " flex min-h-[calc(100vh-3.5rem)] flex-col absolute overflow-y duration-300 -z-10 w-full bg-bg dark:bg-bg_dark " +
+                            (leftOrRight == "left" && " right-0 ") +
                             (mode == SideBarMode.Large
-                                ? " md:w-[calc(100%-14rem)]"
-                                : " md:w-[calc(100%-56px)]")
+                                ? " md:w-[calc(100%-14rem)] "
+                                : " md:w-[calc(100%-56px)] ") +
+                            (mode == SideBarMode.Large && " max-md:blur-sm ") +
+                            (leftOrRight == "right" &&
+                                mode == SideBarMode.Large &&
+                                " md:right-[14rem] ") +
+                            (leftOrRight == "right" &&
+                                mode == SideBarMode.Small &&
+                                " md:right-[56px] ")
                         }
                     >
                         {option?.href !== "/dashboard" && (

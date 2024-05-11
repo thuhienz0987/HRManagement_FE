@@ -16,7 +16,7 @@ function ArrowIcon({
       width={width}
       height={height}
       viewBox="0 0 7 12"
-      fill="none"
+      fill="#C89E31"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

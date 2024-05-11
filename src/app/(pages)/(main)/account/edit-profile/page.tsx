@@ -80,6 +80,7 @@ const EditUserProfile = () => {
   const [profile, setProfile] = useState<User>();
   const [departments, setDepartments] = useState<dDepartment[]>();
   const [positions, setPositions] = useState<dPosition[]>();
+  const [changeDepartmentTeam, setChangeDepartmentTeam] = useState(true);
   const [teams, setTeams] = useState<dTeam[]>();
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<ImageListType>([]);
@@ -253,6 +254,13 @@ const EditUserProfile = () => {
       formik.initialValues.avatarUrl = profile?.avatarImage;
     }
   }, [profile]);
+  useEffect(() => {
+    const employeePosition = positions?.find((po) => po._id === profile?.positionId._id);
+    if(employeePosition?.code === 'EMP')
+    {
+      setChangeDepartmentTeam(false);
+    } 
+  }, [profile]);
 
   useEffect(() => {
     console.log({ errors });
@@ -375,7 +383,7 @@ const EditUserProfile = () => {
                   onSelect={(value) =>
                     formik.setFieldValue("department", value)
                   }
-                  disable={!isHRManager}
+                  disable={changeDepartmentTeam}
                 />
                 {errors.department && touched.department && (
                   <span className={errorClassName}>{errors.department}</span>
@@ -412,7 +420,7 @@ const EditUserProfile = () => {
                   }
                   value={formik.values.team}
                   onSelect={(value) => formik.setFieldValue("team", value)}
-                  disable={!isHRManager}
+                  disable={changeDepartmentTeam}
                 />
                 {errors.team && touched.team && (
                   <span className={errorClassName}>{errors.team}</span>

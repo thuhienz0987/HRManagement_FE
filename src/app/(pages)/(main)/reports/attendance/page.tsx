@@ -74,11 +74,6 @@ const Reports = () => {
             type: ColumnEnum.textColumn,
             key: "totalOvertimeHours",
         },
-        {
-            title: "Action",
-            type: ColumnEnum.functionColumn,
-            key: "action",
-        },
     ];
     const today = startOfToday();
     const [employeeAttendances, setEmployeeAttendances] =
@@ -171,7 +166,7 @@ const Reports = () => {
             }
         };
         getAttendanceRatio();
-    }, []);
+    }, [selectedMonth]);
 
     const exportToExcel = async () => {
         let workbook = XLSX.utils.book_new();
@@ -365,7 +360,9 @@ const Reports = () => {
                 </div>
             </div>
             <div className="flex flex-col w-[90%] self-center bg-white dark:bg-dark border shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)]  rounded-md py-6 my-4">
-                <h2 className={`text-[26px] font-semibold text-[#2C3D3A] dark:text-button ml-5`}>
+                <h2
+                    className={`text-[26px] font-semibold text-[#2C3D3A] dark:text-button ml-5`}
+                >
                     Attendance per department
                 </h2>
                 <div className="flex flex-1 justify-between px-5 self-center w-full">
