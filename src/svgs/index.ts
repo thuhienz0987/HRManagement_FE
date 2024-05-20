@@ -15,3 +15,9 @@ export { default as EditIcon } from "./edit";
 export { default as DeleteIcon } from "./delete";
 export { default as ColorCalendarIcon } from "./colorCalendar";
 export { default as AccountIcon } from "./account";
+export { default as SmileIcon} from "./smileIcon"
+export { default as AddMessageIcon} from "./addMessageIcon"
+export { default as ImageIcon} from "./imageIcon"
+export { default as MessageIcon} from "./messageIcon"
+
+

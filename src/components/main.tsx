@@ -19,6 +19,7 @@ import { useSession } from "next-auth/react";
 import AttendanceIcon from "src/svgs/attendance";
 import StarIcon from "src/svgs/star";
 import { usePosition } from "src/hooks/usePosition";
+import MarkUnreadChatAltOutlinedIcon from '@mui/icons-material/MarkUnreadChatAltOutlined';
 
 const Main = ({ children }: { children: React.ReactNode }) => {
     const initMode: SideBarMode = SideBarMode.Large;
@@ -229,6 +230,15 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                     name: "Salary",
                     href: "/salary",
                 },
+            ],
+            isHidden: false,
+        },
+        {
+            name: "Message",
+            href: "/message",
+            icon: MarkUnreadChatAltOutlinedIcon,
+            subSidebar: [
+                
             ],
             isHidden: false,
         },
