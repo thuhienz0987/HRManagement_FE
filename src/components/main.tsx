@@ -16,6 +16,8 @@ import {
 import { redirect, useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
 import { useSession } from "next-auth/react";
+import { io } from 'socket.io-client'
+import { BASE_URL } from "src/utils/api";
 import AttendanceIcon from "src/svgs/attendance";
 import StarIcon from "src/svgs/star";
 import { usePosition } from "src/hooks/usePosition";
@@ -250,50 +252,63 @@ const Main = ({ children }: { children: React.ReactNode }) => {
     );
 
     if (session)
-        return (
-            <>
-                <Header
-                    mode={mode}
-                    setMode={setMode}
-                    SideBarOps={SideBarOps}
-                    setLOR={setLOR}
-                    leftOrRight={leftOrRight}
-                />
-                <div className="flex absolute w-full pt-[3.5rem]">
-                    <SideBar
+        {
+            var sender_id = session.user._id;
+            var socket = io(`${BASE_URL}/user-namespace`, {
+                auth: {
+                    token: session.user._id
+                }
+            })
+            socket.on('getOnlineUser', (data) => {
+                console.log('socketuserId----------------', data.userId)
+            })
+            
+
+            return (
+                <>
+                    <Header
                         mode={mode}
                         setMode={setMode}
                         SideBarOps={SideBarOps}
                         setLOR={setLOR}
                         leftOrRight={leftOrRight}
                     />
-                    <div
-                        className={
-                            " flex min-h-[calc(100vh-3.5rem)] flex-col absolute overflow-y duration-300 -z-10 w-full bg-bg dark:bg-bg_dark " +
-                            (leftOrRight == "left" && " right-0 ") +
-                            (mode == SideBarMode.Large
-                                ? " md:w-[calc(100%-14rem)] "
-                                : " md:w-[calc(100%-56px)] ") +
-                            (mode == SideBarMode.Large && " max-md:blur-sm ") +
-                            (leftOrRight == "right" &&
-                                mode == SideBarMode.Large &&
-                                " md:right-[14rem] ") +
-                            (leftOrRight == "right" &&
-                                mode == SideBarMode.Small &&
-                                " md:right-[56px] ")
-                        }
-                    >
-                        {option?.href !== "/dashboard" && (
-                            <TraceBar option={option} subOption={subOption} />
-                        )}
-                        <div className="flex flex-col flex-1 h-full ">
-                            {children}
+                    <div className="flex absolute w-full pt-[3.5rem]">
+                        <SideBar
+                            mode={mode}
+                            setMode={setMode}
+                            SideBarOps={SideBarOps}
+                            setLOR={setLOR}
+                            leftOrRight={leftOrRight}
+                        />
+                        <div
+                            className={
+                                " flex min-h-[calc(100vh-3.5rem)] flex-col absolute overflow-y duration-300 -z-10 w-full bg-bg dark:bg-bg_dark " +
+                                (leftOrRight == "left" && " right-0 ") +
+                                (mode == SideBarMode.Large
+                                    ? " md:w-[calc(100%-14rem)] "
+                                    : " md:w-[calc(100%-56px)] ") +
+                                (mode == SideBarMode.Large && " max-md:blur-sm ") +
+                                (leftOrRight == "right" &&
+                                    mode == SideBarMode.Large &&
+                                    " md:right-[14rem] ") +
+                                (leftOrRight == "right" &&
+                                    mode == SideBarMode.Small &&
+                                    " md:right-[56px] ")
+                            }
+                        >
+                            {option?.href !== "/dashboard" && (
+                                <TraceBar option={option} subOption={subOption} />
+                            )}
+                            <div className="flex flex-col flex-1 h-full ">
+                                {children}
+                            </div>
+                            <Footer />
                         </div>
-                        <Footer />
                     </div>
-                </div>
-            </>
-        );
+                </>
+            );
+    }
 };
 
 export default Main;
