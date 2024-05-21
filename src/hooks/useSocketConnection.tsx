@@ -1,9 +1,15 @@
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useSession } from 'next-auth/react';
 import { BASE_URL } from 'src/utils/api';
 
-const useSocketConnection = (): Socket | null => {
+export const SocketContext = createContext<Socket | null>(null);
+
+export const useSocket = () => {
+    return useContext(SocketContext)
+}
+
+const SocketProvider = ({children}:{children: React.ReactNode}) => {
   const { data: session } = useSession();
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -22,7 +28,11 @@ const useSocketConnection = (): Socket | null => {
     }
   }, [session]);
 
-  return socket;
+  return (
+    <SocketContext.Provider value={socket}>
+      {children}
+    </SocketContext.Provider>
+  )
 };
 
-export default useSocketConnection;
+export default SocketProvider;

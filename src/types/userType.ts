@@ -1,4 +1,5 @@
 export interface User {
+    isOnline: string;
     _id: string;
     roles: string[];
     phoneNumber: string;

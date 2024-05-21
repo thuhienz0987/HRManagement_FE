@@ -16,8 +16,6 @@ import {
 import { redirect, useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
 import { useSession } from "next-auth/react";
-import { io } from 'socket.io-client'
-import { BASE_URL } from "src/utils/api";
 import AttendanceIcon from "src/svgs/attendance";
 import StarIcon from "src/svgs/star";
 import { usePosition } from "src/hooks/usePosition";
@@ -28,7 +26,6 @@ const Main = ({ children }: { children: React.ReactNode }) => {
     const [mode, setMode] = useState<SideBarMode>(initMode);
     const [value] = usePosition();
     const [leftOrRight, setLOR] = useState(value);
-    console.log({ value });
 
     const { data: session } = useSession({
         required: true,
@@ -253,16 +250,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
 
     if (session)
         {
-            var sender_id = session.user._id;
-            var socket = io(`${BASE_URL}/user-namespace`, {
-                auth: {
-                    token: session.user._id
-                }
-            })
-            socket.on("receiveMessage", (message: string) => {
-                console.log("Received message:", message);
-                // Update state to display the new message
-              });
+
             
 
             return (

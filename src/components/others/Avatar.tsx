@@ -3,14 +3,14 @@ import { FunctionComponent } from "react";
 
 
 type TComponentProps = {
-    isOnline?: boolean;
+    isOnline?: string;
     userName?: string;
     size?: number;
     imageLink?: string;
 };
 const AvatarComponent: FunctionComponent<TComponentProps> = ({
     imageLink,
-    isOnline = false,
+    isOnline = 0,
     userName = "username",
     size = 36,
 }) => {
@@ -29,7 +29,7 @@ const AvatarComponent: FunctionComponent<TComponentProps> = ({
                 className={`w-[${size?.toString()}px] h-[${size?.toString()}px]`}
                 size="md"
             />
-            {isOnline && (
+            {isOnline === "1"  && (
                 <div className=" w-3 h-3 bg-green-500 rounded-full outline outline-2 outline-white absolute bottom-0 right-0" />
             )}
         </div>

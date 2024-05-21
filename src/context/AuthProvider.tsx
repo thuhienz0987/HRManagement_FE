@@ -2,6 +2,7 @@
 
 import { SessionProvider } from "next-auth/react";
 import Providers from "src/components/layout/providers";
+import SocketProvider from "src/hooks/useSocketConnection";
 
 export default function AuthProvider({
   children,
@@ -9,8 +10,10 @@ export default function AuthProvider({
   children: React.ReactNode;
 }) {
   return (
-    <SessionProvider>
-      <Providers>{children}</Providers>
+    <SessionProvider refetchOnWindowFocus={false}>
+      <SocketProvider>
+        <Providers>{children}</Providers>
+      </SocketProvider>
     </SessionProvider>
   );
 }

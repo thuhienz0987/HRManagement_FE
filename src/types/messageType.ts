@@ -1,9 +1,9 @@
 import {User} from './userType'
 
-export interface Message {
-    sender: User;
-    receiver: User;
+export interface IMessage {
+    senderId: string;
+    receiverId: string;
     message: string;
-    timestamp: Date;
+    createdAt: Date;
   }
 
