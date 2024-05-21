@@ -16,18 +16,16 @@ import {
 import { redirect, useSelectedLayoutSegments } from "next/navigation";
 import Header from "./header";
 import { useSession } from "next-auth/react";
-import { io } from 'socket.io-client'
-import { BASE_URL } from "src/utils/api";
 import AttendanceIcon from "src/svgs/attendance";
 import StarIcon from "src/svgs/star";
 import { usePosition } from "src/hooks/usePosition";
+import MarkUnreadChatAltOutlinedIcon from '@mui/icons-material/MarkUnreadChatAltOutlined';
 
 const Main = ({ children }: { children: React.ReactNode }) => {
     const initMode: SideBarMode = SideBarMode.Large;
     const [mode, setMode] = useState<SideBarMode>(initMode);
     const [value] = usePosition();
     const [leftOrRight, setLOR] = useState(value);
-    console.log({ value });
 
     const { data: session } = useSession({
         required: true,
@@ -234,6 +232,15 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             ],
             isHidden: false,
         },
+        {
+            name: "Message",
+            href: "/message",
+            icon: MarkUnreadChatAltOutlinedIcon,
+            subSidebar: [
+                
+            ],
+            isHidden: false,
+        },
     ];
     const segments = useSelectedLayoutSegments();
     const option = SideBarOps.find((opt) => opt.href == "/" + segments[0]);
@@ -243,15 +250,7 @@ const Main = ({ children }: { children: React.ReactNode }) => {
 
     if (session)
         {
-            var sender_id = session.user._id;
-            var socket = io(`${BASE_URL}/user-namespace`, {
-                auth: {
-                    token: session.user._id
-                }
-            })
-            socket.on('getOnlineUser', (data) => {
-                console.log('socketuserId----------------', data.userId)
-            })
+
             
 
             return (
@@ -300,5 +299,6 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             );
     }
 };
+
 
 export default Main;

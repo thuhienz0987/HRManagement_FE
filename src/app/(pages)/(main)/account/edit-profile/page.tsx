@@ -398,7 +398,7 @@ const EditUserProfile = () => {
                 buttonStyle="bg-white  dark:bg-[#3b3b3b]"
                 options={positions}
                 value={formik.values.position}
-                disable
+                // disable
               />
               {errors.position && touched.position && (
                 <span className={errorClassName}>{errors.position}</span>

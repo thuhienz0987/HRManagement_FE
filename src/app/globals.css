@@ -64,6 +64,20 @@
         --input: 217.2 32.6% 17.5%;
         --ring: 212.7 26.8% 83.9%;
     }
+    .btn-send {
+        border: none;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .btn-send:hover {
+        transform: scale(1.1);
+    }
+    
+    .btn-send:active {
+        transform: scale(0.9);
+    }
+
 }
 
 @layer base {

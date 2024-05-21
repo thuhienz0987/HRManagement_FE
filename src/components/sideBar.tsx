@@ -233,6 +233,7 @@ const SideBar = ({
                             ))}
                         </ul>
                     </nav>
+                    
                     <Switch
                         defaultSelected={value == "right"}
                         size="lg"

@@ -40,11 +40,17 @@ export const options: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
+            if(trigger === 'update') {
+                if(session.newAccessToken) {
+                    token.accessToken = session.newAccessToken
+                }
+              }
             return { ...token, ...user };
         },
         async session({ session, token, user }) {
             session.user = token as any;
+            session.accessToken = token.accessToken as any
             return session;
         },
     },
