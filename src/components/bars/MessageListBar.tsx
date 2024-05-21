@@ -8,18 +8,23 @@ import { useEffect, useState } from "react";
 import { format, parseISO, startOfToday } from "date-fns";
 
 
-type Employee = User 
+interface MessageListBarProps {
+  setSelectedUser: (user: User|null) => void;
+  // selectedUser: User | null;
+  
+}
 
-const MessageListBar = () => {
-    const router = useRouter();
+
+
+const MessageListBar:React.FC<MessageListBarProps> = ({ setSelectedUser }) => {
     const axiosPrivate = useAxiosPrivate();
 
-    const [employees, setEmployees] = useState<Employee[]>();
+    const [employees, setEmployees] = useState<User[]>();
 
     useEffect(() => {
         const getEmployees = async () => {
           try {
-            const res = await axiosPrivate.get<Employee[]>("/all-user", {
+            const res = await axiosPrivate.get<User[]>("/all-user", {
               headers: { "Content-Type": "application/json" },
               withCredentials: true,
             });
@@ -38,13 +43,18 @@ const MessageListBar = () => {
       }, []);
 
     return (
-        <div className="flex flex-col w-[88px] md:w-[360px] bg-bg dark:bg-dark rounded-xl md">
-            <MessageListHeader />
-            <div className="flex flex-1 overflow-y-scroll px-[6px]">
-                <MessageItem />
-                {/* {Array(5).map((item) => (
-                    <MessageItem />
-                ))} */}
+        <div className="flex flex-col w-[88px] h-1/2 md:w-[360px] bg-bg dark:bg-dark rounded-xl md max-h-screen">
+            <MessageListHeader setSelectedUser={setSelectedUser} />
+            <div className="flex flex-1 overflow-y-scroll px-[6px] flex-col " >
+              {employees&&employees.map(employee =>(
+                <MessageItem 
+                
+                key={employee._id}
+            name={employee.name}
+            avatarImage={employee.avatarImage}
+            onClick={() => setSelectedUser(employee)} // Pass click handler
+          />
+              ))}
             </div>
         </div>
     );

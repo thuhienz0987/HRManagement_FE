@@ -259,9 +259,10 @@ const Main = ({ children }: { children: React.ReactNode }) => {
                     token: session.user._id
                 }
             })
-            socket.on('getOnlineUser', (data) => {
-                console.log('socketuserId----------------', data.userId)
-            })
+            socket.on("receiveMessage", (message: string) => {
+                console.log("Received message:", message);
+                // Update state to display the new message
+              });
             
 
             return (
@@ -310,5 +311,6 @@ const Main = ({ children }: { children: React.ReactNode }) => {
             );
     }
 };
+
 
 export default Main;

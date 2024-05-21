@@ -9,9 +9,11 @@ import { useRouter } from "next13-progressbar";
 
 type Employee = User;
 
-type TComponentProps = {};
+interface SearchBarProps {
+  setSelectedUser: (user: User | null) => void;
+}
 
-const SearchBar: FunctionComponent<TComponentProps> = ({}) => {
+const SearchBar: FunctionComponent<SearchBarProps> = ({ setSelectedUser }) => {
   const router = useRouter();
   const axiosPrivate = useAxiosPrivate();
   //   const [isUser, setIsUser] = useState(false);
@@ -60,6 +62,11 @@ const SearchBar: FunctionComponent<TComponentProps> = ({}) => {
     getEmployees();
   }, []);
 
+  const handleUserSelect = (user: User) => {
+    setSelectedUser(user);
+    setSearchQuery(""); // Clear search query after selecting user
+    setAvailable(false); // Hide the search results list
+  };
   return (
     <div className="w-full h-[36px] px-4 mb-2">
       <Input
@@ -96,7 +103,7 @@ const SearchBar: FunctionComponent<TComponentProps> = ({}) => {
         startContent={<SearchIcon />}
       />
       {available && rows() && (
-        <div className="absolute top-full right-0 mt-2 w-60 bg-white dark:bg-bg_dark border border-gray-300 rounded-lg overflow-y-auto z-10">
+        <div onFocus={handleInputFocus} className="absolute top-full right-0 mt-2 w-60 bg-white dark:bg-bg_dark border border-gray-300 rounded-lg overflow-y-auto z-10">
           <Listbox
             classNames={{
               base: "max-w-full",
@@ -108,7 +115,11 @@ const SearchBar: FunctionComponent<TComponentProps> = ({}) => {
             variant="flat"
           >
             {(item) => (
-              <ListboxItem key={item._id} textValue={item.name}>
+              <ListboxItem
+                key={item._id}
+                textValue={item.name}
+                onClick={() => handleUserSelect(item)}
+              >
                 <div className="flex gap-2 items-center">
                   <Avatar
                     alt={item.name}

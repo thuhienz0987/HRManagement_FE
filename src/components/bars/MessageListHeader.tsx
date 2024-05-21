@@ -2,9 +2,14 @@ import React, { useState, useEffect, Key } from "react";
 import { Button } from "@nextui-org/react";
 import { AddMessageIcon } from "src/svgs";
 import SearchBar from "../others/SearchBar";
+import { User } from "src/types/userType";
+
+interface MessageListHeaderProps {
+  setSelectedUser: (user: User | null) => void;
+}
 
 
-const MessageListHeader = () => {
+const MessageListHeader:React.FC<MessageListHeaderProps> = ({setSelectedUser}) => {
 
   const [isUser, setIsUser] = useState(false);
 
@@ -29,7 +34,7 @@ const MessageListHeader = () => {
           
         </div>
       </div>
-      <SearchBar />
+      <SearchBar setSelectedUser={setSelectedUser} />
     </div>
   );
 };
