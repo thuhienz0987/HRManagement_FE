@@ -40,7 +40,7 @@ const ContentBody: React.FC<ContentBodyProps> = ({
             dir="btt"
             className="flex flex-col flex-1 relative overflow-y-scroll"
         >
-            {messages.map((msg, index) =>
+            {messages && messages.map((msg, index) =>
                 msg?.senderId === session?.user._id ? (
                     <SelfMessage
                         key={index}

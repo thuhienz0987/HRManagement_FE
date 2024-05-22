@@ -7,20 +7,31 @@ import { User } from "src/types/userType";
 import { useSocket } from "src/hooks/useSocketConnection";
 import { IMessage } from "src/types/messageType";
 import { useSession } from "next-auth/react";
+import { axiosPrivate } from "src/apis/axios";
+
+export interface ILastMessage {
+    userId: string;
+    lastMessage: string;
+}
+
+interface ILastGroupMessage {
+    groupId: string;
+    groupName: string;
+    groupImage: string;
+    lastMessage: string;
+}
+
+interface ILastMessages {
+    messageHistory: ILastMessage[];
+    groupHistory: ILastGroupMessage[]}
 
 function Message() {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [newMessages, setNewMessages] = useState<IMessage[]>([]);
+    const [messages, setMessages] = useState<IMessage[]>([]);
+    const [lastMess, setLastMess] = useState<ILastMessage[]>();
     const socket = useSocket();
     const { data: session } = useSession();
-    useEffect(() => {
-        return () => {
-            // socket?.off("loadChats");
-            socket?.off("loadNewChat");
-            console.log("unmount1");
-        };
-    }, []);
-
     const getLatest = (opponentId: string) => {
         const filteredMessages = newMessages
             .filter(
@@ -47,19 +58,19 @@ function Message() {
     };
 
     /////////////////
-    const [messages, setMessages] = useState<IMessage[]>([]);
 
     useEffect(() => {
         if (selectedUser && session?.user._id) {
-            socket?.emit("existsChat", {
+            socket?.emit("existsMessage", {
                 senderId: session.user._id,
                 receiverId: selectedUser._id,
             });
-            socket?.on("loadChats", (data) => {
-                setMessages(data.chats);
+            socket?.on("loadMessages", (data) => {
+                setMessages(data.messages);
             });
         }
         socket?.on("loadNewChat", ({ chat }: { chat: IMessage }) => {
+            // console.log({chat})
             setNewMessages([...newMessages, chat]);
             console.log("loadNewChat");
             console.log(
@@ -75,23 +86,40 @@ function Message() {
                     session?.user._id == chat.senderId)
             ) {
                 const addedMessages = [...messages, chat];
+                console.log({messages})
                 console.log("add to array");
-                setMessages(addedMessages);
+                setMessages((prev)=> [...prev, chat]);
             }
         });
 
         return () => {
-            socket?.off("loadChats");
+            socket?.off("loadMessages");
         };
     }, [selectedUser, session?.user._id]);
+
+    useEffect(()=>{
+        const getLastMessage = async () => {
+            try {
+                const res = await axiosPrivate.get<ILastMessages>(`/message-history/${session?.user._id}`, {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                });
+                setLastMess(res.data.messageHistory)
+            } catch (e) {
+                console.log({ e });
+            }
+        };
+        getLastMessage();
+    },[newMessages])
     return (
         <div className="flex-1 p-4 h-full w-full flex gap-4 bg-white dark:bg-bg_dark">
             <MessageListBar
                 setSelectedUser={setSelectedUser}
                 itemClick={itemClick}
                 getLatest={getLatest}
+                lastMess={lastMess}
             />
-            <MessageContent selectedUser={selectedUser} messages={messages} />
+            <MessageContent selectedUser={selectedUser} messages={messages} setMessages={setMessages}/>
         </div>
     );
 }

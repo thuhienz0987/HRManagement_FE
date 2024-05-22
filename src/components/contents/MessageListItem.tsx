@@ -8,6 +8,7 @@ type MessageItemProps = {
     isOnline: string;
     _id: string;
     newMessage: string | undefined;
+    lastMessage: string | undefined;
 };
 
 const MessageItem: React.FC<MessageItemProps> = ({
@@ -17,6 +18,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
     isOnline,
     _id: opponentId,
     newMessage,
+    lastMessage
 }) => {
     return (
         <div className="w-full h-[68px] p-[4px] rounded-sm">
@@ -34,7 +36,12 @@ const MessageItem: React.FC<MessageItemProps> = ({
                     <span className="text-[15px] font-medium">{name}</span>
                     {/* <div className="block w-full h-2" /> */}
                     <div className="flex text-[13px] leading-4 font-normal">
-                        <span className="inline">{newMessage}</span>
+                        {newMessage?
+                            <span className="inline font-bold">{newMessage}</span>
+                            :
+                            <span className="inline font-normal">{lastMessage || "No message yet"}</span>
+                        }
+                        
                         <span className="inline px-[2px]">·</span>
                         <span className="inline">1 ngày</span>
                     </div>

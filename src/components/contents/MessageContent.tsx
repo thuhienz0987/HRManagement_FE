@@ -10,18 +10,20 @@ import { IMessage } from "src/types/messageType";
 interface MessageContentProps {
     selectedUser: User | null;
     messages: IMessage[];
+    setMessages:  (mess: IMessage[]) => void;
 }
 // const MessageContent : React.FC<MessageContentProps>= ({ selectedUser }) => {
 
 const MessageContent: React.FC<MessageContentProps> = ({
     selectedUser,
     messages,
+    setMessages
 }) => {
     return (
         <div className="flex flex-col flex-1 rounded-xl bg-bg dark:bg-dark bg-cover  relative overflow-hidden max-h-screen">
             {selectedUser && <ContentHeader selectedUser={selectedUser} />}
             <ContentBody selectedUser={selectedUser} messages={messages} />
-            {selectedUser && <ContentBottom selectedUser={selectedUser} />}
+            {selectedUser && <ContentBottom selectedUser={selectedUser} setMessages={setMessages} messages={messages}/>}
         </div>
     );
 };
