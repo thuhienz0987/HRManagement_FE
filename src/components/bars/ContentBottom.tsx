@@ -7,12 +7,15 @@ import { User } from "src/types/userType";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useSocket } from "src/hooks/useSocketConnection";
+import { IMessage } from "src/types/messageType";
 
 interface ContentBottomProps {
   selectedUser: User;
+  setMessages:  (mess: IMessage[]) => void;
+  messages: IMessage[];
 }
 
-const ContentBottom: React.FC<ContentBottomProps> = ({ selectedUser }) => {
+const ContentBottom: React.FC<ContentBottomProps> = ({ selectedUser, setMessages, messages }) => {
   const axiosPrivate = useAxiosPrivate();
   const [message, setMessage] = useState("");
   const { data: session } = useSession();
@@ -24,8 +27,8 @@ const ContentBottom: React.FC<ContentBottomProps> = ({ selectedUser }) => {
     if (!message.trim() || !selectedUser) return;
 
     try {
-      const response = await axiosPrivate.post(
-        "/save-chat",
+      const response = await axiosPrivate.post( 
+        "/save-message",
         JSON.stringify({
           receiverId: selectedUser._id,
           senderId: user?._id,
@@ -38,6 +41,11 @@ const ContentBottom: React.FC<ContentBottomProps> = ({ selectedUser }) => {
       );
 
       if (response.status === 200) {
+        console.log(response.data)
+        const mes: IMessage = response.data.data
+        console.log({messages})
+        const newArray = [...messages, mes]
+        setMessages(newArray)
         setMessage("");
         socket?.emit("newChat", response.data);
       }

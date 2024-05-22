@@ -9,21 +9,25 @@ import { format, parseISO, startOfToday } from "date-fns";
 import { useSocket } from "src/hooks/useSocketConnection";
 import { useSession } from "next-auth/react";
 import { IMessage } from "src/types/messageType";
+import { ILastMessage } from "src/app/(pages)/(main)/message/page";
 
 interface MessageListBarProps {
     setSelectedUser: (user: User | null) => void;
     itemClick: (opponentId: User) => void;
     getLatest: (id: string) => string | undefined;
+    lastMess: ILastMessage[] | undefined
 }
 
 const MessageListBar: React.FC<MessageListBarProps> = ({
     setSelectedUser,
     itemClick,
     getLatest,
+    lastMess
 }) => {
     const axiosPrivate = useAxiosPrivate();
 
     const [employees, setEmployees] = useState<User[]>();
+    const { data: session} = useSession()
 
     useEffect(() => {
         const getEmployees = async () => {
@@ -43,6 +47,8 @@ const MessageListBar: React.FC<MessageListBarProps> = ({
                 console.log({ e });
             }
         };
+        
+
         getEmployees();
     }, []);
 
@@ -60,6 +66,9 @@ const MessageListBar: React.FC<MessageListBarProps> = ({
                             avatarImage={employee.avatarImage}
                             onClick={() => itemClick(employee)}
                             newMessage={getLatest(employee._id)}
+                            lastMessage={
+                                lastMess?.find(mes => mes.userId === employee._id)?.lastMessage
+                            }
                         />
                     ))}
             </div>
