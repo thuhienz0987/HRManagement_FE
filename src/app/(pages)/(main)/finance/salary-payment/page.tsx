@@ -221,7 +221,8 @@ const AdminSalary = () => {
         }
         let filteredRow = sortedSalary?.filter(
             (sa) =>
-                format(new Date(sa.idComment.commentMonth), "/MM/yyyy") == selectedMonth
+                `/${new Date(sa.idComment.commentMonth).getMonth() + 1}/${new Date(sa.idComment.commentMonth).getFullYear()}` == selectedMonth
+            
         );
         return filteredRow;
     };

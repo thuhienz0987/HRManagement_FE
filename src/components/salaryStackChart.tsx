@@ -111,7 +111,7 @@ function SalaryStackChart() {
     const getData = async () => {
       try {
         const res = await axiosPrivate.get<dataItem[]>(
-          `/statisticSalariesByYear/${today.getFullYear()-1}`
+          `/statisticSalariesByYear/${today.getFullYear()}`
         );
         
         // const reverse = res.data.reverse();
@@ -121,7 +121,7 @@ function SalaryStackChart() {
         let tempProduction: number[] = [];
         console.log(res.data)
         res.data.map((month) => {
-          tempLabels.push(`${month.month}/23`);
+          tempLabels.push(`${month.month}/24`);
           tempOffice.push((month.officeSalaries / month.firmSalaries) * 100 );
           tempSales.push((month.salesSalaries / month.firmSalaries) * 100 );
           tempProduction.push((month.productionSalaries / month.firmSalaries) * 100);

@@ -48,6 +48,7 @@ const DashBoard = () => {
                 );
                 console.log(res.data);
                 setStatus(res.data);
+                console.log("xxxxxx", res.data)
             } catch (e) {
                 console.log({ e });
             }
