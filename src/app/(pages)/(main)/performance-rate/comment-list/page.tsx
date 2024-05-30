@@ -165,7 +165,6 @@ const CommentForm = () => {
     const getEmployeeComments = async () => {
         try {
             const res = await axiosPrivate.get<dCommentGet[]>("/comments");
-            console.log(res.data);
             res.data.map((emp) => {
                 emp.revieweeName = emp.revieweeId.name;
                 emp.reviewerName = emp.reviewerId.name;
@@ -266,10 +265,12 @@ const CommentForm = () => {
         }
     };
     const row = () => {
+        
         let filteredRow = empComments.filter(
             (emp) =>
-                format(new Date(emp.commentMonth), "/MM/yyyy") == selectedMonth
+                `/${new Date(emp.commentMonth).getMonth() + 1}/${new Date(emp.commentMonth).getFullYear()}` == selectedMonth
         );
+        
         return filteredRow;
     };
     return (
