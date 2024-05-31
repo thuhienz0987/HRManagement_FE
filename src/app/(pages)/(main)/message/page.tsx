@@ -23,7 +23,9 @@ interface ILastGroupMessage {
 
 interface ILastMessages {
     messageHistory: ILastMessage[];
-    groupHistory: ILastGroupMessage[]}
+    groupHistory: ILastGroupMessage[];
+    createdAt: string;
+}
 
 function Message() {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -72,13 +74,6 @@ function Message() {
         socket?.on("loadNewChat", ({ chat }: { chat: IMessage }) => {
             // console.log({chat})
             setNewMessages([...newMessages, chat]);
-            console.log("loadNewChat");
-            console.log(
-                (selectedUser?._id == chat.senderId &&
-                    session?.user._id == chat.receiverId) ||
-                    (selectedUser?._id == chat.receiverId &&
-                        session?.user._id == chat.senderId)
-            );
             if (
                 (selectedUser?._id == chat.senderId &&
                     session?.user._id == chat.receiverId) ||
@@ -86,9 +81,7 @@ function Message() {
                     session?.user._id == chat.senderId)
             ) {
                 const addedMessages = [...messages, chat];
-                console.log({messages})
-                console.log("add to array");
-                setMessages((prev)=> [...prev, chat]);
+                setMessages((prev) => [...prev, chat]);
             }
         });
 
@@ -97,29 +90,38 @@ function Message() {
         };
     }, [selectedUser, session?.user._id]);
 
-    useEffect(()=>{
+    useEffect(() => {
         const getLastMessage = async () => {
             try {
-                const res = await axiosPrivate.get<ILastMessages>(`/message-history/${session?.user._id}`, {
-                    headers: { "Content-Type": "application/json" },
-                    withCredentials: true,
-                });
-                setLastMess(res.data.messageHistory)
+                const res = await axiosPrivate.get<ILastMessages>(
+                    `/message-history/${session?.user._id}`,
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        withCredentials: true,
+                    }
+                );
+                console.log(res.data.messageHistory);
+                setLastMess(res.data.messageHistory);
             } catch (e) {
                 console.log({ e });
             }
         };
         getLastMessage();
-    },[newMessages])
+    }, [newMessages]);
     return (
         <div className="flex-1 p-4 h-full w-full flex gap-4 bg-white dark:bg-bg_dark">
             <MessageListBar
+                selectedUser={selectedUser}
                 setSelectedUser={setSelectedUser}
                 itemClick={itemClick}
                 getLatest={getLatest}
                 lastMess={lastMess}
             />
-            <MessageContent selectedUser={selectedUser} messages={messages} setMessages={setMessages}/>
+            <MessageContent
+                selectedUser={selectedUser}
+                messages={messages}
+                setMessages={setMessages}
+            />
         </div>
     );
 }

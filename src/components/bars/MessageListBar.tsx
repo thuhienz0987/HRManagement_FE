@@ -12,22 +12,24 @@ import { IMessage } from "src/types/messageType";
 import { ILastMessage } from "src/app/(pages)/(main)/message/page";
 
 interface MessageListBarProps {
+    selectedUser: User | null;
     setSelectedUser: (user: User | null) => void;
     itemClick: (opponentId: User) => void;
     getLatest: (id: string) => string | undefined;
-    lastMess: ILastMessage[] | undefined
+    lastMess: ILastMessage[] | undefined;
 }
 
 const MessageListBar: React.FC<MessageListBarProps> = ({
+    selectedUser,
     setSelectedUser,
     itemClick,
     getLatest,
-    lastMess
+    lastMess,
 }) => {
     const axiosPrivate = useAxiosPrivate();
 
     const [employees, setEmployees] = useState<User[]>();
-    const { data: session} = useSession()
+    const { data: session } = useSession();
 
     useEffect(() => {
         const getEmployees = async () => {
@@ -47,7 +49,6 @@ const MessageListBar: React.FC<MessageListBarProps> = ({
                 console.log({ e });
             }
         };
-        
 
         getEmployees();
     }, []);
@@ -59,6 +60,7 @@ const MessageListBar: React.FC<MessageListBarProps> = ({
                 {employees &&
                     employees.map((employee) => (
                         <MessageItem
+                            selected={employee._id === selectedUser?._id}
                             isOnline={employee.isOnline}
                             key={employee._id}
                             name={employee.name}
@@ -67,7 +69,9 @@ const MessageListBar: React.FC<MessageListBarProps> = ({
                             onClick={() => itemClick(employee)}
                             newMessage={getLatest(employee._id)}
                             lastMessage={
-                                lastMess?.find(mes => mes.userId === employee._id)?.lastMessage
+                                lastMess?.find(
+                                    (mes) => mes.userId === employee._id
+                                )?.lastMessage
                             }
                         />
                     ))}
