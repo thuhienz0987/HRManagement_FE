@@ -9,16 +9,29 @@ interface OpponentMessageProps {
   selectedUser: string;
   avatarImage: string;
   message: string;
+  createdAt: Date;
 }
 
 
-const OpponentMessage: React.FC<OpponentMessageProps> = ({selectedUser,message, avatarImage}) => {
+const OpponentMessage: React.FC<OpponentMessageProps> = ({selectedUser,message, avatarImage,createdAt}) => {
   const [showTime, setShowTime] = useState(false);
   const { data: session } = useSession();
   const url = session?.user.avatarImage;
   const socket = useSocket()
+
+  const getTime = () =>{
+    let time = "";
+    time += `${new Date(createdAt.toString()).getHours()}:`;
+    time += `${new Date(createdAt.toString()).getMinutes()} `;
+    if((new Date().getTime() - new Date(createdAt.toString()).getTime()) <= (60*60*24))
+      return time + "today";
+    time += `${new Date(createdAt.toString()).getDay()}/`;
+    time += `${new Date(createdAt.toString()).getMonth()}`;
+    return time;
+  }
+  
   return (
-    <div className="flex flex-col-reverse h-full">
+    <div className="flex flex-col-reverse">
       <div className="flex flex-row items-start m-2">
         <AvatarComponent imageLink={avatarImage} />
         <div
@@ -31,8 +44,8 @@ const OpponentMessage: React.FC<OpponentMessageProps> = ({selectedUser,message, 
           </p>
         </div>
         {showTime && (
-            <div className='flex justify-center'>
-                <p className="dark:text-bg text-dark">13:35, today</p>
+            <div className='flex justify-center items-center h-full'>
+                <p className="dark:text-bg text-dark text-sm">{getTime()}</p>
             </div>
         )}
       </div>

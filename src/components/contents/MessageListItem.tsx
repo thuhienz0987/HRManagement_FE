@@ -1,5 +1,6 @@
 import { Button } from "@nextui-org/react";
 import AvatarComponent from "../others/Avatar";
+import { useEffect, useState } from "react";
 
 type MessageItemProps = {
     selected: boolean;
@@ -8,6 +9,7 @@ type MessageItemProps = {
     onClick: () => void; // Add onClick prop
     isOnline: string;
     _id: string;
+    createdAt: Date | undefined;
     newMessage: string | undefined;
     lastMessage: string | undefined;
 };
@@ -19,9 +21,34 @@ const MessageItem: React.FC<MessageItemProps> = ({
     onClick,
     isOnline,
     _id: opponentId,
+    createdAt,
     newMessage,
     lastMessage,
 }) => {
+
+    // const [time, setTime] = useState();
+
+    const getTime = () => {
+        let time: Date = new Date();
+        const now: Date = new Date();
+        if (createdAt)
+            time = new Date(createdAt.toString());
+        else
+            return ""
+        const distance = (now.getTime() - time.getTime())/1000;
+        if(distance < 60)
+            return "Just now";
+        else if (distance < 60*60)
+            return `${Math.round(distance/60)} minutes ago`;
+        else if (distance < 60*60*24)
+            return `${Math.round(distance/(60*60))} hours ago`;
+        else
+            return `${Math.round(distance/(60*60*24))} days ago`;
+    }
+    useEffect(() => {
+         
+        });
+    
     return (
         <div className="w-full h-[68px] p-[4px] rounded-sm">
             {/* <div className=" flex flex-1 flex-row h-full "> */}
@@ -53,7 +80,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
                         )}
 
                         <span className="inline px-[2px]">·</span>
-                        <span className="inline">1 ngày</span>
+                        <span className="inline">{getTime()}</span>
                     </div>
                 </div>
             </Button>

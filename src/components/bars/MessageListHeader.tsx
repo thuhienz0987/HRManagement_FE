@@ -20,7 +20,7 @@ const MessageListHeader: React.FC<MessageListHeaderProps> = ({
                     <span className="text-[24px] font-bold text-button ">
                         CHAT
                     </span>
-                    <Button
+                    {/* <Button
                         isIconOnly
                         variant="solid"
                         className="w-[36px] h-[36px] bg-button focus:outline-none border-none p-0"
@@ -31,7 +31,7 @@ const MessageListHeader: React.FC<MessageListHeaderProps> = ({
                         }}
                     >
                         <AddMessageIcon />
-                    </Button>
+                    </Button> */}
                 </div>
             </div>
             <SearchBar setSelectedUser={setSelectedUser} />

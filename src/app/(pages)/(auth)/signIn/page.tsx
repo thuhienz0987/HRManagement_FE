@@ -149,6 +149,7 @@ const SignInForm = (props: Props) => {
                             id="default-checkbox"
                             type="checkbox"
                             value=""
+                            checked={true}
                             className="w-4 h-4 text-[#24243f] bg-gray-100 border-gray-300 rounded focus:ring-[#24243f] dark:focus:ring-[#24243f] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         />
                         <label

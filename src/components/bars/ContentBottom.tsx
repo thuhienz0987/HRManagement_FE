@@ -8,14 +8,17 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useSocket } from "src/hooks/useSocketConnection";
 import { IMessage } from "src/types/messageType";
+import { ILastMessage } from "src/app/(pages)/(main)/message/page";
 
 interface ContentBottomProps {
   selectedUser: User;
   setMessages:  (mess: IMessage[]) => void;
+  setLastMess:  (mess: ILastMessage[]) => void;
   messages: IMessage[];
+  lastMess: ILastMessage[] | undefined;
 }
 
-const ContentBottom: React.FC<ContentBottomProps> = ({ selectedUser, setMessages, messages }) => {
+const ContentBottom: React.FC<ContentBottomProps> = ({ selectedUser, setMessages, setLastMess, messages, lastMess }) => {
   const axiosPrivate = useAxiosPrivate();
   const [message, setMessage] = useState("");
   const { data: session } = useSession();
@@ -44,6 +47,14 @@ const ContentBottom: React.FC<ContentBottomProps> = ({ selectedUser, setMessages
         console.log(response.data)
         const mes: IMessage = response.data.data
         console.log({messages})
+        let newLastArray: ILastMessage[] = []
+        const filterArray = lastMess?.filter(lastMess => lastMess.userId !== mes.receiverId)
+        if (filterArray)
+          newLastArray = [...filterArray, {
+            userId: mes.receiverId,
+            lastMessage: mes.message
+          }]
+        setLastMess(newLastArray)
         const newArray = [...messages, mes]
         setMessages(newArray)
         setMessage("");
@@ -55,7 +66,7 @@ const ContentBottom: React.FC<ContentBottomProps> = ({ selectedUser, setMessages
   };
 
   return (
-    <div className="flex flex-row dark:bg-dark bg-bg h-[60px] items-center gap-2 border-1 m-4">
+    <div className="flex flex-row dark:bg-dark bg-bg h-[60px] items-center gap-2 m-4">
       <Input
         className="h-[50px] overflow-hidden"
         placeholder="Aa"
