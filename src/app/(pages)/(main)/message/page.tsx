@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "src/components/bars/Sidebar";
 import MessageListBar from "src/components/bars/MessageListBar";
 import MessageContent from "src/components/contents/MessageContent";
@@ -8,10 +8,11 @@ import { useSocket } from "src/hooks/useSocketConnection";
 import { IMessage } from "src/types/messageType";
 import { useSession } from "next-auth/react";
 import { axiosPrivate } from "src/apis/axios";
-
+// import MessNoti from "../../../../../public/"
 export interface ILastMessage {
     userId: string;
     lastMessage: string;
+    createdAt: Date;
 }
 
 interface ILastGroupMessage {
@@ -24,7 +25,7 @@ interface ILastGroupMessage {
 interface ILastMessages {
     messageHistory: ILastMessage[];
     groupHistory: ILastGroupMessage[];
-    createdAt: string;
+    
 }
 
 function Message() {
@@ -34,6 +35,15 @@ function Message() {
     const [lastMess, setLastMess] = useState<ILastMessage[]>();
     const socket = useSocket();
     const { data: session } = useSession();
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const playNotificationSound = () => {
+        if (audioRef.current) {
+            audioRef.current.play()
+        } else {
+            // Throw error
+            console.log("sound error")
+        }
+      };
     const getLatest = (opponentId: string) => {
         const filteredMessages = newMessages
             .filter(
@@ -73,20 +83,32 @@ function Message() {
         }
         socket?.on("loadNewChat", ({ chat }: { chat: IMessage }) => {
             // console.log({chat})
-            setNewMessages([...newMessages, chat]);
+            playNotificationSound();
+            if(!(selectedUser?._id == chat.receiverId || selectedUser?._id == chat.senderId) ) setNewMessages([...newMessages, chat]);
+            else {
+                let newLastArray: ILastMessage[] = []
+                const filterArray = lastMess?.filter(lastMess => lastMess.userId !== chat.senderId)
+                if (filterArray)
+                newLastArray = [...filterArray, {
+                    userId: chat.senderId,
+                    lastMessage: chat.message,
+                    createdAt: chat.createdAt
+                }]
+                setLastMess(newLastArray)
+            }
             if (
                 (selectedUser?._id == chat.senderId &&
                     session?.user._id == chat.receiverId) ||
                 (selectedUser?._id == chat.receiverId &&
                     session?.user._id == chat.senderId)
             ) {
-                const addedMessages = [...messages, chat];
                 setMessages((prev) => [...prev, chat]);
             }
         });
 
         return () => {
             socket?.off("loadMessages");
+            socket?.off("loadNewChat");
         };
     }, [selectedUser, session?.user._id]);
 
@@ -110,6 +132,7 @@ function Message() {
     }, [newMessages]);
     return (
         <div className="flex-1 p-4 h-full w-full flex gap-4 bg-white dark:bg-bg_dark">
+            <audio ref={audioRef} src='/messageNoti.mp3' />
             <MessageListBar
                 selectedUser={selectedUser}
                 setSelectedUser={setSelectedUser}
@@ -121,6 +144,8 @@ function Message() {
                 selectedUser={selectedUser}
                 messages={messages}
                 setMessages={setMessages}
+                setLastMess={setLastMess}
+                lastMess={lastMess}
             />
         </div>
     );

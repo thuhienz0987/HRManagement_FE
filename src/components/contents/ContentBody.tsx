@@ -38,19 +38,21 @@ const ContentBody: React.FC<ContentBodyProps> = ({
     return (
         <div
             dir="btt"
-            className="flex flex-col flex-1 relative overflow-y-scroll"
+            className="flex flex-col flex-1 relative overflow-y-scroll justify-end"
         >
             {messages && messages.map((msg, index) =>
                 msg?.senderId === session?.user._id ? (
                     <SelfMessage
                         key={index}
                         message={msg.message}
+                        createdAt={msg.createdAt}
                         selectedUser={msg.receiverId}
                     />
                 ) : (
                     <OpponentMessage
                         key={index}
                         message={msg.message}
+                        createdAt={msg.createdAt}
                         selectedUser={msg.senderId}
                         avatarImage={selectedUser.avatarImage}
                     />

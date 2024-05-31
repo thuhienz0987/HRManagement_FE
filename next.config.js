@@ -13,6 +13,18 @@ const nextConfig = {
         },
       ],
     });
+    config.module.rules.push({
+      test: /\.(mp3)$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          publicPath: 'public/',
+          outputPath: 'public/',
+          name: '[name].[ext]',
+          esModule: false,
+        },
+      },
+    });
     return config;
   },
   env: {

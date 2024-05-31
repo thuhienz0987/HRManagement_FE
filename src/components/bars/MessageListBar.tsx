@@ -54,9 +54,9 @@ const MessageListBar: React.FC<MessageListBarProps> = ({
     }, []);
 
     return (
-        <div className="flex flex-col w-[88px] h-1/2 md:w-[360px] bg-bg dark:bg-dark rounded-xl md max-h-screen">
+        <div className="flex flex-col w-[88px] md:w-[360px] bg-bg dark:bg-dark rounded-xl relative max-h-[73vh]">
             <MessageListHeader setSelectedUser={setSelectedUser} />
-            <div className="flex flex-1 overflow-y-scroll px-[6px] flex-col ">
+            <div className="flex flex-1 overflow-y-scroll px-[6px] flex-col relative">
                 {employees &&
                     employees.map((employee) => (
                         <MessageItem
@@ -73,6 +73,9 @@ const MessageListBar: React.FC<MessageListBarProps> = ({
                                     (mes) => mes.userId === employee._id
                                 )?.lastMessage
                             }
+                            createdAt={lastMess?.find(
+                                (mes) => mes.userId === employee._id
+                            )?.createdAt}
                         />
                     ))}
             </div>
